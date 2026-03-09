@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChefLink · Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0D1209; --bg2:#111707; --card:#181F0C; --card2:#1E2810;
+  --border:#263012; --border2:#334018;
+  --olive:#7A9A2A; --olive2:#9ABF35; --olive3:#C5DC5A;
+  --sand:#D4A853; --sand2:#E8C278;
+  --mint:#3D9E6A; --mint2:#5DC48A;
+  --red:#C94040; --red2:#E05555;
+  --terr:#B05A2A; --terr2:#D4703A;
+  --white:#EDE8DC; --muted:#6B7A45; --muted2:#4A5530;
+  --r:14px; --rs:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;}
+
+/* ── LAYOUT ── */
+#app{display:none;min-height:100vh;}
+.topbar{height:62px;background:rgba(13,18,9,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:200;}
+.logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-1px;cursor:pointer;}
+.logo span{color:var(--olive2);}
+.logo-badge{padding:3px 10px;background:rgba(122,154,42,.15);border:1px solid rgba(122,154,42,.2);border-radius:6px;font-size:10px;font-weight:700;color:var(--olive2);letter-spacing:.5px;margin-left:10px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--card);border:1px solid var(--border2);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;}
+.user-avatar{width:28px;height:28px;background:linear-gradient(135deg,var(--olive),var(--olive2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.btn-logout{padding:7px 14px;background:transparent;border:1px solid var(--border2);border-radius:8px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
+.btn-logout:hover{border-color:var(--red);color:var(--red2);}
+.notif-btn{width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.notif-btn svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;}
+.ndot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--terr2);border-radius:50%;border:2px solid var(--bg);}
+
+.layout{display:flex;min-height:calc(100vh - 62px);}
+.sidebar{width:230px;background:var(--bg2);border-right:1px solid var(--border);padding:20px 12px;flex-shrink:0;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;}
+.sidebar::-webkit-scrollbar{display:none;}
+.main{flex:1;padding:32px;max-width:100%;}
+.cart-col{width:300px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);padding:20px;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;display:flex;flex-direction:column;}
+.cart-col::-webkit-scrollbar{display:none;}
+
+/* ── SIDEBAR NAV ── */
+.nav-label{font-size:10px;font-weight:700;color:var(--muted2);letter-spacing:.8px;padding:0 10px;margin:18px 0 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all .2s;margin-bottom:2px;font-size:13px;font-weight:500;color:var(--muted);}
+.nav-item:hover{background:var(--card);color:var(--white);}
+.nav-item.active{background:rgba(122,154,42,.14);color:var(--olive2);font-weight:600;}
+.nav-item svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--terr2);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;}
+
+/* ── PANELS ── */
+.panel{display:none;}
+.panel.active{display:block;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ── PAGE HEADER ── */
+.ph{margin-bottom:24px;}
+.ph h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;}
+.ph p{font-size:13px;color:var(--muted);margin-top:5px;}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;gap:14px;margin-bottom:24px;}
+.g4{grid-template-columns:repeat(4,1fr);}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g2{grid-template-columns:repeat(2,1fr);}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s;}
+.scard:hover{transform:translateY(-2px);border-color:var(--border2);}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.s1::before{background:linear-gradient(90deg,var(--olive),var(--olive3));}
+.s2::before{background:linear-gradient(90deg,var(--mint),var(--mint2));}
+.s3::before{background:linear-gradient(90deg,var(--sand),var(--sand2));}
+.s4::before{background:linear-gradient(90deg,var(--terr),var(--terr2));}
+.scard-ico{font-size:22px;margin-bottom:10px;}
+.scard-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;line-height:1;}
+.scard-lbl{font-size:12px;color:var(--muted);margin-top:4px;}
+.scard-delta{font-size:11px;font-weight:600;margin-top:6px;}
+.up{color:var(--mint2);} .dn{color:var(--red2);} .wn{color:var(--sand);}
+
+/* ── AI CARD ── */
+.ai-card{background:linear-gradient(135deg,#141C08,#1A2809);border:1px solid rgba(154,191,53,.2);border-radius:var(--r);padding:20px;margin-bottom:20px;position:relative;overflow:hidden;}
+.ai-card::after{content:'';position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(154,191,53,.08),transparent 70%);pointer-events:none;}
+.ai-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(154,191,53,.1);border:1px solid rgba(154,191,53,.2);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--olive2);margin-bottom:12px;letter-spacing:.5px;}
+.ai-dot{width:6px;height:6px;background:var(--olive2);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ai-txt{font-size:14px;line-height:1.65;color:var(--white);}
+.ai-txt strong{color:var(--olive3);}
+.ai-btns{display:flex;gap:8px;margin-top:14px;}
+.btn-yes{padding:10px 20px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:9px;color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .15s;}
+.btn-yes:active{transform:scale(.96);}
+.btn-no{padding:10px 20px;background:var(--card2);border:1px solid var(--border2);border-radius:9px;color:var(--muted);font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);}
+.cp{padding:20px;}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.btn-sm{padding:6px 14px;border:1px solid var(--border2);background:transparent;border-radius:8px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
+.btn-sm:hover{border-color:var(--olive);color:var(--olive2);}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;}
+th{padding:11px 18px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.4px;border-bottom:1px solid var(--border);background:var(--bg2);}
+td{padding:13px 18px;font-size:13px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.bg{background:rgba(61,158,106,.14);color:var(--mint2);}
+.bo{background:rgba(212,168,83,.14);color:var(--sand);}
+.br{background:rgba(201,64,64,.14);color:var(--red2);}
+.bl{background:rgba(122,154,42,.14);color:var(--olive2);}
+.bgy{background:rgba(107,122,69,.14);color:var(--muted);}
+
+/* ── SEARCH & FILTERS ── */
+.search-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.search-wrap{flex:1;min-width:200px;position:relative;}
+.search-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2;}
+.search-inp{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px 11px 40px;font-size:13px;color:var(--white);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.search-inp:focus{border-color:var(--olive);}
+.search-inp::placeholder{color:var(--muted2);}
+.filt{padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.filt.on{background:var(--olive);border-color:var(--olive);color:white;}
+
+/* ── PRODUCTS ── */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:border-color .2s,transform .2s;cursor:default;}
+.pcard:hover{border-color:var(--border2);transform:translateY(-2px);}
+.pcard.selected{border-color:var(--olive);background:rgba(122,154,42,.05);}
+.pcard.rupt{opacity:.55;border-style:dashed;}
+.p-emo{font-size:34px;margin-bottom:10px;}
+.p-name{font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.3;}
+.p-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:11px;color:var(--muted);margin-bottom:6px;direction:rtl;}
+.p-sup{font-size:11px;color:var(--olive2);margin-bottom:8px;font-weight:500;}
+.p-price{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--sand);}
+.p-unit{font-size:11px;color:var(--muted);}
+.p-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;margin-top:4px;}
+.qty-row{display:flex;align-items:center;background:var(--card2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-top:12px;}
+.qbtn{width:36px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:700;color:var(--olive2);transition:background .15s;}
+.qbtn:hover{background:rgba(122,154,42,.15);}
+.qval{flex:1;text-align:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+
+/* ── CART ── */
+.cart-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:4px;}
+.cart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted);}
+.cart-empty-ico{font-size:44px;margin-bottom:12px;}
+.citem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.citem-emo{font-size:20px;width:32px;text-align:center;}
+.citem-info{flex:1;}
+.citem-name{font-size:13px;font-weight:600;}
+.citem-qty{font-size:11px;color:var(--muted);margin-top:2px;}
+.citem-price{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--sand);}
+.cdel{width:26px;height:26px;background:rgba(201,64,64,.1);border:1px solid rgba(201,64,64,.18);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--red2);flex-shrink:0;}
+.cart-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);}
+.crow{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;}
+.crow span:first-child{color:var(--muted);}
+.crow.tot{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;border-top:1px solid var(--border2);padding-top:10px;margin-top:6px;margin-bottom:14px;}
+.crow.tot span:last-child{color:var(--sand);}
+.del-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.dopt{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;}
+.dopt.on{border-color:var(--olive);background:rgba(122,154,42,.08);}
+.dopt-t{font-size:12px;font-weight:700;}
+.dopt-s{font-size:10px;color:var(--muted);margin-top:2px;}
+.btn-order{width:100%;padding:14px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:12px;color:white;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(122,154,42,.4);transition:transform .15s;}
+.btn-order:active{transform:scale(.97);}
+
+/* ── COMPARE ── */
+.cmp-row{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:8px;cursor:pointer;transition:border-color .2s;}
+.cmp-row:hover{border-color:var(--border2);}
+.cmp-row.best{border-color:var(--olive);background:rgba(122,154,42,.05);}
+
+/* ── CHART ── */
+.chart-bars{height:110px;display:flex;align-items:flex-end;gap:7px;}
+.cbar-w{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
+.cbar{width:100%;border-radius:4px 4px 0 0;min-height:4px;}
+.cbar-l{font-size:9px;color:var(--muted);}
+
+/* ── PROGRESS ── */
+.prog-row{margin-bottom:12px;}
+.prog-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+.prog-head span:first-child{color:var(--muted);}
+.prog-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;}
+
+/* ── GRID ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+
+/* ── LOGIN PAGE ── */
+#page-login{min-height:100vh;display:flex;background:radial-gradient(ellipse at 25% 25%,rgba(122,154,42,.07) 0%,transparent 55%),radial-gradient(ellipse at 75% 75%,rgba(212,168,83,.05) 0%,transparent 55%);}
+.login-side{width:420px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;border-right:1px solid var(--border);}
+.login-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.4;}
+.hero-content{position:relative;text-align:center;}
+.hero-badge{display:inline-block;padding:6px 16px;background:rgba(122,154,42,.12);border:1px solid rgba(122,154,42,.2);border-radius:20px;font-size:12px;font-weight:700;color:var(--olive2);letter-spacing:.5px;margin-bottom:20px;}
+.hero-title{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;letter-spacing:-2px;line-height:1.1;margin-bottom:16px;}
+.hero-title span{color:var(--olive2);}
+.hero-desc{font-size:15px;color:var(--muted);line-height:1.7;max-width:400px;}
+.hero-stats{display:flex;gap:32px;margin-top:36px;justify-content:center;}
+.hstat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--olive2);}
+.hstat-lbl{font-size:12px;color:var(--muted);margin-top:4px;}
+.login-logo{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1.5px;margin-bottom:6px;}
+.login-logo span{color:var(--olive2);}
+.login-tagline{font-size:13px;color:var(--muted);margin-bottom:36px;}
+.login-box{width:100%;}
+.lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.4px;display:block;margin-bottom:6px;}
+.inp{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:13px 16px;font-size:14px;color:var(--white);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;margin-bottom:14px;}
+.inp:focus{border-color:var(--olive);}
+.inp::placeholder{color:var(--muted2);}
+.btn-login{width:100%;padding:15px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:12px;color:white;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(122,154,42,.4);transition:transform .15s,box-shadow .15s;margin-top:4px;}
+.btn-login:hover{box-shadow:0 12px 32px rgba(122,154,42,.5);}
+.btn-login:active{transform:scale(.97);}
+.login-footer{text-align:center;margin-top:20px;font-size:12px;color:var(--muted);}
+.login-footer a{color:var(--olive2);cursor:pointer;}
+.demo-box{margin-top:24px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.demo-title{font-size:10px;font-weight:700;color:var(--muted2);letter-spacing:.5px;margin-bottom:10px;}
+.demo-item{display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--card);border-radius:8px;cursor:pointer;transition:background .15s;}
+.demo-item:hover{background:var(--card2);}
+.demo-item-lbl{font-size:12px;color:var(--muted);flex:1;}
+.demo-item-val{font-size:12px;font-weight:600;color:var(--olive2);}
+
+/* ── SUCCESS ── */
+#success{display:none;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:40px;background:var(--bg);}
+.s-ring{width:110px;height:110px;background:rgba(61,158,106,.1);border:2px solid var(--mint);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:52px;margin:0 auto 28px;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+.s-h1{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin-bottom:10px;}
+.s-p{font-size:15px;color:var(--muted);line-height:1.7;max-width:400px;margin:0 auto 32px;}
+.s-details{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;max-width:360px;margin:0 auto 28px;text-align:left;}
+.s-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.s-row:last-child{border:none;}
+.s-row span:first-child{color:var(--muted);}
+
+/* ── TOAST & MODAL ── */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:12px 22px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+#mo{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);z-index:500;display:none;align-items:center;justify-content:center;padding:24px;}
+#mo.on{display:flex;}
+.mo-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:28px;width:100%;max-width:460px;animation:pop .3s cubic-bezier(.34,1.4,.64,1);}
+.mo-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;}
+.mo-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+
+@media(max-width:1100px){.cart-col{display:none;} .g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){
+  .login-hero{display:none;}
+  .login-side{width:100%;border-right:none;}
+  .main{padding:20px;}
+  .sidebar{width:56px;padding:12px 6px;}
+  .sidebar .nav-item span,.sidebar .nav-label,.sidebar .nav-badge{display:none;}
+  .sidebar .nav-item{justify-content:center;}
+  .g4,.g3{grid-template-columns:repeat(2,1fr);}
+  .two-col{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div id="mo" onclick="if(event.target===this)closeMo()">
+  <div class="mo-box" id="mo-body"></div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div id="page-login">
+  <div class="login-side">
+    <div class="login-box">
+      <div class="login-logo">Chef<span>Link</span></div>
+      <div class="login-tagline">Portail Restaurant · المطعم</div>
+      <label class="lbl">EMAIL</label>
+      <input class="inp" id="l-email" type="email" placeholder="vous@restaurant.ma">
+      <label class="lbl">MOT DE PASSE</label>
+      <input class="inp" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+      <button class="btn-login" onclick="login()">Accéder à mon dashboard →</button>
+      <div class="login-footer">Pas de compte ? <a onclick="toast('📧 Contactez admin@cheflink.ma')">Contacter ChefLink</a></div>
+      <div class="demo-box">
+        <div class="demo-title">COMPTE DÉMO — CLIQUEZ POUR ACCÉDER</div>
+        <div class="demo-item" onclick="quickLogin()">
+          <span style="font-size:20px;">🍽️</span>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">Café Atlas · Ahmed Benali</div>
+            <div class="demo-item-lbl"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0577607671647077646b71456160686a2b666a68">[email&#160;protected]</a></div>
+          </div>
+          <span class="demo-item-val">Accéder →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="login-hero">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🍽️ PORTAIL RESTAURANT</div>
+      <div class="hero-title">Commandez.<br><span>Économisez.</span><br>Gérez.</div>
+      <div class="hero-desc">Passez vos commandes en 2 clics, comparez les prix entre fournisseurs, et laissez l'IA optimiser vos achats automatiquement.</div>
+      <div class="hero-stats">
+        <div><div class="hstat-val">−18%</div><div class="hstat-lbl">dépenses moyennes</div></div>
+        <div><div class="hstat-val">+1 340</div><div class="hstat-lbl">DH économisés/mois</div></div>
+        <div><div class="hstat-val">2 min</div><div class="hstat-lbl">pour commander</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="logo">Chef<span>Link</span></div>
+      <div class="logo-badge">RESTAURANT</div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn" onclick="toast('🔔 2 nouvelles alertes IA')">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="ndot"></div>
+      </div>
+      <div class="user-chip">
+        <div class="user-avatar">👨‍🍳</div>
+        <span id="u-name">Ahmed</span>
+      </div>
+      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="nav-label">PRINCIPAL</div>
+      <div class="nav-item active" id="n-dash" onclick="go('dash')">
+        <svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Tableau de bord</span>
+      </div>
+      <div class="nav-item" id="n-cmd" onclick="go('cmd')">
+        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Commander</span>
+        <span class="nav-badge" id="cart-badge" style="display:none;">0</span>
+      </div>
+      <div class="nav-item" id="n-cmp" onclick="go('cmp')">
+        <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        <span>Comparer prix</span>
+      </div>
+      <div class="nav-label">SUIVI</div>
+      <div class="nav-item" id="n-ord" onclick="go('ord')">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        <span>Mes commandes</span>
+      </div>
+      <div class="nav-item" id="n-ana" onclick="go('ana')">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Analytiques</span>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div class="panel active" id="p-dash">
+        <div class="ph">
+          <h1>Bonjour Ahmed 👋</h1>
+          <p>Café Atlas · Casablanca — Vendredi 6 Mars 2026</p>
+        </div>
+        <div class="ai-card">
+          <div class="ai-tag"><div class="ai-dot"></div>BRIEFING IA · AUJOURD'HUI</div>
+          <div class="ai-txt">Tes stocks de <strong>bœuf haché</strong> seront épuisés vendredi. J'ai trouvé <strong>8kg chez ProViande à 68 DH/kg</strong> — économie de <strong>96 DH</strong> vs prix habituel. FruitsLég a aussi une promo tomates <strong>−15%</strong> jusqu'à demain soir.</div>
+          <div class="ai-btns">
+            <button class="btn-yes" onclick="toast('✅ Commande confirmée — Livraison vendredi 7h')">Confirmer la commande</button>
+            <button class="btn-no" onclick="this.closest('.ai-card').style.opacity='.45'">Plus tard</button>
+          </div>
+        </div>
+        <div class="stat-grid g4">
+          <div class="scard s1" onclick="go('ana')"><div class="scard-ico">💸</div><div class="scard-val">8 420</div><div class="scard-lbl">Dépenses ce mois (DH)</div><div class="scard-delta dn">↓ 18% vs mois passé</div></div>
+          <div class="scard s2" onclick="go('ana')"><div class="scard-ico">💰</div><div class="scard-val">1 340</div><div class="scard-lbl">Économies IA (DH)</div><div class="scard-delta up">↑ 32% ce mois</div></div>
+          <div class="scard s3" onclick="go('ord')"><div class="scard-ico">📦</div><div class="scard-val">24</div><div class="scard-lbl">Commandes ce mois</div><div class="scard-delta up">↑ 3 cette semaine</div></div>
+          <div class="scard s4" onclick="go('ana')"><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">Food cost actuel</div><div class="scard-delta wn">⚠ Objectif : 25%</div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Commandes récentes</div><button class="btn-sm" onclick="go('ord')">Tout voir →</button></div>
+          <table>
+            <thead><tr><th>FOURNISSEUR</th><th>PRODUITS</th><th>MONTANT</th><th>DATE</th><th>STATUT</th></tr></thead>
+            <tbody>
+              <tr onclick="toast('📦 ProViande — Livré 7h00')"><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">425 DH</td><td style="color:var(--muted);">Aujourd'hui</td><td><span class="badge bg">Livré ✓</span></td></tr>
+              <tr onclick="toast('🥬 FruitsLég — En route 11h30')"><td><strong>FruitsLég Express</strong></td><td>Légumes saison 8kg</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">186 DH</td><td style="color:var(--muted);">Hier</td><td><span class="badge bo">En route</span></td></tr>
+              <tr onclick="moInvoice()"><td><strong>HuileMax</strong></td><td>Huile d'olive 20L</td><td style="font-family:'Syne',sans-serif;color:var(--red2);font-weight:700;">440 DH</td><td style="color:var(--muted);">13 Jan</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
+              <tr onclick="toast('🧂 EpicesPro — Livré')"><td><strong>EpicesPro</strong></td><td>Épices & condiments</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">290 DH</td><td style="color:var(--muted);">12 Jan</td><td><span class="badge bg">Livré ✓</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- COMMANDER -->
+      <div class="panel" id="p-cmd">
+        <div class="ph"><h1>Commander</h1><p>Catalogue complet · Tous les fournisseurs actifs</p></div>
+        <div class="search-row">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input class="search-inp" id="ps" placeholder="Chercher un produit..." oninput="filterP(this.value)">
+          </div>
+          <div class="filt on" onclick="catF('all',this)">🛒 Tout</div>
+          <div class="filt" onclick="catF('viande',this)">🥩</div>
+          <div class="filt" onclick="catF('legume',this)">🥬</div>
+          <div class="filt" onclick="catF('laitier',this)">🥛</div>
+          <div class="filt" onclick="catF('epice',this)">🧂</div>
+          <div class="filt" onclick="catF('huile',this)">🫙</div>
+        </div>
+        <div class="prod-grid" id="pgrid"></div>
+      </div>
+
+      <!-- COMPARER -->
+      <div class="panel" id="p-cmp">
+        <div class="ph"><h1>Comparer les prix</h1><p>L'IA sélectionne le meilleur fournisseur pour chaque produit</p></div>
+        <div class="ai-card" style="margin-bottom:20px;">
+          <div class="ai-tag"><div class="ai-dot"></div>ANALYSE IA · JANVIER 2026</div>
+          <div class="ai-txt">Ce mois, l'IA t'a économisé <strong>1 340 DH</strong> en choisissant automatiquement les meilleurs prix. <strong>ProViande</strong> est 12% moins cher que la moyenne marché sur les viandes.</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Comparaison par produit</div></div>
+          <table>
+            <thead><tr><th>PRODUIT</th><th>FOURNISSEUR A</th><th>FOURNISSEUR B</th><th>FOURNISSEUR C</th><th>RECOMMANDATION IA</th></tr></thead>
+            <tbody>
+              <tr onclick="toast('🥩 ProViande sélectionné pour bœuf haché')"><td><strong>🥩 Bœuf haché / kg</strong></td><td style="font-weight:700;">85 DH</td><td style="color:var(--muted);">92 DH</td><td style="color:var(--muted);">88 DH</td><td><span class="badge bl">85 DH — ProViande</span></td></tr>
+              <tr onclick="toast('🍅 FruitsLég sélectionné pour tomates')"><td><strong>🍅 Tomates / kg</strong></td><td style="color:var(--muted);">9 DH</td><td style="font-weight:700;">8 DH</td><td style="color:var(--muted);">8.5 DH</td><td><span class="badge bl">8 DH — FruitsLég</span></td></tr>
+              <tr onclick="toast('🫙 HuileMax sélectionné pour huile')"><td><strong>🫙 Huile olive / L</strong></td><td style="color:var(--muted);">24 DH</td><td style="color:var(--muted);">23 DH</td><td style="font-weight:700;">22 DH</td><td><span class="badge bl">22 DH — HuileMax</span></td></tr>
+              <tr onclick="toast('🥛 LaitiersNord sélectionné pour lait')"><td><strong>🥛 Lait / L</strong></td><td style="font-weight:700;">11 DH</td><td style="color:var(--muted);">12.5 DH</td><td style="color:var(--muted);">12 DH</td><td><span class="badge bl">11 DH — LaitiersNord</span></td></tr>
+              <tr onclick="toast('🍗 VolaillesMS sélectionné pour poulet')"><td><strong>🍗 Poulet / kg</strong></td><td style="color:var(--muted);">44 DH</td><td style="font-weight:700;">42 DH</td><td style="color:var(--muted);">43 DH</td><td><span class="badge bl">42 DH — VolaillesMS</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- COMMANDES -->
+      <div class="panel" id="p-ord">
+        <div class="ph"><h1>Mes commandes</h1><p>Historique complet et suivi des livraisons</p></div>
+        <div class="search-row">
+          <div class="search-wrap"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input class="search-inp" placeholder="Rechercher..."></div>
+          <div class="filt on" onclick="setF(this)">Toutes</div>
+          <div class="filt" onclick="setF(this)">En cours</div>
+          <div class="filt" onclick="setF(this)">Livrées</div>
+          <div class="filt" onclick="setF(this)">⚠ Anomalies</div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>#</th><th>FOURNISSEUR</th><th>PRODUITS</th><th>MONTANT</th><th>DATE</th><th>LIVRAISON</th><th>STATUT</th></tr></thead>
+            <tbody>
+              <tr onclick="toast('📦 #2841 ProViande — Détails')"><td style="color:var(--muted);">#2841</td><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">425 DH</td><td style="color:var(--muted);">Auj</td><td style="color:var(--muted);">7h00</td><td><span class="badge bg">Livré</span></td></tr>
+              <tr onclick="toast('🥬 #2840 En route, livraison 11h30')"><td style="color:var(--muted);">#2840</td><td><strong>FruitsLég Express</strong></td><td>Légumes 8kg</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">186 DH</td><td style="color:var(--muted);">Hier</td><td style="color:var(--muted);">11h30</td><td><span class="badge bo">En route</span></td></tr>
+              <tr onclick="moInvoice()"><td style="color:var(--muted);">#2839</td><td><strong>HuileMax</strong></td><td>Huile olive 20L</td><td style="font-family:'Syne',sans-serif;color:var(--red2);font-weight:700;">440 DH</td><td style="color:var(--muted);">13 Jan</td><td style="color:var(--muted);">—</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
+              <tr onclick="toast('🧂 #2838 Livré')"><td style="color:var(--muted);">#2838</td><td><strong>EpicesPro</strong></td><td>Épices</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">290 DH</td><td style="color:var(--muted);">12 Jan</td><td style="color:var(--muted);">8h00</td><td><span class="badge bg">Livré</span></td></tr>
+              <tr onclick="toast('🥛 #2837 Livré')"><td style="color:var(--muted);">#2837</td><td><strong>LaitiersNord</strong></td><td>Fromage, lait</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">340 DH</td><td style="color:var(--muted);">11 Jan</td><td style="color:var(--muted);">7h30</td><td><span class="badge bg">Livré</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ANALYTIQUES -->
+      <div class="panel" id="p-ana">
+        <div class="ph"><h1>Analytiques</h1><p>Dépenses, food cost, économies réalisées</p></div>
+        <div class="stat-grid g3">
+          <div class="scard s1"><div class="scard-ico">💸</div><div class="scard-val">8 420 DH</div><div class="scard-lbl">Dépenses totales janvier</div><div class="scard-delta dn">↓ 18% vs décembre</div></div>
+          <div class="scard s2"><div class="scard-ico">💰</div><div class="scard-val">1 340 DH</div><div class="scard-lbl">Économies IA ce mois</div><div class="scard-delta up">↑ 32%</div></div>
+          <div class="scard s4"><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">Food cost actuel</div><div class="scard-delta wn">⚠ Objectif 25%</div></div>
+        </div>
+        <div class="two-col">
+          <div class="card cp">
+            <div class="card-title" style="margin-bottom:16px;">Dépenses par catégorie</div>
+            <div class="prog-row"><div class="prog-head"><span>🥩 Viandes</span><span style="font-family:'Syne',sans-serif;font-weight:700;">3 200 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:38%;background:linear-gradient(90deg,var(--olive),var(--olive2));"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🥬 Légumes</span><span style="font-family:'Syne',sans-serif;font-weight:700;">1 800 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:21%;background:linear-gradient(90deg,var(--mint),var(--mint2));"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🫙 Huiles</span><span style="font-family:'Syne',sans-serif;font-weight:700;">1 400 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:17%;background:linear-gradient(90deg,var(--sand),var(--sand2));"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🥛 Laitiers</span><span style="font-family:'Syne',sans-serif;font-weight:700;">1 020 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,var(--terr),var(--terr2));"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🧂 Épices</span><span style="font-family:'Syne',sans-serif;font-weight:700;">1 000 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,#8A6A9A,#A48AB4);"></div></div></div>
+          </div>
+          <div class="card cp">
+            <div class="card-title" style="margin-bottom:16px;">Évolution dépenses · 7 jours</div>
+            <div class="chart-bars">
+              <div class="cbar-w"><div class="cbar" style="height:38%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">L</div></div>
+              <div class="cbar-w"><div class="cbar" style="height:62%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">M</div></div>
+              <div class="cbar-w"><div class="cbar" style="height:44%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">M</div></div>
+              <div class="cbar-w"><div class="cbar" style="height:82%;background:linear-gradient(180deg,var(--sand),rgba(212,168,83,.3));border-radius:4px 4px 0 0;"></div><div class="cbar-l" style="color:var(--sand);">J</div></div>
+              <div class="cbar-w"><div class="cbar" style="height:33%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">V</div></div>
+              <div class="cbar-w"><div class="cbar" style="height:67%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">S</div></div>
+              <div class="cbar-w"><div class="cbar" style="height:50%;background:linear-gradient(180deg,var(--mint),rgba(61,158,106,.3));border-radius:4px 4px 0 0;"></div><div class="cbar-l" style="color:var(--mint2);">A</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+
+    <!-- CART COLUMN -->
+    <div class="cart-col" id="cart-col">
+      <div class="cart-title">🛒 Mon panier</div>
+      <div class="cart-sub" id="cart-sub-lbl">0 article</div>
+      <div id="cart-items" style="flex:1;">
+        <div class="cart-empty">
+          <div class="cart-empty-ico">🛒</div>
+          <div style="font-size:14px;font-weight:600;">Panier vide</div>
+          <div style="font-size:12px;margin-top:6px;">Ajoute des produits depuis le catalogue</div>
+        </div>
+      </div>
+      <div class="cart-footer" id="cart-foot" style="display:none;">
+        <div class="crow"><span>Sous-total</span><span id="cv-sub" style="font-family:'Syne',sans-serif;font-weight:700;">0 DH</span></div>
+        <div class="crow"><span>Économie IA</span><span id="cv-sav" style="color:var(--olive2);font-weight:600;">−0 DH</span></div>
+        <div class="del-opts">
+          <div class="dopt on" id="do-std" onclick="setDel('std')"><div class="dopt-t">Standard</div><div class="dopt-s">Demain 7h · Gratuit</div></div>
+          <div class="dopt" id="do-exp" onclick="setDel('exp')"><div class="dopt-t" style="color:var(--sand);">🚀 Express</div><div class="dopt-s">~45 min · +30 DH</div></div>
+        </div>
+        <div class="crow tot"><span>Total</span><span id="cv-tot">0 DH</span></div>
+        <button class="btn-order" onclick="confirmOrder()">Confirmer la commande</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /app -->
+
+<!-- SUCCESS -->
+<div id="success" style="display:none;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:40px;background:var(--bg);">
+  <div>
+    <div class="s-ring">✓</div>
+    <div class="s-h1">Commande confirmée !</div>
+    <div class="s-p">Vos fournisseurs ont reçu la commande. Vous serez notifié à chaque étape.</div>
+    <div class="s-details" id="s-det"></div>
+    <button class="btn-login" style="max-width:300px;margin:0 auto;display:block;" onclick="backHome()">Retour au tableau de bord</button>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// DATA
+const PRODS = [
+  {id:1,emo:'🥩',name:'Bœuf haché',ar:'لحم مفروم',price:85,unit:'kg',cat:'viande',sup:'ProViande',promo:'Meilleur prix −8%',rupt:false},
+  {id:2,emo:'🍗',name:'Poulet entier',ar:'دجاجة كاملة',price:42,unit:'kg',cat:'viande',sup:'VolaillesMS',promo:'',rupt:false},
+  {id:3,emo:'🐑',name:'Agneau épaule',ar:'كتف الغنم',price:115,unit:'kg',cat:'viande',sup:'ProViande',promo:'',rupt:false},
+  {id:4,emo:'🍅',name:'Tomates',ar:'طماطم',price:8,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'Promo −15%',rupt:false},
+  {id:5,emo:'🥬',name:'Courgettes',ar:'قرع',price:6,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'',rupt:true},
+  {id:6,emo:'🥔',name:'Pommes de terre',ar:'بطاطس',price:5,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'Meilleur prix',rupt:false},
+  {id:7,emo:'🧅',name:'Oignons',ar:'بصل',price:4,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'',rupt:false},
+  {id:8,emo:'🥛',name:'Lait entier',ar:'حليب كامل',price:12,unit:'L',cat:'laitier',sup:'LaitiersNord',promo:'',rupt:false},
+  {id:9,emo:'🧀',name:'Fromage frais',ar:'جبن طازج',price:45,unit:'kg',cat:'laitier',sup:'LaitiersNord',promo:'',rupt:false},
+  {id:10,emo:'🧂',name:'Sel de mer',ar:'ملح البحر',price:3,unit:'kg',cat:'epice',sup:'EpicesPro',promo:'',rupt:false},
+  {id:11,emo:'🌶',name:'Paprika',ar:'فلفل أحمر',price:28,unit:'kg',cat:'epice',sup:'EpicesPro',promo:'Promo −10%',rupt:false},
+  {id:12,emo:'🫙',name:"Huile d'olive",ar:'زيت الزيتون',price:22,unit:'L',cat:'huile',sup:'HuileMax',promo:'',rupt:false},
+];
+const cart={};
+let delMode='std';
+let activeCat='all';
+let searchQ='';
+
+function login(){
+  const e=document.getElementById('l-email').value.trim();
+  const p=document.getElementById('l-pass').value;
+  if(e===''||p===''){toast('❌ Remplis tous les champs');return;}
+  if(e!=='restaurant@demo.com'||p!=='demo123'){toast('❌ Identifiants incorrects');return;}
+  startApp('Ahmed Benali');
+}
+function quickLogin(){startApp('Ahmed Benali');}
+function startApp(name){
+  document.getElementById('page-login').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('u-name').textContent=name.split(' ')[0];
+  renderProds();
+}
+function logout(){document.getElementById('page-login').style.display='flex';document.getElementById('app').style.display='none';}
+function backHome(){document.getElementById('success').style.display='none';document.getElementById('app').style.display='block';go('dash');}
+
+let cur='dash';
+function go(id){
+  document.getElementById('p-'+cur).classList.remove('active');
+  document.getElementById('n-'+cur).classList.remove('active');
+  document.getElementById('p-'+id).classList.add('active');
+  document.getElementById('n-'+id).classList.add('active');
+  cur=id;
+  if(id==='cmd')renderProds();
+}
+
+// CATALOGUE
+function renderProds(){
+  const g=document.getElementById('pgrid');
+  if(!g)return;
+  const list=PRODS.filter(p=>{
+    const mc=activeCat==='all'||p.cat===activeCat;
+    const ms=p.name.toLowerCase().includes(searchQ)||p.ar.includes(searchQ);
+    return mc&&ms;
+  });
+  g.innerHTML=list.map(p=>{
+    const q=cart[p.id]||0;
+    return `<div class="pcard${q>0?' selected':''}${p.rupt?' rupt':''}">
+      <div class="p-emo">${p.emo}</div>
+      <div class="p-name">${p.name}</div>
+      <div class="p-ar">${p.ar}</div>
+      <div class="p-sup">${p.sup}</div>
+      <div><span class="p-price">${p.price}</span> <span class="p-unit">DH/${p.unit}</span></div>
+      ${p.promo?`<div class="p-tag" style="background:rgba(61,158,106,.12);color:var(--mint2);">✓ ${p.promo}</div>`:''}
+      ${p.rupt?`<div class="p-tag" style="background:rgba(201,64,64,.12);color:var(--red2);">⚠ Rupture de stock</div>`:''}
+      ${!p.rupt?`<div class="qty-row">
+        <div class="qbtn" onclick="aq(${p.id},-1)">−</div>
+        <div class="qval">${q}</div>
+        <div class="qbtn" onclick="aq(${p.id},1)">+</div>
+      </div>`:``}
+    </div>`;
+  }).join('')||`<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted);">Aucun produit trouvé</div>`;
+}
+
+function aq(id,d){
+  cart[id]=(cart[id]||0)+d;
+  if(cart[id]<=0)delete cart[id];
+  renderProds();renderCart();
+}
+function filterP(v){searchQ=v.toLowerCase();renderProds();}
+function catF(cat,el){
+  activeCat=cat;
+  document.querySelectorAll('.filt').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');renderProds();
+}
+function setDel(m){
+  delMode=m;
+  document.getElementById('do-std').classList.toggle('on',m==='std');
+  document.getElementById('do-exp').classList.toggle('on',m==='exp');
+  renderCart();
+}
+function cartTotal(){return Object.entries(cart).reduce((s,[id,q])=>{const p=PRODS.find(x=>x.id==id);return s+(p?p.price*q:0);},0);}
+function cartCount(){return Object.values(cart).reduce((s,q)=>s+q,0);}
+
+function renderCart(){
+  const items=Object.entries(cart).map(([id,q])=>({...PRODS.find(p=>p.id==id),qty:q})).filter(p=>p.id);
+  const n=cartCount();
+  const badge=document.getElementById('cart-badge');
+  badge.style.display=n>0?'block':'none';
+  badge.textContent=n;
+  document.getElementById('cart-sub-lbl').textContent=n+' article'+(n>1?'s':'');
+  const ci=document.getElementById('cart-items');
+  const cf=document.getElementById('cart-foot');
+  if(!items.length){
+    ci.innerHTML=`<div class="cart-empty"><div class="cart-empty-ico">🛒</div><div style="font-size:14px;font-weight:600;">Panier vide</div><div style="font-size:12px;margin-top:6px;">Ajoute des produits depuis le catalogue</div></div>`;
+    cf.style.display='none';return;
+  }
+  ci.innerHTML=items.map(p=>`<div class="citem">
+    <div class="citem-emo">${p.emo}</div>
+    <div class="citem-info"><div class="citem-name">${p.name}</div><div class="citem-qty">${p.qty} ${p.unit}</div></div>
+    <div class="citem-price">${p.qty*p.price} DH</div>
+    <div class="cdel" onclick="aq(${p.id},-99)">✕</div>
+  </div>`).join('');
+  const sub=cartTotal();
+  const sav=Math.round(sub*.06);
+  const del=delMode==='exp'?30:0;
+  document.getElementById('cv-sub').textContent=sub+' DH';
+  document.getElementById('cv-sav').textContent='−'+sav+' DH';
+  document.getElementById('cv-tot').textContent=(sub+del-sav)+' DH';
+  cf.style.display='block';
+}
+
+function confirmOrder(){
+  const n=cartCount();
+  if(!n){toast('🛒 Ton panier est vide');return;}
+  const tot=document.getElementById('cv-tot').textContent;
+  const isExp=delMode==='exp';
+  document.getElementById('s-det').innerHTML=`
+    <div class="s-row"><span>Numéro</span><span style="font-weight:700;">#${Math.floor(Math.random()*9000+1000)}</span></div>
+    <div class="s-row"><span>Articles</span><span>${n} article${n>1?'s':''}</span></div>
+    <div class="s-row"><span>Total</span><span style="color:var(--sand);font-weight:700;">${tot}</span></div>
+    <div class="s-row"><span>Livraison</span><span style="color:${isExp?'var(--sand)':'var(--mint2)'};">${isExp?'Express ~45 min':'Demain 7h00'}</span></div>
+    <div class="s-row"><span>Statut</span><span style="color:var(--mint2);">Confirmé ✓</span></div>`;
+  Object.keys(cart).forEach(k=>delete cart[k]);
+  renderCart();renderProds();
+  document.getElementById('app').style.display='none';
+  document.getElementById('success').style.display='flex';
+}
+
+function moInvoice(){
+  openMo(`<div class="mo-title" style="color:var(--red2);">⚠ Anomalie facture détectée</div>
+    <div class="mo-sub">HuileMax Distrib. · Facture #1084 · 13 Janvier 2026</div>
+    <div style="display:flex;flex-direction:column;gap:0;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="color:var(--muted);">Commande initiale</span><strong>400 DH</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="color:var(--muted);">Montant facturé</span><strong style="color:var(--red2);">440 DH</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13px;"><span style="color:var(--muted);">Écart</span><strong style="color:var(--red2);">+40 DH</strong></div>
+    </div>
+    <div style="background:rgba(201,64,64,.07);border:1px solid rgba(201,64,64,.18);border-radius:10px;padding:12px;font-size:12px;color:var(--red2);line-height:1.6;margin-bottom:16px;">
+      L'IA a détecté un écart de facturation. 3ème incident avec ce fournisseur ce trimestre. Contestation recommandée.
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button style="flex:1;padding:12px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:10px;color:white;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="closeMo();toast('📧 Contestation envoyée à HuileMax')">Contester</button>
+      <button style="flex:1;padding:12px;background:transparent;border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="closeMo()">Accepter</button>
+    </div>`);
+}
+
+function openMo(h){document.getElementById('mo-body').innerHTML=h;document.getElementById('mo').classList.add('on');}
+function closeMo(){document.getElementById('mo').classList.remove('on');}
+
+let tT;
+function toast(m){
+  const t=document.getElementById('toast');
+  clearTimeout(tT);t.textContent=m;t.classList.
