@@ -3,299 +3,377 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChefLink · Restaurant</title>
-<style>/* System fonts fallback */</style>
+<title>ChefLink</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0D1209; --bg2:#111707; --card:#181F0C; --card2:#1E2810;
-  --border:#263012; --border2:#334018;
-  --olive:#7A9A2A; --olive2:#9ABF35; --olive3:#C5DC5A;
-  --sand:#D4A853; --sand2:#E8C278;
-  --mint:#3D9E6A; --mint2:#5DC48A;
-  --red:#C94040; --red2:#E05555;
-  --terr:#B05A2A; --terr2:#D4703A;
-  --white:#EDE8DC; --muted:#6B7A45; --muted2:#4A5530;
-  --r:14px; --rs:10px;
+:root{
+  --black:#000000;--dark:#050505;--dark2:#0A0A0A;--dark3:#111111;--dark4:#1A1A1A;
+  --border:#222222;--border2:#2A2A2A;--border3:#333333;
+  --green:#00FF88;--green2:#00CC6A;--green3:rgba(0,255,136,.08);
+  --white:#FFFFFF;--grey:#888888;--grey2:#555555;--grey3:#333333;
+  --red:#FF3B3B;--gold:#FFB800;--blue:#0066FF;
+  --r:8px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{font-family:Arial,sans-serif;background:var(--bg);color:var(--white);min-height:100vh;}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);min-height:100vh;overflow-x:hidden;}
+::selection{background:var(--green);color:var(--black);}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--dark);}
+::-webkit-scrollbar-thumb{background:var(--green2);}
 
-/* ── LAYOUT ── */
-#app{display:none;min-height:100vh;}
-.topbar{height:62px;background:rgba(13,18,9,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:200;}
-.logo{font-family:'Arial Black',Arial,sans-serif;font-size:22px;font-weight:800;letter-spacing:-1px;cursor:pointer;}
-.logo span{color:var(--olive2);}
-.logo-badge{padding:3px 10px;background:rgba(122,154,42,.15);border:1px solid rgba(122,154,42,.2);border-radius:6px;font-size:10px;font-weight:700;color:var(--olive2);letter-spacing:.5px;margin-left:10px;}
-.topbar-right{display:flex;align-items:center;gap:12px;}
-.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--card);border:1px solid var(--border2);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;}
-.user-avatar{width:28px;height:28px;background:linear-gradient(135deg,var(--olive),var(--olive2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
-.btn-logout{padding:7px 14px;background:transparent;border:1px solid var(--border2);border-radius:8px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
-.btn-logout:hover{border-color:var(--red);color:var(--red2);}
-.notif-btn{width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
-.notif-btn svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;}
-.ndot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--terr2);border-radius:50%;border:2px solid var(--bg);}
+/* ── FONTS ── */
+.bebas{font-family:'Bebas Neue',sans-serif;letter-spacing:.5px;}
 
-.layout{display:flex;min-height:calc(100vh - 62px);}
-.sidebar{width:230px;background:var(--bg2);border-right:1px solid var(--border);padding:20px 12px;flex-shrink:0;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;}
+/* ── LOGIN ── */
+#page-login{min-height:100vh;display:flex;background:var(--black);position:relative;overflow:hidden;}
+.login-bg{position:absolute;inset:0;pointer-events:none;}
+.login-bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px;}
+.login-bg-glow{position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(0,255,136,.06) 0%,transparent 70%);}
+.login-bg-glow2{position:absolute;bottom:-200px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,102,255,.04) 0%,transparent 70%);}
+
+.login-left{flex:1;display:flex;flex-direction:column;justify-content:center;padding:80px;position:relative;z-index:1;}
+.login-right{width:480px;border-left:1px solid var(--border);display:flex;align-items:center;justify-content:center;padding:60px 48px;position:relative;z-index:1;}
+
+.brand-logo{display:flex;align-items:baseline;gap:2px;margin-bottom:60px;}
+.brand-logo-text{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--white);letter-spacing:2px;}
+.brand-logo-dot{width:8px;height:8px;background:var(--green);border-radius:50%;margin-bottom:8px;}
+
+.login-headline{font-family:'Bebas Neue',sans-serif;font-size:88px;line-height:.95;color:var(--white);margin-bottom:24px;letter-spacing:-1px;}
+.login-headline span{color:var(--green);}
+.login-sub{font-size:15px;color:var(--grey);line-height:1.7;max-width:480px;margin-bottom:48px;}
+
+.stats-row{display:flex;gap:48px;}
+.stat-item{}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--green);line-height:1;}
+.stat-lbl{font-size:11px;color:var(--grey2);margin-top:4px;text-transform:uppercase;letter-spacing:.8px;}
+
+.login-form{width:100%;}
+.form-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);margin-bottom:4px;letter-spacing:2px;}
+.form-tagline{font-size:12px;color:var(--grey);margin-bottom:36px;}
+.form-label{display:block;font-size:10px;font-weight:600;color:var(--grey);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.form-input{width:100%;background:var(--dark3);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;font-size:14px;color:var(--white);font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;margin-bottom:16px;}
+.form-input:focus{border-color:var(--green);}
+.form-input::placeholder{color:var(--grey3);}
+.btn-login{width:100%;padding:16px;background:var(--green);border:none;border-radius:var(--r);color:var(--black);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer;transition:all .2s;margin-top:4px;}
+.btn-login:hover{background:#00FF99;transform:translateY(-1px);}
+.btn-login:active{transform:translateY(0);}
+
+.demo-section{margin-top:28px;padding-top:24px;border-top:1px solid var(--border);}
+.demo-label{font-size:10px;font-weight:600;color:var(--grey2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+.demo-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .2s;margin-bottom:8px;}
+.demo-item:hover{border-color:var(--green);background:var(--green3);}
+.demo-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.d-resto{background:rgba(0,255,136,.12);}
+.d-four{background:rgba(255,184,0,.1);}
+.d-admin{background:rgba(0,102,255,.1);}
+.demo-info{flex:1;}
+.demo-name{font-size:13px;font-weight:600;}
+.demo-role{font-size:11px;color:var(--grey);margin-top:1px;}
+.demo-arrow{font-size:12px;color:var(--grey2);}
+.demo-item:hover .demo-arrow{color:var(--green);}
+
+/* ── APP ── */
+#app{display:none;min-height:100vh;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{height:52px;background:var(--black);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:200;flex-shrink:0;}
+.tb-left{display:flex;align-items:center;gap:16px;}
+.tb-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;}
+.tb-logo span{color:var(--green);}
+.tb-role{padding:2px 8px;background:var(--dark3);border:1px solid var(--border2);border-radius:4px;font-size:10px;font-weight:600;color:var(--grey);letter-spacing:.8px;text-transform:uppercase;}
+.tb-role.r-resto{border-color:rgba(0,255,136,.3);color:var(--green);}
+.tb-role.r-four{border-color:rgba(255,184,0,.3);color:var(--gold);}
+.tb-role.r-admin{border-color:rgba(0,102,255,.3);color:var(--blue);}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.tb-user{font-size:13px;font-weight:500;color:var(--grey);}
+.tb-notif{width:32px;height:32px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;font-size:14px;}
+.ndot{position:absolute;top:6px;right:6px;width:5px;height:5px;background:var(--red);border-radius:50%;border:1.5px solid var(--black);}
+.btn-out{padding:6px 14px;background:transparent;border:1px solid var(--border2);border-radius:6px;font-size:11px;font-weight:600;color:var(--grey);cursor:pointer;transition:all .2s;}
+.btn-out:hover{border-color:var(--red);color:var(--red);}
+
+/* LAYOUT */
+.app-body{display:flex;flex:1;min-height:calc(100vh - 52px);}
+.sidebar{width:200px;background:var(--dark);border-right:1px solid var(--border);padding:16px 8px;flex-shrink:0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;}
 .sidebar::-webkit-scrollbar{display:none;}
-.main{flex:1;padding:32px;max-width:100%;}
-.cart-col{width:300px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);padding:20px;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;display:flex;flex-direction:column;}
-.cart-col::-webkit-scrollbar{display:none;}
+.main{flex:1;padding:28px;overflow-x:hidden;}
+.cart-panel{width:280px;background:var(--dark);border-left:1px solid var(--border);padding:16px;position:sticky;top:52px;height:calc(100vh - 52px);display:flex;flex-direction:column;overflow-y:auto;}
+.cart-panel::-webkit-scrollbar{display:none;}
 
-/* ── SIDEBAR NAV ── */
-.nav-label{font-size:10px;font-weight:700;color:var(--muted2);letter-spacing:.8px;padding:0 10px;margin:18px 0 6px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all .2s;margin-bottom:2px;font-size:13px;font-weight:500;color:var(--muted);}
-.nav-item:hover{background:var(--card);color:var(--white);}
-.nav-item.active{background:rgba(122,154,42,.14);color:var(--olive2);font-weight:600;}
-.nav-item svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
-.nav-badge{margin-left:auto;background:var(--terr2);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;}
+/* NAV */
+.nav-section{font-size:9px;font-weight:700;color:var(--grey2);letter-spacing:1px;text-transform:uppercase;padding:0 10px;margin:16px 0 6px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:6px;cursor:pointer;transition:all .15s;margin-bottom:1px;font-size:12px;font-weight:500;color:var(--grey);}
+.nav-item:hover{background:var(--dark3);color:var(--white);}
+.nav-item.active{background:var(--dark3);color:var(--white);border-left:2px solid var(--green);}
+.nav-item.active-gold{background:var(--dark3);color:var(--white);border-left:2px solid var(--gold);}
+.nav-item.active-blue{background:var(--dark3);color:var(--white);border-left:2px solid var(--blue);}
+.nav-item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--red);color:var(--white);font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;}
 
-/* ── PANELS ── */
+/* PANELS */
 .panel{display:none;}
-.panel.active{display:block;animation:fadeUp .3s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+.panel.active{display:block;animation:fadeUp .25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
 
-/* ── PAGE HEADER ── */
-.ph{margin-bottom:24px;}
-.ph h1{font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;}
-.ph p{font-size:13px;color:var(--muted);margin-top:5px;}
+/* PAGE HEADER */
+.ph{margin-bottom:24px;display:flex;align-items:flex-end;justify-content:space-between;}
+.ph-left h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.5px;line-height:1;}
+.ph-left p{font-size:12px;color:var(--grey);margin-top:4px;}
 
-/* ── STAT GRID ── */
-.stat-grid{display:grid;gap:14px;margin-bottom:24px;}
+/* STATS */
+.stat-grid{display:grid;gap:12px;margin-bottom:20px;}
 .g4{grid-template-columns:repeat(4,1fr);}
 .g3{grid-template-columns:repeat(3,1fr);}
 .g2{grid-template-columns:repeat(2,1fr);}
-.scard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s;}
-.scard:hover{transform:translateY(-2px);border-color:var(--border2);}
-.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-.s1::before{background:linear-gradient(90deg,var(--olive),var(--olive3));}
-.s2::before{background:linear-gradient(90deg,var(--mint),var(--mint2));}
-.s3::before{background:linear-gradient(90deg,var(--sand),var(--sand2));}
-.s4::before{background:linear-gradient(90deg,var(--terr),var(--terr2));}
-.scard-ico{font-size:22px;margin-bottom:10px;}
-.scard-val{font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;line-height:1;}
-.scard-lbl{font-size:12px;color:var(--muted);margin-top:4px;}
-.scard-delta{font-size:11px;font-weight:600;margin-top:6px;}
-.up{color:var(--mint2);} .dn{color:var(--red2);} .wn{color:var(--sand);}
+.scard{background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.scard:hover{border-color:var(--border3);transform:translateY(-1px);}
+.scard-accent{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:2px 0 0 2px;}
+.scard-ico{font-size:18px;margin-bottom:10px;}
+.scard-val{font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;color:var(--white);}
+.scard-lbl{font-size:11px;color:var(--grey);margin-top:3px;}
+.scard-delta{font-size:10px;font-weight:600;margin-top:6px;}
+.up{color:var(--green);} .dn{color:var(--red);} .wn{color:var(--gold);}
 
-/* ── AI CARD ── */
-.ai-card{background:linear-gradient(135deg,#141C08,#1A2809);border:1px solid rgba(154,191,53,.2);border-radius:var(--r);padding:20px;margin-bottom:20px;position:relative;overflow:hidden;}
-.ai-card::after{content:'';position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(154,191,53,.08),transparent 70%);pointer-events:none;}
-.ai-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(154,191,53,.1);border:1px solid rgba(154,191,53,.2);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--olive2);margin-bottom:12px;letter-spacing:.5px;}
-.ai-dot{width:6px;height:6px;background:var(--olive2);border-radius:50%;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.ai-txt{font-size:14px;line-height:1.65;color:var(--white);}
-.ai-txt strong{color:var(--olive3);}
+/* AI CARD */
+.ai-card{background:var(--dark2);border:1px solid rgba(0,255,136,.15);border-radius:var(--r);padding:18px;margin-bottom:18px;position:relative;overflow:hidden;}
+.ai-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.ai-tag{display:inline-flex;align-items:center;gap:6px;font-size:9px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.ai-pulse{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.ai-text{font-size:13px;line-height:1.65;color:var(--white);}
+.ai-text strong{color:var(--green);}
 .ai-btns{display:flex;gap:8px;margin-top:14px;}
-.btn-yes{padding:10px 20px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:9px;color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:Arial,sans-serif;transition:transform .15s;}
-.btn-yes:active{transform:scale(.96);}
-.btn-no{padding:10px 20px;background:var(--card2);border:1px solid var(--border2);border-radius:9px;color:var(--muted);font-weight:600;font-size:13px;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-confirm{padding:9px 20px;background:var(--green);border:none;border-radius:6px;color:var(--black);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.5px;cursor:pointer;transition:all .15s;}
+.btn-confirm:active{transform:scale(.97);}
+.btn-skip{padding:9px 16px;background:transparent;border:1px solid var(--border2);border-radius:6px;font-size:12px;font-weight:500;color:var(--grey);cursor:pointer;}
 
-/* ── CARD ── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);}
-.cp{padding:20px;}
-.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.card-title{font-family:'Arial Black',Arial,sans-serif;font-size:15px;font-weight:700;}
-.btn-sm{padding:6px 14px;border:1px solid var(--border2);background:transparent;border-radius:8px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
-.btn-sm:hover{border-color:var(--olive);color:var(--olive2);}
+/* CARD */
+.card{background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:12px;font-weight:700;color:var(--white);letter-spacing:.3px;text-transform:uppercase;}
+.btn-sm{padding:5px 12px;border:1px solid var(--border2);background:transparent;border-radius:5px;font-size:11px;font-weight:600;color:var(--grey);cursor:pointer;transition:all .2s;}
+.btn-sm:hover{border-color:var(--green);color:var(--green);}
 
-/* ── TABLE ── */
+/* TABLE */
 table{width:100%;border-collapse:collapse;}
-th{padding:11px 18px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.4px;border-bottom:1px solid var(--border);background:var(--bg2);}
-td{padding:13px 18px;font-size:13px;border-bottom:1px solid var(--border);}
+th{padding:10px 16px;text-align:left;font-size:9px;font-weight:700;color:var(--grey2);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--dark);}
+td{padding:12px 16px;font-size:12px;border-bottom:1px solid var(--border);color:var(--white);}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
-.bg{background:rgba(61,158,106,.14);color:var(--mint2);}
-.bo{background:rgba(212,168,83,.14);color:var(--sand);}
-.br{background:rgba(201,64,64,.14);color:var(--red2);}
-.bl{background:rgba(122,154,42,.14);color:var(--olive2);}
-.bgy{background:rgba(107,122,69,.14);color:var(--muted);}
+tr:hover td{background:rgba(255,255,255,.02);cursor:pointer;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.3px;}
+.bg{background:rgba(0,255,136,.08);color:var(--green);border:1px solid rgba(0,255,136,.15);}
+.bo{background:rgba(255,184,0,.08);color:var(--gold);border:1px solid rgba(255,184,0,.15);}
+.br{background:rgba(255,59,59,.08);color:var(--red);border:1px solid rgba(255,59,59,.15);}
+.bb{background:rgba(0,102,255,.08);color:var(--blue);border:1px solid rgba(0,102,255,.15);}
+.bgy{background:rgba(136,136,136,.08);color:var(--grey);border:1px solid rgba(136,136,136,.15);}
+.num{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);letter-spacing:.5px;}
 
-/* ── SEARCH & FILTERS ── */
-.search-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
-.search-wrap{flex:1;min-width:200px;position:relative;}
-.search-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2;}
-.search-inp{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px 11px 40px;font-size:13px;color:var(--white);font-family:Arial,sans-serif;outline:none;transition:border-color .2s;}
-.search-inp:focus{border-color:var(--olive);}
-.search-inp::placeholder{color:var(--muted2);}
-.filt{padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;}
-.filt.on{background:var(--olive);border-color:var(--olive);color:white;}
+/* SEARCH */
+.search-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.sw{flex:1;min-width:180px;position:relative;}
+.sw svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:13px;height:13px;stroke:var(--grey);fill:none;stroke-width:2;}
+.sinp{width:100%;background:var(--dark2);border:1px solid var(--border);border-radius:6px;padding:9px 12px 9px 34px;font-size:12px;color:var(--white);font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+.sinp:focus{border-color:var(--green);}
+.sinp::placeholder{color:var(--grey3);}
+.filt{padding:8px 14px;background:var(--dark2);border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;color:var(--grey);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.filt.on{background:rgba(0,255,136,.08);border-color:rgba(0,255,136,.25);color:var(--green);}
 
-/* ── PRODUCTS ── */
-.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
-.pcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:border-color .2s,transform .2s;cursor:default;}
-.pcard:hover{border-color:var(--border2);transform:translateY(-2px);}
-.pcard.selected{border-color:var(--olive);background:rgba(122,154,42,.05);}
-.pcard.rupt{opacity:.55;border-style:dashed;}
-.p-emo{font-size:34px;margin-bottom:10px;}
-.p-name{font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.3;}
-.p-ar{font-family:Arial,sans-serif;font-size:11px;color:var(--muted);margin-bottom:6px;direction:rtl;}
-.p-sup{font-size:11px;color:var(--olive2);margin-bottom:8px;font-weight:500;}
-.p-price{font-family:'Arial Black',Arial,sans-serif;font-size:22px;font-weight:800;color:var(--sand);}
-.p-unit{font-size:11px;color:var(--muted);}
-.p-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;margin-top:4px;}
-.qty-row{display:flex;align-items:center;background:var(--card2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-top:12px;}
-.qbtn{width:36px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:700;color:var(--olive2);transition:background .15s;}
-.qbtn:hover{background:rgba(122,154,42,.15);}
-.qval{flex:1;text-align:center;font-family:'Arial Black',Arial,sans-serif;font-size:15px;font-weight:700;}
+/* PRODUCTS */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;}
+.pcard{background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);padding:14px;transition:all .2s;}
+.pcard:hover{border-color:var(--border3);transform:translateY(-1px);}
+.pcard.selected{border-color:rgba(0,255,136,.3);background:var(--green3);}
+.pcard.rupt{opacity:.4;border-style:dashed;}
+.p-emo{font-size:28px;margin-bottom:8px;}
+.p-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.p-sup{font-size:10px;color:var(--green);margin-bottom:6px;}
+.p-price{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--white);}
+.p-unit{font-size:10px;color:var(--grey);}
+.p-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;margin-top:4px;}
+.qty-row{display:flex;align-items:center;background:var(--dark3);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-top:10px;}
+.qbtn{width:32px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;font-weight:700;color:var(--green);transition:background .15s;}
+.qbtn:hover{background:rgba(0,255,136,.1);}
+.qval{flex:1;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:16px;}
 
-/* ── CART ── */
-.cart-title{font-family:'Arial Black',Arial,sans-serif;font-size:18px;font-weight:800;margin-bottom:4px;}
-.cart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
-.cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted);}
-.cart-empty-ico{font-size:44px;margin-bottom:12px;}
-.citem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
-.citem-emo{font-size:20px;width:32px;text-align:center;}
+/* CART */
+.cart-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.5px;margin-bottom:4px;}
+.cart-sub{font-size:11px;color:var(--grey);margin-bottom:14px;}
+.cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--grey);}
+.citem{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);}
+.citem-emo{font-size:18px;width:28px;text-align:center;}
 .citem-info{flex:1;}
-.citem-name{font-size:13px;font-weight:600;}
-.citem-qty{font-size:11px;color:var(--muted);margin-top:2px;}
-.citem-price{font-family:'Arial Black',Arial,sans-serif;font-size:14px;font-weight:700;color:var(--sand);}
-.cdel{width:26px;height:26px;background:rgba(201,64,64,.1);border:1px solid rgba(201,64,64,.18);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--red2);flex-shrink:0;}
-.cart-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);}
-.crow{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;}
-.crow span:first-child{color:var(--muted);}
-.crow.tot{font-family:'Arial Black',Arial,sans-serif;font-size:18px;font-weight:800;border-top:1px solid var(--border2);padding-top:10px;margin-top:6px;margin-bottom:14px;}
-.crow.tot span:last-child{color:var(--sand);}
-.del-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.dopt{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;}
-.dopt.on{border-color:var(--olive);background:rgba(122,154,42,.08);}
-.dopt-t{font-size:12px;font-weight:700;}
-.dopt-s{font-size:10px;color:var(--muted);margin-top:2px;}
-.btn-order{width:100%;padding:14px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:12px;color:white;font-family:'Arial Black',Arial,sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(122,154,42,.4);transition:transform .15s;}
-.btn-order:active{transform:scale(.97);}
+.citem-name{font-size:12px;font-weight:600;}
+.citem-qty{font-size:10px;color:var(--grey);margin-top:1px;}
+.citem-price{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gold);}
+.cdel{width:22px;height:22px;background:rgba(255,59,59,.08);border:1px solid rgba(255,59,59,.15);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--red);}
+.cart-foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--border);}
+.crow{display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px;color:var(--grey);}
+.crow span:last-child{color:var(--white);font-weight:600;}
+.crow.tot{font-family:'Bebas Neue',sans-serif;font-size:20px;border-top:1px solid var(--border);padding-top:10px;margin-top:6px;margin-bottom:12px;color:var(--white);}
+.crow.tot span:last-child{color:var(--gold);}
+.del-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.dopt{background:var(--dark3);border:1.5px solid var(--border2);border-radius:6px;padding:9px 10px;text-align:center;cursor:pointer;transition:all .2s;}
+.dopt.on{border-color:rgba(0,255,136,.3);background:var(--green3);}
+.dopt-t{font-size:11px;font-weight:700;}
+.dopt-s{font-size:9px;color:var(--grey);margin-top:2px;}
+.btn-order{width:100%;padding:13px;background:var(--green);border:none;border-radius:6px;color:var(--black);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.5px;cursor:pointer;transition:all .15s;}
+.btn-order:hover{background:#00FF99;}
+.btn-order:active{transform:scale(.98);}
 
-/* ── COMPARE ── */
-.cmp-row{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:8px;cursor:pointer;transition:border-color .2s;}
-.cmp-row:hover{border-color:var(--border2);}
-.cmp-row.best{border-color:var(--olive);background:rgba(122,154,42,.05);}
+/* COMPARE */
+.cmp-row{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--dark2);border:1px solid var(--border);border-radius:6px;margin-bottom:8px;cursor:pointer;transition:border-color .2s;}
+.cmp-row:hover{border-color:var(--border3);}
+.cmp-row.best{border-color:rgba(0,255,136,.25);background:var(--green3);}
 
-/* ── CHART ── */
-.chart-bars{height:110px;display:flex;align-items:flex-end;gap:7px;}
-.cbar-w{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
-.cbar{width:100%;border-radius:4px 4px 0 0;min-height:4px;}
-.cbar-l{font-size:9px;color:var(--muted);}
-
-/* ── PROGRESS ── */
+/* PROGRESS */
 .prog-row{margin-bottom:12px;}
-.prog-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
-.prog-head span:first-child{color:var(--muted);}
-.prog-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:3px;}
+.prog-head{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;color:var(--grey);}
+.prog-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;}
 
-/* ── GRID ── */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+/* CHART */
+.chart-bars{height:100px;display:flex;align-items:flex-end;gap:6px;padding:0 4px;}
+.cbar-w{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.cbar{width:100%;border-radius:3px 3px 0 0;min-height:3px;transition:height .5s ease;}
+.cbar-l{font-size:9px;color:var(--grey);}
 
-/* ── LOGIN PAGE ── */
-#page-login{min-height:100vh;display:flex;background:radial-gradient(ellipse at 25% 25%,rgba(122,154,42,.07) 0%,transparent 55%),radial-gradient(ellipse at 75% 75%,rgba(212,168,83,.05) 0%,transparent 55%);}
-.login-side{width:420px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;border-right:1px solid var(--border);}
-.login-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;position:relative;overflow:hidden;}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.4;}
-.hero-content{position:relative;text-align:center;}
-.hero-badge{display:inline-block;padding:6px 16px;background:rgba(122,154,42,.12);border:1px solid rgba(122,154,42,.2);border-radius:20px;font-size:12px;font-weight:700;color:var(--olive2);letter-spacing:.5px;margin-bottom:20px;}
-.hero-title{font-family:'Arial Black',Arial,sans-serif;font-size:48px;font-weight:800;letter-spacing:-2px;line-height:1.1;margin-bottom:16px;}
-.hero-title span{color:var(--olive2);}
-.hero-desc{font-size:15px;color:var(--muted);line-height:1.7;max-width:400px;}
-.hero-stats{display:flex;gap:32px;margin-top:36px;justify-content:center;}
-.hstat-val{font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:800;color:var(--olive2);}
-.hstat-lbl{font-size:12px;color:var(--muted);margin-top:4px;}
-.login-logo{font-family:'Arial Black',Arial,sans-serif;font-size:32px;font-weight:800;letter-spacing:-1.5px;margin-bottom:6px;}
-.login-logo span{color:var(--olive2);}
-.login-tagline{font-size:13px;color:var(--muted);margin-bottom:36px;}
-.login-box{width:100%;}
-.lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.4px;display:block;margin-bottom:6px;}
-.inp{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:13px 16px;font-size:14px;color:var(--white);font-family:Arial,sans-serif;outline:none;transition:border-color .2s;margin-bottom:14px;}
-.inp:focus{border-color:var(--olive);}
-.inp::placeholder{color:var(--muted2);}
-.btn-login{width:100%;padding:15px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:12px;color:white;font-family:'Arial Black',Arial,sans-serif;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(122,154,42,.4);transition:transform .15s,box-shadow .15s;margin-top:4px;}
-.btn-login:hover{box-shadow:0 12px 32px rgba(122,154,42,.5);}
-.btn-login:active{transform:scale(.97);}
-.login-footer{text-align:center;margin-top:20px;font-size:12px;color:var(--muted);}
-.login-footer a{color:var(--olive2);cursor:pointer;}
-.demo-box{margin-top:24px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.demo-title{font-size:10px;font-weight:700;color:var(--muted2);letter-spacing:.5px;margin-bottom:10px;}
-.demo-item{display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--card);border-radius:8px;cursor:pointer;transition:background .15s;}
-.demo-item:hover{background:var(--card2);}
-.demo-item-lbl{font-size:12px;color:var(--muted);flex:1;}
-.demo-item-val{font-size:12px;font-weight:600;color:var(--olive2);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.cp{padding:18px;}
 
-/* ── SUCCESS ── */
-#success{display:none;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:40px;background:var(--bg);}
-.s-ring{width:110px;height:110px;background:rgba(61,158,106,.1);border:2px solid var(--mint);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:52px;margin:0 auto 28px;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
-.s-h1{font-family:'Arial Black',Arial,sans-serif;font-size:36px;font-weight:800;margin-bottom:10px;}
-.s-p{font-size:15px;color:var(--muted);line-height:1.7;max-width:400px;margin:0 auto 32px;}
-.s-details{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;max-width:360px;margin:0 auto 28px;text-align:left;}
-.s-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;}
+/* SUPPLIER SCORE */
+.score-bar{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.score-label{font-size:11px;color:var(--grey);width:100px;flex-shrink:0;}
+.score-track{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.score-fill{height:100%;background:var(--green);border-radius:2px;}
+.score-val{font-size:11px;font-weight:700;color:var(--white);width:32px;text-align:right;flex-shrink:0;}
+
+/* PAYMENT ALERT */
+.pay-alert{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,59,59,.03);border:1px solid rgba(255,59,59,.12);border-radius:6px;margin-bottom:8px;cursor:pointer;transition:background .2s;}
+.pay-alert:hover{background:rgba(255,59,59,.07);}
+.pa-amt{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--red);white-space:nowrap;}
+
+/* PRODUCT MGMT */
+.pmcard{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--dark2);border:1px solid var(--border);border-radius:6px;margin-bottom:8px;transition:background .15s;}
+.pmcard:hover{background:var(--dark3);}
+.pm-emo{font-size:22px;width:36px;text-align:center;flex-shrink:0;}
+.pm-info{flex:1;}
+.pm-name{font-size:13px;font-weight:600;}
+.pm-cat{font-size:10px;color:var(--grey);margin-top:2px;}
+.pm-price{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);margin-right:12px;}
+.btn-rupt{padding:5px 10px;border-radius:5px;border:1px solid;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.dispo{background:rgba(0,255,136,.06);border-color:rgba(0,255,136,.2);color:var(--green);}
+.rupt-style{background:rgba(255,59,59,.06);border-color:rgba(255,59,59,.2);color:var(--red);}
+.btn-edit-sm{padding:5px 10px;border-radius:5px;border:1px solid var(--border2);font-size:10px;font-weight:600;cursor:pointer;color:var(--grey);background:transparent;transition:all .2s;}
+.btn-edit-sm:hover{border-color:var(--gold);color:var(--gold);}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.flbl{font-size:10px;font-weight:600;color:var(--grey);letter-spacing:.8px;text-transform:uppercase;}
+.finp{background:var(--dark3);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--white);font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+.finp:focus{border-color:var(--green);}
+.finp::placeholder{color:var(--grey3);}
+select.finp option{background:var(--dark3);}
+.btn-primary{padding:10px 20px;background:var(--green);border:none;border-radius:6px;color:var(--black);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.5px;cursor:pointer;transition:all .15s;}
+.btn-primary:active{transform:scale(.97);}
+.btn-secondary{padding:10px 16px;background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--grey);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;}
+
+/* LITIGE */
+.litige-card{background:var(--dark2);border:1px solid rgba(255,59,59,.15);border-radius:var(--r);padding:18px;margin-bottom:12px;}
+.litige-card.gold{border-color:rgba(255,184,0,.15);}
+
+/* STATUS DOT */
+.sdot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px;}
+.sdot-green{background:var(--green);}
+.sdot-red{background:var(--red);}
+.sdot-gold{background:var(--gold);}
+
+/* SUCCESS */
+#success{display:none;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:40px;}
+.s-ring{width:90px;height:90px;background:rgba(0,255,136,.08);border:1px solid var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 24px;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+.s-h1{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:.5px;}
+.s-p{font-size:14px;color:var(--grey);line-height:1.7;max-width:380px;margin:10px auto 28px;}
+.s-det{background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);padding:18px;max-width:340px;margin:0 auto 24px;text-align:left;}
+.s-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--grey);}
 .s-row:last-child{border:none;}
-.s-row span:first-child{color:var(--muted);}
+.s-row span:last-child{color:var(--white);font-weight:600;}
 
-/* ── TOAST & MODAL ── */
-#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:12px 22px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
+/* TOAST & MODAL */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--dark3);border:1px solid var(--border2);border-radius:8px;padding:11px 20px;font-size:12px;font-weight:500;z-index:999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
-#mo{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);z-index:500;display:none;align-items:center;justify-content:center;padding:24px;}
+#mo{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);z-index:500;display:none;align-items:center;justify-content:center;padding:24px;}
 #mo.on{display:flex;}
-.mo-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:28px;width:100%;max-width:460px;animation:pop .3s cubic-bezier(.34,1.4,.64,1);}
-.mo-title{font-family:'Arial Black',Arial,sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;}
-.mo-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.mo-box{background:var(--dark2);border:1px solid var(--border2);border-radius:12px;padding:26px;width:100%;max-width:440px;animation:pop .25s cubic-bezier(.34,1.4,.64,1);}
+.mo-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.5px;margin-bottom:4px;}
+.mo-sub{font-size:12px;color:var(--grey);margin-bottom:20px;}
+.mo-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--grey);}
+.mo-row:last-of-type{border:none;}
+.mo-row span:last-child{color:var(--white);font-weight:600;}
 
-@media(max-width:1100px){.cart-col{display:none;} .g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:1100px){.cart-panel{display:none;}.g4{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:768px){
-  .login-hero{display:none;}
-  .login-side{width:100%;border-right:none;}
-  .main{padding:20px;}
-  .sidebar{width:56px;padding:12px 6px;}
-  .sidebar .nav-item span,.sidebar .nav-label,.sidebar .nav-badge{display:none;}
-  .sidebar .nav-item{justify-content:center;}
+  .login-right{width:100%;border-left:none;}.login-left{display:none;}
+  .main{padding:16px;}.sidebar{width:48px;padding:10px 4px;}
+  .sidebar .nav-item span,.sidebar .nav-section,.sidebar .nav-badge{display:none;}
+  .sidebar .nav-item{justify-content:center;padding:9px;}
   .g4,.g3{grid-template-columns:repeat(2,1fr);}
   .two-col{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
 <div id="toast"></div>
-
-<div id="mo" onclick="if(event.target===this)closeMo()">
-  <div class="mo-box" id="mo-body"></div>
-</div>
+<div id="mo" onclick="if(event.target===this)closeMo()"><div class="mo-box" id="mo-body"></div></div>
 
 <!-- ══ LOGIN ══ -->
 <div id="page-login">
-  <div class="login-side">
-    <div class="login-box">
-      <div class="login-logo">Chef<span>Link</span></div>
-      <div class="login-tagline">Portail Restaurant · المطعم</div>
-      <label class="lbl">EMAIL</label>
-      <input class="inp" id="l-email" type="email" placeholder="vous@restaurant.ma">
-      <label class="lbl">MOT DE PASSE</label>
-      <input class="inp" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
-      <button class="btn-login" onclick="login()">Accéder à mon dashboard →</button>
-      <div class="login-footer">Pas de compte ? <a onclick="toast('📧 Contactez admin@cheflink.ma')">Contacter ChefLink</a></div>
-      <div class="demo-box">
-        <div class="demo-title">COMPTE DÉMO — CLIQUEZ POUR ACCÉDER</div>
-        <div class="demo-item" onclick="quickLogin()">
-          <span style="font-size:20px;">🍽️</span>
-          <div style="flex:1;">
-            <div style="font-size:13px;font-weight:600;">Café Atlas · Ahmed Benali</div>
-            <div class="demo-item-lbl"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c0b2a5b3b4a1b5b2a1aeb480a4a5adafeea3afad">[email&#160;protected]</a></div>
-          </div>
-          <span class="demo-item-val">Accéder →</span>
-        </div>
-      </div>
+  <div class="login-bg">
+    <div class="login-bg-grid"></div>
+    <div class="login-bg-glow"></div>
+    <div class="login-bg-glow2"></div>
+  </div>
+  <div class="login-left">
+    <div class="brand-logo">
+      <div class="brand-logo-text">CHEF<span style="color:var(--green)">LINK</span></div>
+      <div class="brand-logo-dot"></div>
+    </div>
+    <div class="login-headline">LE SYSTÈME<br>D'EXPLOITATION<br>DE LA <span>RESTAURATION</span></div>
+    <div class="login-sub">Commandez, négociez et gérez tous vos fournisseurs depuis une seule interface. L'IA travaille pour vous 24h/24.</div>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-val">−18%</div><div class="stat-lbl">Dépenses moyennes</div></div>
+      <div class="stat-item"><div class="stat-val">120K+</div><div class="stat-lbl">Restaurants Maghreb</div></div>
+      <div class="stat-item"><div class="stat-val">2 MIN</div><div class="stat-lbl">Pour commander</div></div>
     </div>
   </div>
-  <div class="login-hero">
-    <div class="hero-grid"></div>
-    <div class="hero-content">
-      <div class="hero-badge">🍽️ PORTAIL RESTAURANT</div>
-      <div class="hero-title">Commandez.<br><span>Économisez.</span><br>Gérez.</div>
-      <div class="hero-desc">Passez vos commandes en 2 clics, comparez les prix entre fournisseurs, et laissez l'IA optimiser vos achats automatiquement.</div>
-      <div class="hero-stats">
-        <div><div class="hstat-val">−18%</div><div class="hstat-lbl">dépenses moyennes</div></div>
-        <div><div class="hstat-val">+1 340</div><div class="hstat-lbl">DH économisés/mois</div></div>
-        <div><div class="hstat-val">2 min</div><div class="hstat-lbl">pour commander</div></div>
+  <div class="login-right">
+    <div class="login-form">
+      <div class="form-logo">CHEF<span style="color:var(--green)">LINK</span></div>
+      <div class="form-tagline">Connectez-vous à votre espace</div>
+      <label class="form-label">Email</label>
+      <input class="form-input" id="l-email" type="email" placeholder="vous@cheflink.ma">
+      <label class="form-label">Mot de passe</label>
+      <input class="form-input" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+      <button class="btn-login" onclick="login()">ACCÉDER</button>
+      <div class="demo-section">
+        <div class="demo-label">Comptes démo</div>
+        <div class="demo-item" onclick="quickLogin('restaurant')">
+          <div class="demo-icon d-resto">🍽️</div>
+          <div class="demo-info"><div class="demo-name">Café Atlas · Ahmed</div><div class="demo-role">restaurant@demo.com · demo123</div></div>
+          <div class="demo-arrow">→</div>
+        </div>
+        <div class="demo-item" onclick="quickLogin('fournisseur')">
+          <div class="demo-icon d-four">🏭</div>
+          <div class="demo-info"><div class="demo-name">ProViande · Karim</div><div class="demo-role">fournisseur@demo.com · demo123</div></div>
+          <div class="demo-arrow">→</div>
+        </div>
+        <div class="demo-item" onclick="quickLogin('admin')">
+          <div class="demo-icon d-admin">⚙️</div>
+          <div class="demo-info"><div class="demo-name">Admin ChefLink</div><div class="demo-role">admin@cheflink.ma · admin123</div></div>
+          <div class="demo-arrow">→</div>
+        </div>
       </div>
     </div>
   </div>
@@ -304,384 +382,768 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
 <!-- ══ APP ══ -->
 <div id="app">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div class="logo">Chef<span>Link</span></div>
-      <div class="logo-badge">RESTAURANT</div>
+    <div class="tb-left">
+      <div class="tb-logo">CHEF<span>LINK</span></div>
+      <div class="tb-role" id="tb-role">—</div>
     </div>
-    <div class="topbar-right">
-      <div class="notif-btn" onclick="toast('🔔 2 nouvelles alertes IA')">
-        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <div class="ndot"></div>
-      </div>
-      <div class="user-chip">
-        <div class="user-avatar">👨‍🍳</div>
-        <span id="u-name">Ahmed</span>
-      </div>
-      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+    <div class="tb-right">
+      <span class="tb-user" id="tb-user">—</span>
+      <div class="tb-notif" onclick="toast('🔔 2 nouvelles alertes')">🔔<div class="ndot"></div></div>
+      <button class="btn-out" onclick="logout()">Déconnexion</button>
     </div>
   </div>
-
-  <div class="layout">
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="nav-label">PRINCIPAL</div>
-      <div class="nav-item active" id="n-dash" onclick="go('dash')">
-        <svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        <span>Tableau de bord</span>
-      </div>
-      <div class="nav-item" id="n-cmd" onclick="go('cmd')">
-        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span>Commander</span>
-        <span class="nav-badge" id="cart-badge" style="display:none;">0</span>
-      </div>
-      <div class="nav-item" id="n-cmp" onclick="go('cmp')">
-        <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
-        <span>Comparer prix</span>
-      </div>
-      <div class="nav-label">SUIVI</div>
-      <div class="nav-item" id="n-ord" onclick="go('ord')">
-        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-        <span>Mes commandes</span>
-      </div>
-      <div class="nav-item" id="n-ana" onclick="go('ana')">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>Analytiques</span>
-      </div>
-    </div>
-
-    <!-- MAIN -->
-    <div class="main">
-
-      <!-- DASHBOARD -->
-      <div class="panel active" id="p-dash">
-        <div class="ph">
-          <h1>Bonjour Ahmed 👋</h1>
-          <p>Café Atlas · Casablanca — Vendredi 6 Mars 2026</p>
-        </div>
-        <div class="ai-card">
-          <div class="ai-tag"><div class="ai-dot"></div>BRIEFING IA · AUJOURD'HUI</div>
-          <div class="ai-txt">Tes stocks de <strong>bœuf haché</strong> seront épuisés vendredi. J'ai trouvé <strong>8kg chez ProViande à 68 DH/kg</strong> — économie de <strong>96 DH</strong> vs prix habituel. FruitsLég a aussi une promo tomates <strong>−15%</strong> jusqu'à demain soir.</div>
-          <div class="ai-btns">
-            <button class="btn-yes" onclick="toast('✅ Commande confirmée — Livraison vendredi 7h')">Confirmer la commande</button>
-            <button class="btn-no" onclick="this.closest('.ai-card').style.opacity='.45'">Plus tard</button>
-          </div>
-        </div>
-        <div class="stat-grid g4">
-          <div class="scard s1" onclick="go('ana')"><div class="scard-ico">💸</div><div class="scard-val">8 420</div><div class="scard-lbl">Dépenses ce mois (DH)</div><div class="scard-delta dn">↓ 18% vs mois passé</div></div>
-          <div class="scard s2" onclick="go('ana')"><div class="scard-ico">💰</div><div class="scard-val">1 340</div><div class="scard-lbl">Économies IA (DH)</div><div class="scard-delta up">↑ 32% ce mois</div></div>
-          <div class="scard s3" onclick="go('ord')"><div class="scard-ico">📦</div><div class="scard-val">24</div><div class="scard-lbl">Commandes ce mois</div><div class="scard-delta up">↑ 3 cette semaine</div></div>
-          <div class="scard s4" onclick="go('ana')"><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">Food cost actuel</div><div class="scard-delta wn">⚠ Objectif : 25%</div></div>
-        </div>
-        <div class="card">
-          <div class="card-head"><div class="card-title">Commandes récentes</div><button class="btn-sm" onclick="go('ord')">Tout voir →</button></div>
-          <table>
-            <thead><tr><th>FOURNISSEUR</th><th>PRODUITS</th><th>MONTANT</th><th>DATE</th><th>STATUT</th></tr></thead>
-            <tbody>
-              <tr onclick="toast('📦 ProViande — Livré 7h00')"><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">425 DH</td><td style="color:var(--muted);">Aujourd'hui</td><td><span class="badge bg">Livré ✓</span></td></tr>
-              <tr onclick="toast('🥬 FruitsLég — En route 11h30')"><td><strong>FruitsLég Express</strong></td><td>Légumes saison 8kg</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">186 DH</td><td style="color:var(--muted);">Hier</td><td><span class="badge bo">En route</span></td></tr>
-              <tr onclick="moInvoice()"><td><strong>HuileMax</strong></td><td>Huile d'olive 20L</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--red2);font-weight:700;">440 DH</td><td style="color:var(--muted);">13 Jan</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
-              <tr onclick="toast('🧂 EpicesPro — Livré')"><td><strong>EpicesPro</strong></td><td>Épices & condiments</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">290 DH</td><td style="color:var(--muted);">12 Jan</td><td><span class="badge bg">Livré ✓</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- COMMANDER -->
-      <div class="panel" id="p-cmd">
-        <div class="ph"><h1>Commander</h1><p>Catalogue complet · Tous les fournisseurs actifs</p></div>
-        <div class="search-row">
-          <div class="search-wrap">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input class="search-inp" id="ps" placeholder="Chercher un produit..." oninput="filterP(this.value)">
-          </div>
-          <div class="filt on" onclick="catF('all',this)">🛒 Tout</div>
-          <div class="filt" onclick="catF('viande',this)">🥩</div>
-          <div class="filt" onclick="catF('legume',this)">🥬</div>
-          <div class="filt" onclick="catF('laitier',this)">🥛</div>
-          <div class="filt" onclick="catF('epice',this)">🧂</div>
-          <div class="filt" onclick="catF('huile',this)">🫙</div>
-        </div>
-        <div class="prod-grid" id="pgrid"></div>
-      </div>
-
-      <!-- COMPARER -->
-      <div class="panel" id="p-cmp">
-        <div class="ph"><h1>Comparer les prix</h1><p>L'IA sélectionne le meilleur fournisseur pour chaque produit</p></div>
-        <div class="ai-card" style="margin-bottom:20px;">
-          <div class="ai-tag"><div class="ai-dot"></div>ANALYSE IA · JANVIER 2026</div>
-          <div class="ai-txt">Ce mois, l'IA t'a économisé <strong>1 340 DH</strong> en choisissant automatiquement les meilleurs prix. <strong>ProViande</strong> est 12% moins cher que la moyenne marché sur les viandes.</div>
-        </div>
-        <div class="card">
-          <div class="card-head"><div class="card-title">Comparaison par produit</div></div>
-          <table>
-            <thead><tr><th>PRODUIT</th><th>FOURNISSEUR A</th><th>FOURNISSEUR B</th><th>FOURNISSEUR C</th><th>RECOMMANDATION IA</th></tr></thead>
-            <tbody>
-              <tr onclick="toast('🥩 ProViande sélectionné pour bœuf haché')"><td><strong>🥩 Bœuf haché / kg</strong></td><td style="font-weight:700;">85 DH</td><td style="color:var(--muted);">92 DH</td><td style="color:var(--muted);">88 DH</td><td><span class="badge bl">85 DH — ProViande</span></td></tr>
-              <tr onclick="toast('🍅 FruitsLég sélectionné pour tomates')"><td><strong>🍅 Tomates / kg</strong></td><td style="color:var(--muted);">9 DH</td><td style="font-weight:700;">8 DH</td><td style="color:var(--muted);">8.5 DH</td><td><span class="badge bl">8 DH — FruitsLég</span></td></tr>
-              <tr onclick="toast('🫙 HuileMax sélectionné pour huile')"><td><strong>🫙 Huile olive / L</strong></td><td style="color:var(--muted);">24 DH</td><td style="color:var(--muted);">23 DH</td><td style="font-weight:700;">22 DH</td><td><span class="badge bl">22 DH — HuileMax</span></td></tr>
-              <tr onclick="toast('🥛 LaitiersNord sélectionné pour lait')"><td><strong>🥛 Lait / L</strong></td><td style="font-weight:700;">11 DH</td><td style="color:var(--muted);">12.5 DH</td><td style="color:var(--muted);">12 DH</td><td><span class="badge bl">11 DH — LaitiersNord</span></td></tr>
-              <tr onclick="toast('🍗 VolaillesMS sélectionné pour poulet')"><td><strong>🍗 Poulet / kg</strong></td><td style="color:var(--muted);">44 DH</td><td style="font-weight:700;">42 DH</td><td style="color:var(--muted);">43 DH</td><td><span class="badge bl">42 DH — VolaillesMS</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- COMMANDES -->
-      <div class="panel" id="p-ord">
-        <div class="ph"><h1>Mes commandes</h1><p>Historique complet et suivi des livraisons</p></div>
-        <div class="search-row">
-          <div class="search-wrap"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input class="search-inp" placeholder="Rechercher..."></div>
-          <div class="filt on" onclick="setF(this)">Toutes</div>
-          <div class="filt" onclick="setF(this)">En cours</div>
-          <div class="filt" onclick="setF(this)">Livrées</div>
-          <div class="filt" onclick="setF(this)">⚠ Anomalies</div>
-        </div>
-        <div class="card">
-          <table>
-            <thead><tr><th>#</th><th>FOURNISSEUR</th><th>PRODUITS</th><th>MONTANT</th><th>DATE</th><th>LIVRAISON</th><th>STATUT</th></tr></thead>
-            <tbody>
-              <tr onclick="toast('📦 #2841 ProViande — Détails')"><td style="color:var(--muted);">#2841</td><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">425 DH</td><td style="color:var(--muted);">Auj</td><td style="color:var(--muted);">7h00</td><td><span class="badge bg">Livré</span></td></tr>
-              <tr onclick="toast('🥬 #2840 En route, livraison 11h30')"><td style="color:var(--muted);">#2840</td><td><strong>FruitsLég Express</strong></td><td>Légumes 8kg</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">186 DH</td><td style="color:var(--muted);">Hier</td><td style="color:var(--muted);">11h30</td><td><span class="badge bo">En route</span></td></tr>
-              <tr onclick="moInvoice()"><td style="color:var(--muted);">#2839</td><td><strong>HuileMax</strong></td><td>Huile olive 20L</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--red2);font-weight:700;">440 DH</td><td style="color:var(--muted);">13 Jan</td><td style="color:var(--muted);">—</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
-              <tr onclick="toast('🧂 #2838 Livré')"><td style="color:var(--muted);">#2838</td><td><strong>EpicesPro</strong></td><td>Épices</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">290 DH</td><td style="color:var(--muted);">12 Jan</td><td style="color:var(--muted);">8h00</td><td><span class="badge bg">Livré</span></td></tr>
-              <tr onclick="toast('🥛 #2837 Livré')"><td style="color:var(--muted);">#2837</td><td><strong>LaitiersNord</strong></td><td>Fromage, lait</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">340 DH</td><td style="color:var(--muted);">11 Jan</td><td style="color:var(--muted);">7h30</td><td><span class="badge bg">Livré</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ANALYTIQUES -->
-      <div class="panel" id="p-ana">
-        <div class="ph"><h1>Analytiques</h1><p>Dépenses, food cost, économies réalisées</p></div>
-        <div class="stat-grid g3">
-          <div class="scard s1"><div class="scard-ico">💸</div><div class="scard-val">8 420 DH</div><div class="scard-lbl">Dépenses totales janvier</div><div class="scard-delta dn">↓ 18% vs décembre</div></div>
-          <div class="scard s2"><div class="scard-ico">💰</div><div class="scard-val">1 340 DH</div><div class="scard-lbl">Économies IA ce mois</div><div class="scard-delta up">↑ 32%</div></div>
-          <div class="scard s4"><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">Food cost actuel</div><div class="scard-delta wn">⚠ Objectif 25%</div></div>
-        </div>
-        <div class="two-col">
-          <div class="card cp">
-            <div class="card-title" style="margin-bottom:16px;">Dépenses par catégorie</div>
-            <div class="prog-row"><div class="prog-head"><span>🥩 Viandes</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">3 200 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:38%;background:linear-gradient(90deg,var(--olive),var(--olive2));"></div></div></div>
-            <div class="prog-row"><div class="prog-head"><span>🥬 Légumes</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">1 800 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:21%;background:linear-gradient(90deg,var(--mint),var(--mint2));"></div></div></div>
-            <div class="prog-row"><div class="prog-head"><span>🫙 Huiles</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">1 400 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:17%;background:linear-gradient(90deg,var(--sand),var(--sand2));"></div></div></div>
-            <div class="prog-row"><div class="prog-head"><span>🥛 Laitiers</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">1 020 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,var(--terr),var(--terr2));"></div></div></div>
-            <div class="prog-row"><div class="prog-head"><span>🧂 Épices</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">1 000 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,#8A6A9A,#A48AB4);"></div></div></div>
-          </div>
-          <div class="card cp">
-            <div class="card-title" style="margin-bottom:16px;">Évolution dépenses · 7 jours</div>
-            <div class="chart-bars">
-              <div class="cbar-w"><div class="cbar" style="height:38%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">L</div></div>
-              <div class="cbar-w"><div class="cbar" style="height:62%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">M</div></div>
-              <div class="cbar-w"><div class="cbar" style="height:44%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">M</div></div>
-              <div class="cbar-w"><div class="cbar" style="height:82%;background:linear-gradient(180deg,var(--sand),rgba(212,168,83,.3));border-radius:4px 4px 0 0;"></div><div class="cbar-l" style="color:var(--sand);">J</div></div>
-              <div class="cbar-w"><div class="cbar" style="height:33%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">V</div></div>
-              <div class="cbar-w"><div class="cbar" style="height:67%;background:linear-gradient(180deg,var(--olive),rgba(122,154,42,.2));border-radius:4px 4px 0 0;"></div><div class="cbar-l">S</div></div>
-              <div class="cbar-w"><div class="cbar" style="height:50%;background:linear-gradient(180deg,var(--mint),rgba(61,158,106,.3));border-radius:4px 4px 0 0;"></div><div class="cbar-l" style="color:var(--mint2);">A</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /main -->
-
-    <!-- CART COLUMN -->
-    <div class="cart-col" id="cart-col">
-      <div class="cart-title">🛒 Mon panier</div>
-      <div class="cart-sub" id="cart-sub-lbl">0 article</div>
-      <div id="cart-items" style="flex:1;">
-        <div class="cart-empty">
-          <div class="cart-empty-ico">🛒</div>
-          <div style="font-size:14px;font-weight:600;">Panier vide</div>
-          <div style="font-size:12px;margin-top:6px;">Ajoute des produits depuis le catalogue</div>
-        </div>
-      </div>
-      <div class="cart-footer" id="cart-foot" style="display:none;">
-        <div class="crow"><span>Sous-total</span><span id="cv-sub" style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">0 DH</span></div>
-        <div class="crow"><span>Économie IA</span><span id="cv-sav" style="color:var(--olive2);font-weight:600;">−0 DH</span></div>
-        <div class="del-opts">
-          <div class="dopt on" id="do-std" onclick="setDel('std')"><div class="dopt-t">Standard</div><div class="dopt-s">Demain 7h · Gratuit</div></div>
-          <div class="dopt" id="do-exp" onclick="setDel('exp')"><div class="dopt-t" style="color:var(--sand);">🚀 Express</div><div class="dopt-s">~45 min · +30 DH</div></div>
-        </div>
-        <div class="crow tot"><span>Total</span><span id="cv-tot">0 DH</span></div>
-        <button class="btn-order" onclick="confirmOrder()">Confirmer la commande</button>
-      </div>
-    </div>
-  </div>
-</div><!-- /app -->
-
-<!-- SUCCESS -->
-<div id="success" style="display:none;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:40px;background:var(--bg);">
-  <div>
-    <div class="s-ring">✓</div>
-    <div class="s-h1">Commande confirmée !</div>
-    <div class="s-p">Vos fournisseurs ont reçu la commande. Vous serez notifié à chaque étape.</div>
-    <div class="s-details" id="s-det"></div>
-    <button class="btn-login" style="max-width:300px;margin:0 auto;display:block;" onclick="backHome()">Retour au tableau de bord</button>
+  <div class="app-body">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main" id="main-content"></div>
+    <div class="cart-panel" id="cart-panel" style="display:none;"></div>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// DATA
+<!-- ══ SUCCESS ══ -->
+<div id="success">
+  <div>
+    <div class="s-ring">✓</div>
+    <div class="s-h1">COMMANDE CONFIRMÉE</div>
+    <div class="s-p">Vos fournisseurs ont reçu la commande. Vous serez notifié à chaque étape de la livraison.</div>
+    <div class="s-det" id="s-det"></div>
+    <button class="btn-login" style="max-width:280px;margin:0 auto;display:block;" onclick="backHome()">RETOUR AU DASHBOARD</button>
+  </div>
+</div>
+
+<script>
+// ══ DATA ══
 const PRODS = [
-  {id:1,emo:'🥩',name:'Bœuf haché',ar:'لحم مفروم',price:85,unit:'kg',cat:'viande',sup:'ProViande',promo:'Meilleur prix −8%',rupt:false},
-  {id:2,emo:'🍗',name:'Poulet entier',ar:'دجاجة كاملة',price:42,unit:'kg',cat:'viande',sup:'VolaillesMS',promo:'',rupt:false},
-  {id:3,emo:'🐑',name:'Agneau épaule',ar:'كتف الغنم',price:115,unit:'kg',cat:'viande',sup:'ProViande',promo:'',rupt:false},
-  {id:4,emo:'🍅',name:'Tomates',ar:'طماطم',price:8,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'Promo −15%',rupt:false},
-  {id:5,emo:'🥬',name:'Courgettes',ar:'قرع',price:6,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'',rupt:true},
-  {id:6,emo:'🥔',name:'Pommes de terre',ar:'بطاطس',price:5,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'Meilleur prix',rupt:false},
-  {id:7,emo:'🧅',name:'Oignons',ar:'بصل',price:4,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'',rupt:false},
-  {id:8,emo:'🥛',name:'Lait entier',ar:'حليب كامل',price:12,unit:'L',cat:'laitier',sup:'LaitiersNord',promo:'',rupt:false},
-  {id:9,emo:'🧀',name:'Fromage frais',ar:'جبن طازج',price:45,unit:'kg',cat:'laitier',sup:'LaitiersNord',promo:'',rupt:false},
-  {id:10,emo:'🧂',name:'Sel de mer',ar:'ملح البحر',price:3,unit:'kg',cat:'epice',sup:'EpicesPro',promo:'',rupt:false},
-  {id:11,emo:'🌶',name:'Paprika',ar:'فلفل أحمر',price:28,unit:'kg',cat:'epice',sup:'EpicesPro',promo:'Promo −10%',rupt:false},
-  {id:12,emo:'🫙',name:"Huile d'olive",ar:'زيت الزيتون',price:22,unit:'L',cat:'huile',sup:'HuileMax',promo:'',rupt:false},
+  {id:1,emo:'🥩',name:'Bœuf haché',price:85,unit:'kg',cat:'viande',sup:'ProViande',promo:'Meilleur prix',rupt:false},
+  {id:2,emo:'🍗',name:'Poulet entier',price:42,unit:'kg',cat:'viande',sup:'VolaillesMS',promo:'',rupt:false},
+  {id:3,emo:'🐑',name:'Agneau épaule',price:115,unit:'kg',cat:'viande',sup:'ProViande',promo:'',rupt:false},
+  {id:4,emo:'🍅',name:'Tomates',price:8,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'Promo −15%',rupt:false},
+  {id:5,emo:'🥬',name:'Courgettes',price:6,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'',rupt:true},
+  {id:6,emo:'🥔',name:'Pommes de terre',price:5,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'',rupt:false},
+  {id:7,emo:'🧅',name:'Oignons',price:4,unit:'kg',cat:'legume',sup:'FruitsLég',promo:'',rupt:false},
+  {id:8,emo:'🥛',name:'Lait entier',price:12,unit:'L',cat:'laitier',sup:'LaitiersNord',promo:'',rupt:false},
+  {id:9,emo:'🧀',name:'Fromage frais',price:45,unit:'kg',cat:'laitier',sup:'LaitiersNord',promo:'',rupt:false},
+  {id:10,emo:'🧂',name:'Sel de mer',price:3,unit:'kg',cat:'epice',sup:'EpicesPro',promo:'',rupt:false},
+  {id:11,emo:'🌶️',name:'Paprika',price:28,unit:'kg',cat:'epice',sup:'EpicesPro',promo:'',rupt:false},
+  {id:12,emo:'🫙',name:"Huile d'olive",price:22,unit:'L',cat:'huile',sup:'HuileMax',promo:'',rupt:false},
 ];
-const cart={};
-let delMode='std';
-let activeCat='all';
-let searchQ='';
 
-function login(){
-  const e=document.getElementById('l-email').value.trim();
-  const p=document.getElementById('l-pass').value;
-  if(e===''||p===''){toast('❌ Remplis tous les champs');return;}
-  if(e!=='restaurant@demo.com'||p!=='demo123'){toast('❌ Identifiants incorrects');return;}
-  startApp('Ahmed Benali');
-}
-function quickLogin(){startApp('Ahmed Benali');}
-function startApp(name){
-  document.getElementById('page-login').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('u-name').textContent=name.split(' ')[0];
-  renderProds();
-}
-function logout(){document.getElementById('page-login').style.display='flex';document.getElementById('app').style.display='none';}
-function backHome(){document.getElementById('success').style.display='none';document.getElementById('app').style.display='block';go('dash');}
+let MY_PRODS = [
+  {id:1,emo:'🥩',name:'Bœuf haché',price:85,unit:'kg',cat:'viande',rupt:false},
+  {id:2,emo:'🍗',name:'Poulet entier',price:42,unit:'kg',cat:'viande',rupt:false},
+  {id:3,emo:'🐑',name:'Agneau épaule',price:115,unit:'kg',cat:'viande',rupt:false},
+];
 
-let cur='dash';
-function go(id){
-  document.getElementById('p-'+cur).classList.remove('active');
-  document.getElementById('n-'+cur).classList.remove('active');
-  document.getElementById('p-'+id).classList.add('active');
-  document.getElementById('n-'+id).classList.add('active');
-  cur=id;
-  if(id==='cmd')renderProds();
+const USERS = {
+  'restaurant@demo.com': {pass:'demo123',role:'restaurant',name:'Ahmed Benali',company:'Café Atlas'},
+  'fournisseur@demo.com': {pass:'demo123',role:'fournisseur',name:'Karim Mansouri',company:'ProViande SARL'},
+  'admin@cheflink.ma': {pass:'admin123',role:'admin',name:'Admin ChefLink',company:'ChefLink HQ'},
+};
+
+let currentUser = null;
+let currentRole = null;
+let currentPanel = '';
+let cart = {};
+let delMode = 'std';
+let activeCat = 'all';
+let searchQ = '';
+
+// ══ AUTH ══
+function login() {
+  const e = document.getElementById('l-email').value.trim().toLowerCase();
+  const p = document.getElementById('l-pass').value;
+  if (!e || !p) { toast('Remplis tous les champs'); return; }
+  const u = USERS[e];
+  if (!u || u.pass !== p) { toast('❌ Identifiants incorrects'); return; }
+  startApp(u);
 }
 
-// CATALOGUE
-function renderProds(){
-  const g=document.getElementById('pgrid');
-  if(!g)return;
-  const list=PRODS.filter(p=>{
-    const mc=activeCat==='all'||p.cat===activeCat;
-    const ms=p.name.toLowerCase().includes(searchQ)||p.ar.includes(searchQ);
-    return mc&&ms;
+function quickLogin(role) {
+  const map = {
+    restaurant: 'restaurant@demo.com',
+    fournisseur: 'fournisseur@demo.com',
+    admin: 'admin@cheflink.ma'
+  };
+  const u = USERS[map[role]];
+  startApp(u);
+}
+
+function startApp(u) {
+  currentUser = u;
+  currentRole = u.role;
+  document.getElementById('page-login').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('tb-user').textContent = u.name;
+  const roleEl = document.getElementById('tb-role');
+  roleEl.textContent = u.role.toUpperCase();
+  roleEl.className = 'tb-role r-' + u.role;
+  buildSidebar();
+  if (u.role === 'restaurant') {
+    document.getElementById('cart-panel').style.display = 'flex';
+    document.getElementById('cart-panel').style.flexDirection = 'column';
+    renderCart();
+    navigateTo('dash');
+  } else if (u.role === 'fournisseur') {
+    document.getElementById('cart-panel').style.display = 'none';
+    navigateTo('dash');
+  } else {
+    document.getElementById('cart-panel').style.display = 'none';
+    navigateTo('dash');
+  }
+}
+
+function logout() {
+  currentUser = null; currentRole = null;
+  Object.keys(cart).forEach(k => delete cart[k]);
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('page-login').style.display = 'flex';
+  document.getElementById('l-pass').value = '';
+}
+
+function backHome() {
+  document.getElementById('success').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  navigateTo('dash');
+}
+
+// ══ NAVIGATION ══
+const NAV_CONFIG = {
+  restaurant: [
+    {section:'PRINCIPAL'},
+    {id:'dash',label:'Dashboard',icon:'home'},
+    {id:'cmd',label:'Commander',icon:'shop',badge:'cart'},
+    {id:'cmp',label:'Comparer prix',icon:'compare'},
+    {section:'SUIVI'},
+    {id:'ord',label:'Commandes',icon:'list'},
+    {id:'ana',label:'Analytiques',icon:'chart'},
+  ],
+  fournisseur: [
+    {section:'PRINCIPAL'},
+    {id:'dash',label:'Dashboard',icon:'home'},
+    {id:'prod',label:'Mes produits',icon:'box'},
+    {id:'cmd',label:'Commandes reçues',icon:'list',badge:'2'},
+    {section:'FINANCES'},
+    {id:'pay',label:'Paiements',icon:'card',badge:'2'},
+    {id:'stats',label:'Statistiques',icon:'chart'},
+  ],
+  admin: [
+    {section:'VUE GLOBALE'},
+    {id:'dash',label:'Vue globale',icon:'grid'},
+    {id:'cmd',label:'Toutes commandes',icon:'list',badge:'142'},
+    {section:'UTILISATEURS'},
+    {id:'rest',label:'Restaurants',icon:'resto'},
+    {id:'four',label:'Fournisseurs',icon:'truck'},
+    {section:'FINANCES'},
+    {id:'fin',label:'Finances & GMV',icon:'chart'},
+    {id:'lit',label:'Litiges',icon:'alert',badge:'2'},
+  ]
+};
+
+const ICONS = {
+  home:`<svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  shop:`<svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+  compare:`<svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>`,
+  list:`<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>`,
+  chart:`<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+  box:`<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`,
+  card:`<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,
+  grid:`<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+  resto:`<svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>`,
+  truck:`<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
+  alert:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+};
+
+function buildSidebar() {
+  const nav = NAV_CONFIG[currentRole];
+  const accentColor = currentRole === 'restaurant' ? 'var(--green)' : currentRole === 'fournisseur' ? 'var(--gold)' : 'var(--blue)';
+  let html = '';
+  nav.forEach(item => {
+    if (item.section) {
+      html += `<div class="nav-section">${item.section}</div>`;
+    } else {
+      const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
+      html += `<div class="nav-item" id="n-${item.id}" onclick="navigateTo('${item.id}')">
+        ${ICONS[item.icon]||''}<span>${item.label}</span>${badge}</div>`;
+    }
   });
-  g.innerHTML=list.map(p=>{
-    const q=cart[p.id]||0;
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+function navigateTo(id) {
+  if (currentPanel) {
+    const old = document.getElementById('n-' + currentPanel);
+    if (old) old.className = 'nav-item';
+  }
+  currentPanel = id;
+  const nav = document.getElementById('n-' + id);
+  if (nav) {
+    const ac = currentRole === 'restaurant' ? 'active' : currentRole === 'fournisseur' ? 'active-gold' : 'active-blue';
+    nav.className = 'nav-item ' + ac;
+  }
+  renderPanel(id);
+}
+
+// ══ PANEL RENDERER ══
+function renderPanel(id) {
+  const mc = document.getElementById('main-content');
+  if (currentRole === 'restaurant') mc.innerHTML = restaurantPanel(id);
+  else if (currentRole === 'fournisseur') mc.innerHTML = fournisseurPanel(id);
+  else mc.innerHTML = adminPanel(id);
+  // Post-render hooks
+  if (id === 'cmd' && currentRole === 'restaurant') renderProds();
+  if (id === 'prod' && currentRole === 'fournisseur') renderMyProds();
+}
+
+// ══ RESTAURANT PANELS ══
+function restaurantPanel(id) {
+  if (id === 'dash') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Bonjour Ahmed</h1><p>Café Atlas · Casablanca · 9 Mars 2026</p></div></div>
+    <div class="ai-card">
+      <div class="ai-tag"><div class="ai-pulse"></div>BRIEFING IA · AUJOURD'HUI</div>
+      <div class="ai-text">Stock <strong>bœuf haché</strong> probablement épuisé. ProViande propose <strong>68 DH/kg</strong> cette semaine (économie <strong>136 DH</strong> sur 8kg). Anomalie facture HuileMax détectée : <strong>+40 DH</strong> non justifiés.</div>
+      <div class="ai-btns">
+        <button class="btn-confirm" onclick="toast('✅ Commande confirmée — Livraison vendredi 7h')">Confirmer la commande</button>
+        <button class="btn-skip" onclick="this.closest('.ai-card').style.opacity='.4'">Plus tard</button>
+      </div>
+    </div>
+    <div class="stat-grid g4">
+      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">💸</div><div class="scard-val">8 420</div><div class="scard-lbl">Dépenses ce mois (DH)</div><div class="scard-delta dn">↓ 18% vs mois passé</div></div>
+      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">1 340</div><div class="scard-lbl">Économies IA (DH)</div><div class="scard-delta up">↑ 32% ce mois</div></div>
+      <div class="scard" onclick="navigateTo('ord')"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">📦</div><div class="scard-val">24</div><div class="scard-lbl">Commandes ce mois</div><div class="scard-delta up">↑ 3 cette semaine</div></div>
+      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">Food cost actuel</div><div class="scard-delta wn">⚠ Objectif 25%</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Commandes récentes</div><button class="btn-sm" onclick="navigateTo('ord')">Voir tout →</button></div>
+      <table><thead><tr><th>Fournisseur</th><th>Produits</th><th>Montant</th><th>Date</th><th>Statut</th></tr></thead><tbody>
+        <tr onclick="toast('📦 ProViande — Livré 7h00')"><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td><span class="num">425 DH</span></td><td style="color:var(--grey)">Auj</td><td><span class="badge bg">Livré ✓</span></td></tr>
+        <tr onclick="toast('🥬 FruitsLég — En route 11h30')"><td><strong>FruitsLég Express</strong></td><td>Légumes 8kg</td><td><span class="num">186 DH</span></td><td style="color:var(--grey)">Hier</td><td><span class="badge bo">En route</span></td></tr>
+        <tr onclick="moInvoice()"><td><strong>HuileMax</strong></td><td>Huile olive 20L</td><td><span class="num" style="color:var(--red)">440 DH</span></td><td style="color:var(--grey)">13 Jan</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
+        <tr onclick="toast('🧂 EpicesPro — Livré')"><td><strong>EpicesPro</strong></td><td>Épices & condiments</td><td><span class="num">290 DH</span></td><td style="color:var(--grey)">12 Jan</td><td><span class="badge bg">Livré ✓</span></td></tr>
+      </tbody></table>
+    </div>`;
+
+  if (id === 'cmd') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Commander</h1><p>Catalogue multi-fournisseurs · Comparaison prix IA</p></div></div>
+    <div class="search-row">
+      <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input class="sinp" id="ps" placeholder="Chercher un produit..." oninput="searchQ=this.value.toLowerCase();renderProds()"></div>
+      <div class="filt on" onclick="activeCat='all';setF(this);renderProds()">Tout</div>
+      <div class="filt" onclick="activeCat='viande';setF(this);renderProds()">🥩 Viandes</div>
+      <div class="filt" onclick="activeCat='legume';setF(this);renderProds()">🥬 Légumes</div>
+      <div class="filt" onclick="activeCat='laitier';setF(this);renderProds()">🥛 Laitiers</div>
+      <div class="filt" onclick="activeCat='epice';setF(this);renderProds()">🧂 Épices</div>
+      <div class="filt" onclick="activeCat='huile';setF(this);renderProds()">🫙 Huiles</div>
+    </div>
+    <div class="prod-grid" id="pgrid"></div>`;
+
+  if (id === 'cmp') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Comparer les prix</h1><p>L'IA sélectionne le meilleur fournisseur pour chaque produit</p></div></div>
+    <div class="ai-card" style="margin-bottom:18px;">
+      <div class="ai-tag"><div class="ai-pulse"></div>ANALYSE IA</div>
+      <div class="ai-text">Ce mois, l'IA t'a économisé <strong>1 340 DH</strong>. <strong>ProViande</strong> est 12% moins cher que la moyenne marché sur les viandes.</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Comparaison par produit</div></div>
+      <table><thead><tr><th>Produit</th><th>Fournisseur A</th><th>Fournisseur B</th><th>Fournisseur C</th><th>Recommandation IA</th></tr></thead><tbody>
+        <tr onclick="toast('🥩 ProViande sélectionné')"><td><strong>🥩 Bœuf haché/kg</strong></td><td style="font-weight:700">85 DH</td><td style="color:var(--grey)">92 DH</td><td style="color:var(--grey)">88 DH</td><td><span class="badge bg">85 DH · ProViande</span></td></tr>
+        <tr onclick="toast('🍅 FruitsLég sélectionné')"><td><strong>🍅 Tomates/kg</strong></td><td style="color:var(--grey)">9 DH</td><td style="font-weight:700">8 DH</td><td style="color:var(--grey)">8.5 DH</td><td><span class="badge bg">8 DH · FruitsLég</span></td></tr>
+        <tr onclick="toast('🫙 HuileMax sélectionné')"><td><strong>🫙 Huile olive/L</strong></td><td style="color:var(--grey)">24 DH</td><td style="color:var(--grey)">23 DH</td><td style="font-weight:700">22 DH</td><td><span class="badge bg">22 DH · HuileMax</span></td></tr>
+        <tr onclick="toast('🥛 LaitiersNord sélectionné')"><td><strong>🥛 Lait/L</strong></td><td style="font-weight:700">11 DH</td><td style="color:var(--grey)">12.5 DH</td><td style="color:var(--grey)">12 DH</td><td><span class="badge bg">11 DH · LaitiersNord</span></td></tr>
+        <tr onclick="toast('🍗 VolaillesMS sélectionné')"><td><strong>🍗 Poulet/kg</strong></td><td style="color:var(--grey)">44 DH</td><td style="font-weight:700">42 DH</td><td style="color:var(--grey)">43 DH</td><td><span class="badge bg">42 DH · VolaillesMS</span></td></tr>
+      </tbody></table>
+    </div>`;
+
+  if (id === 'ord') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Mes commandes</h1><p>Historique et suivi des livraisons</p></div></div>
+    <div class="search-row">
+      <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input class="sinp" placeholder="Rechercher..."></div>
+      <div class="filt on" onclick="setF(this)">Toutes</div>
+      <div class="filt" onclick="setF(this)">En cours</div>
+      <div class="filt" onclick="setF(this)">Livrées</div>
+      <div class="filt" onclick="setF(this)">⚠ Anomalies</div>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>#</th><th>Fournisseur</th><th>Produits</th><th>Montant</th><th>Date</th><th>Statut</th></tr></thead><tbody>
+        <tr onclick="toast('#2841 · ProViande · Livré 7h')"><td style="color:var(--grey)">#2841</td><td><strong>ProViande</strong></td><td>Bœuf haché 5kg</td><td><span class="num">425 DH</span></td><td style="color:var(--grey)">Auj</td><td><span class="badge bg">Livré</span></td></tr>
+        <tr onclick="toast('#2840 · En route 11h30')"><td style="color:var(--grey)">#2840</td><td><strong>FruitsLég</strong></td><td>Légumes 8kg</td><td><span class="num">186 DH</span></td><td style="color:var(--grey)">Hier</td><td><span class="badge bo">En route</span></td></tr>
+        <tr onclick="moInvoice()"><td style="color:var(--grey)">#2839</td><td><strong>HuileMax</strong></td><td>Huile olive 20L</td><td><span class="num" style="color:var(--red)">440 DH</span></td><td style="color:var(--grey)">13 Jan</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
+        <tr onclick="toast('#2838 · EpicesPro · Livré')"><td style="color:var(--grey)">#2838</td><td><strong>EpicesPro</strong></td><td>Épices</td><td><span class="num">290 DH</span></td><td style="color:var(--grey)">12 Jan</td><td><span class="badge bg">Livré</span></td></tr>
+        <tr onclick="toast('#2837 · LaitiersNord · Livré')"><td style="color:var(--grey)">#2837</td><td><strong>LaitiersNord</strong></td><td>Fromage, lait</td><td><span class="num">340 DH</span></td><td style="color:var(--grey)">11 Jan</td><td><span class="badge bg">Livré</span></td></tr>
+      </tbody></table>
+    </div>`;
+
+  if (id === 'ana') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Analytiques</h1><p>Dépenses, food cost, économies réalisées</p></div></div>
+    <div class="stat-grid g3">
+      <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">💸</div><div class="scard-val">8 420 DH</div><div class="scard-lbl">Dépenses totales janvier</div><div class="scard-delta dn">↓ 18% vs décembre</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">1 340 DH</div><div class="scard-lbl">Économies IA ce mois</div><div class="scard-delta up">↑ 32%</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">Food cost actuel</div><div class="scard-delta wn">⚠ Objectif 25%</div></div>
+    </div>
+    <div class="two-col">
+      <div class="card cp">
+        <div class="card-title" style="margin-bottom:16px;">Dépenses par catégorie</div>
+        <div class="prog-row"><div class="prog-head"><span>🥩 Viandes</span><span style="color:var(--white);font-weight:600">3 200 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:38%;background:var(--green)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>🥬 Légumes</span><span style="color:var(--white);font-weight:600">1 800 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:21%;background:var(--gold)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>🫙 Huiles</span><span style="color:var(--white);font-weight:600">1 400 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:17%;background:var(--blue)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>🥛 Laitiers</span><span style="color:var(--white);font-weight:600">1 020 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:var(--red)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>🧂 Épices</span><span style="color:var(--white);font-weight:600">1 000 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:var(--grey2)"></div></div></div>
+      </div>
+      <div class="card cp">
+        <div class="card-title" style="margin-bottom:16px;">Évolution dépenses · 7 jours</div>
+        <div class="chart-bars">
+          ${[38,62,44,82,33,67,50].map((h,i)=>`<div class="cbar-w"><div class="cbar" style="height:${h}%;background:${i===3?'var(--gold)':'var(--green)'};opacity:${i===3?1:.6}"></div><div class="cbar-l">${['L','M','M','J','V','S','D'][i]}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+
+  return `<div class="ph"><div class="ph-left"><h1 class="bebas">${id}</h1></div></div>`;
+}
+
+// ══ FOURNISSEUR PANELS ══
+function fournisseurPanel(id) {
+  if (id === 'dash') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Bonjour Karim</h1><p>ProViande SARL · Casablanca · 9 Mars 2026</p></div></div>
+    <div class="stat-grid g4">
+      <div class="scard" onclick="navigateTo('stats')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">12 480</div><div class="scard-lbl">CA ce mois (DH)</div><div class="scard-delta up">↑ 24%</div></div>
+      <div class="scard" onclick="navigateTo('cmd')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">📦</div><div class="scard-val">18</div><div class="scard-lbl">Commandes reçues</div><div class="scard-delta up">↑ 6 nouvelles</div></div>
+      <div class="scard" onclick="navigateTo('pay')"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">⏳</div><div class="scard-val">3 200</div><div class="scard-lbl">Impayés (DH)</div><div class="scard-delta dn">2 restaurants</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">⭐</div><div class="scard-val">92/100</div><div class="scard-lbl">Score ChefLink</div><div class="scard-delta up">↑ 3 pts</div></div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head"><div class="card-title" style="color:var(--red)">⚠ Paiements en retard</div><button class="btn-sm" onclick="navigateTo('pay')">Voir tout →</button></div>
+      <div style="padding:12px 14px;">
+        <div class="pay-alert" onclick="moReminder('Café Atlas','1 800','18')"><div style="font-size:20px">🍽️</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Café Atlas</div><div style="font-size:11px;color:var(--red);margin-top:2px">Retard 18 jours · Facture #1082</div></div><div class="pa-amt">1 800 DH</div></div>
+        <div class="pay-alert" onclick="moReminder('Restaurant Tazi','1 400','7')"><div style="font-size:20px">🍽️</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Restaurant Tazi</div><div style="font-size:11px;color:var(--red);margin-top:2px">Retard 7 jours · Facture #1079</div></div><div class="pa-amt">1 400 DH</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Score qualité — détail</div></div>
+      <div style="padding:16px">
+        <div class="score-bar"><div class="score-label">Prix compétitif</div><div class="score-track"><div class="score-fill" style="width:80%"></div></div><div class="score-val">80%</div></div>
+        <div class="score-bar"><div class="score-label">Ponctualité</div><div class="score-track"><div class="score-fill" style="width:92%"></div></div><div class="score-val">92%</div></div>
+        <div class="score-bar"><div class="score-label">Qualité produits</div><div class="score-track"><div class="score-fill" style="width:85%"></div></div><div class="score-val">85%</div></div>
+        <div class="score-bar"><div class="score-label">Réactivité</div><div class="score-track"><div class="score-fill" style="width:74%"></div></div><div class="score-val">74%</div></div>
+        <div class="score-bar"><div class="score-label">Facturation</div><div class="score-track"><div class="score-fill" style="width:90%"></div></div><div class="score-val">90%</div></div>
+      </div>
+    </div>`;
+
+  if (id === 'prod') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Mes produits</h1><p>Gérez votre catalogue, prix et disponibilités</p></div></div>
+    <div class="card cp" style="margin-bottom:16px;">
+      <div class="card-title" style="margin-bottom:16px;">Ajouter un produit</div>
+      <div class="form-grid">
+        <div class="fg"><label class="flbl">Nom du produit</label><input class="finp" id="np-name" placeholder="Ex: Bœuf haché"></div>
+        <div class="fg"><label class="flbl">Prix (DH)</label><input class="finp" id="np-price" type="number" placeholder="85"></div>
+        <div class="fg"><label class="flbl">Unité</label><select class="finp" id="np-unit"><option>kg</option><option>L</option><option>unité</option><option>carton</option></select></div>
+        <div class="fg"><label class="flbl">Catégorie</label><select class="finp" id="np-cat"><option value="viande">🥩 Viandes</option><option value="legume">🥬 Légumes</option><option value="laitier">🥛 Laitiers</option><option value="epice">🧂 Épices</option><option value="huile">🫙 Huiles</option></select></div>
+        <div class="fg"><label class="flbl">Emoji</label><input class="finp" id="np-emo" placeholder="🥩" maxlength="2"></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-primary" onclick="addMyProd()">Ajouter au catalogue</button>
+        <button class="btn-secondary" onclick="toast('💾 Sauvegardé')">Sauvegarder</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title" id="prod-count-lbl">Catalogue actuel</div></div>
+      <div style="padding:8px 12px" id="prod-list"></div>
+    </div>`;
+
+  if (id === 'cmd') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Commandes reçues</h1><p>Toutes les commandes de vos restaurants clients</p></div></div>
+    <div class="card">
+      <table><thead><tr><th>#</th><th>Restaurant</th><th>Produits</th><th>Montant</th><th>Date</th><th>Statut</th><th>Paiement</th><th>Action</th></tr></thead><tbody>
+        <tr><td style="color:var(--grey)">#2841</td><td><strong>Café Atlas</strong></td><td>Bœuf haché 5kg</td><td><span class="num">425 DH</span></td><td style="color:var(--grey)">Auj</td><td><span class="badge bg">Livré</span></td><td><span class="badge bg">Payé</span></td><td><button class="btn-edit-sm" onclick="toast('📄 Facture #2841')">Facture</button></td></tr>
+        <tr><td style="color:var(--grey)">#2840</td><td><strong>Restaurant Tazi</strong></td><td>Agneau 3kg</td><td><span class="num">345 DH</span></td><td style="color:var(--grey)">Hier</td><td><span class="badge bo">En livraison</span></td><td><span class="badge bgy">En attente</span></td><td><button class="btn-edit-sm" onclick="toast('✅ Commande #2840 livrée')">Marquer livré</button></td></tr>
+        <tr><td style="color:var(--grey)">#2839</td><td><strong>Chez Driss</strong></td><td>Bœuf 10kg</td><td><span class="num" style="color:var(--red)">850 DH</span></td><td style="color:var(--grey)">10 Jan</td><td><span class="badge bg">Livré</span></td><td><span class="badge br">⚠ Retard 18j</span></td><td><button class="btn-edit-sm" style="color:var(--red);border-color:rgba(255,59,59,.2)" onclick="moReminder('Chez Driss','850','18')">Rappel</button></td></tr>
+      </tbody></table>
+    </div>`;
+
+  if (id === 'pay') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Paiements</h1><p>Suivi des encaissements et relances</p></div></div>
+    <div class="stat-grid g3">
+      <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">✅</div><div class="scard-val">9 280 DH</div><div class="scard-lbl">Encaissé ce mois</div><div class="scard-delta up">↑ 18%</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">⏳</div><div class="scard-val">3 200 DH</div><div class="scard-lbl">En attente</div><div class="scard-delta dn">2 clients</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">📊</div><div class="scard-val">74%</div><div class="scard-lbl">Taux encaissement</div><div class="scard-delta wn">Objectif 90%</div></div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head"><div class="card-title" style="color:var(--red)">Relances urgentes</div></div>
+      <div style="padding:12px 14px;">
+        <div class="pay-alert" onclick="moReminder('Café Atlas','1 800','18')"><div style="font-size:20px">🍽️</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Café Atlas</div><div style="font-size:11px;color:var(--red);margin-top:2px">Facture #1082 · 18 jours de retard</div></div><div class="pa-amt">1 800 DH</div></div>
+        <div class="pay-alert" onclick="moReminder('Restaurant Tazi','1 400','7')"><div style="font-size:20px">🍽️</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Restaurant Tazi</div><div style="font-size:11px;color:var(--red);margin-top:2px">Facture #1079 · 7 jours de retard</div></div><div class="pa-amt">1 400 DH</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>Restaurant</th><th>Total facturé</th><th>Encaissé</th><th>En attente</th><th>Retard</th><th>Statut</th></tr></thead><tbody>
+        <tr onclick="toast('✅ Café Atlas — À jour')"><td><strong>Café Atlas</strong></td><td>3 200 DH</td><td style="color:var(--green);font-weight:600">3 200 DH</td><td style="color:var(--grey)">—</td><td style="color:var(--grey)">0j</td><td><span class="badge bg">À jour ✓</span></td></tr>
+        <tr onclick="moReminder('Restaurant Tazi','1 400','7')"><td><strong>Restaurant Tazi</strong></td><td>2 800 DH</td><td style="color:var(--green);font-weight:600">1 400 DH</td><td style="color:var(--gold);font-weight:600">1 400 DH</td><td style="color:var(--gold)">7j</td><td><span class="badge bo">En attente</span></td></tr>
+        <tr onclick="moReminder('Chez Driss','1 800','18')"><td><strong>Chez Driss</strong></td><td>1 800 DH</td><td style="color:var(--grey)">0 DH</td><td style="color:var(--red);font-weight:600">1 800 DH</td><td style="color:var(--red);font-weight:700">18j</td><td><span class="badge br">⚠ Urgent</span></td></tr>
+      </tbody></table>
+    </div>`;
+
+  if (id === 'stats') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Statistiques</h1><p>Performance, CA et analyse clients</p></div></div>
+    <div class="stat-grid g4">
+      <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">12 480</div><div class="scard-lbl">CA ce mois (DH)</div><div class="scard-delta up">↑ 24%</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">📦</div><div class="scard-val">18</div><div class="scard-lbl">Commandes livrées</div><div class="scard-delta up">↑ 6</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">🍽️</div><div class="scard-val">4</div><div class="scard-lbl">Restaurants clients</div><div class="scard-delta up">+1 ce mois</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">⏳</div><div class="scard-val">3 200</div><div class="scard-lbl">Impayés (DH)</div><div class="scard-delta dn">2 clients</div></div>
+    </div>
+    <div class="two-col">
+      <div class="card cp">
+        <div class="card-title" style="margin-bottom:16px;">CA mensuel</div>
+        <div class="chart-bars">
+          ${[50,62,42,100].map((h,i)=>`<div class="cbar-w"><div class="cbar" style="height:${h}%;background:${i===3?'var(--gold)':'var(--green)'};opacity:${i===3?1:.5}"></div><div class="cbar-l">${['Oct','Nov','Déc','Jan'][i]}</div></div>`).join('')}
+        </div>
+      </div>
+      <div class="card cp">
+        <div class="card-title" style="margin-bottom:16px;">CA par client</div>
+        <div class="prog-row"><div class="prog-head"><span>Café Atlas</span><span style="color:var(--white);font-weight:600">3 200 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:65%;background:var(--gold)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>Restaurant Tazi</span><span style="color:var(--white);font-weight:600">2 800 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:56%;background:var(--green)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>Chez Driss</span><span style="color:var(--white);font-weight:600">1 800 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:36%;background:var(--blue)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>Café Zitoun</span><span style="color:var(--white);font-weight:600">1 560 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:31%;background:var(--red)"></div></div></div>
+      </div>
+    </div>`;
+
+  return `<div class="ph"><div class="ph-left"><h1 class="bebas">${id}</h1></div></div>`;
+}
+
+// ══ ADMIN PANELS ══
+function adminPanel(id) {
+  if (id === 'dash') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Vue globale</h1><p>ChefLink HQ · 9 Mars 2026 · <span style="color:var(--green)"><span class="sdot sdot-green"></span>Système opérationnel</span></p></div></div>
+    <div class="stat-grid g4">
+      <div class="scard" onclick="navigateTo('rest')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">🍽️</div><div class="scard-val">7</div><div class="scard-lbl">Restaurants actifs</div><div class="scard-delta up">↑ 2 ce mois</div></div>
+      <div class="scard" onclick="navigateTo('four')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">🏭</div><div class="scard-val">5</div><div class="scard-lbl">Fournisseurs actifs</div><div class="scard-delta up">+1 cette semaine</div></div>
+      <div class="scard" onclick="navigateTo('cmd')"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">📦</div><div class="scard-val">142</div><div class="scard-lbl">Commandes ce mois</div><div class="scard-delta up">↑ 38%</div></div>
+      <div class="scard" onclick="navigateTo('fin')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">68 400</div><div class="scard-lbl">GMV ce mois (DH)</div><div class="scard-delta up">↑ 41%</div></div>
+    </div>
+    <div class="stat-grid g4">
+      <div class="scard" onclick="navigateTo('lit')"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">⚠</div><div class="scard-val">2</div><div class="scard-lbl">Litiges actifs</div><div class="scard-delta dn">Attention requise</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">💳</div><div class="scard-val">2 097</div><div class="scard-lbl">Revenus ChefLink (DH)</div><div class="scard-delta up">3.07% commission</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">⭐</div><div class="scard-val">84</div><div class="scard-lbl">Score moyen fournisseurs</div><div class="scard-delta up">↑ 2 pts</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">📈</div><div class="scard-val">94%</div><div class="scard-lbl">Livraisons à temps</div><div class="scard-delta up">Excellent</div></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Restaurants</div><button class="btn-sm" onclick="navigateTo('rest')">Gérer →</button></div>
+        <table><thead><tr><th>Nom</th><th>Commandes</th><th>Statut</th></tr></thead><tbody>
+          <tr onclick="toast('Café Atlas · Pro · Actif')"><td><strong>Café Atlas</strong></td><td>24</td><td><span class="badge bg">Actif</span></td></tr>
+          <tr onclick="toast('Restaurant Tazi · Starter · Actif')"><td><strong>Restaurant Tazi</strong></td><td>18</td><td><span class="badge bg">Actif</span></td></tr>
+          <tr onclick="toast('Chez Driss · Impayé')"><td><strong>Chez Driss</strong></td><td>12</td><td><span class="badge br">⚠ Impayé</span></td></tr>
+          <tr onclick="toast('Café Zitoun · Starter · Actif')"><td><strong>Café Zitoun</strong></td><td>8</td><td><span class="badge bg">Actif</span></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Fournisseurs</div><button class="btn-sm" onclick="navigateTo('four')">Gérer →</button></div>
+        <table><thead><tr><th>Nom</th><th>Score</th><th>CA (DH)</th></tr></thead><tbody>
+          <tr onclick="toast('ProViande · 92/100')"><td><strong>ProViande SARL</strong></td><td><span class="badge bg">92/100</span></td><td><span class="num">12 480</span></td></tr>
+          <tr onclick="toast('FruitsLég · 78/100')"><td><strong>FruitsLég Express</strong></td><td><span class="badge bo">78/100</span></td><td><span class="num">8 200</span></td></tr>
+          <tr onclick="toast('HuileMax · 61/100 · Litige actif')"><td><strong>HuileMax Distrib.</strong></td><td><span class="badge br">61/100</span></td><td><span class="num" style="color:var(--red)">4 100</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>`;
+
+  if (id === 'cmd') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Toutes les commandes</h1><p>Vue complète de l'activité plateforme</p></div></div>
+    <div class="stat-grid g3">
+      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">📦</div><div class="scard-val">142</div><div class="scard-lbl">Total ce mois</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">✅</div><div class="scard-val">138</div><div class="scard-lbl">Livrées avec succès</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">⚠</div><div class="scard-val">4</div><div class="scard-lbl">Anomalies / litiges</div></div>
+    </div>
+    <div class="card">
+      <table><thead><tr><th>#</th><th>Restaurant</th><th>Fournisseur</th><th>Montant</th><th>Date</th><th>Statut</th><th>Action</th></tr></thead><tbody>
+        <tr onclick="toast('#2841 — Normal')"><td style="color:var(--grey)">#2841</td><td>Café Atlas</td><td>ProViande</td><td><span class="num">425 DH</span></td><td style="color:var(--grey)">Auj</td><td><span class="badge bg">Livré</span></td><td><button class="btn-edit-sm" onclick="toast('📄 Facture #2841')">Voir</button></td></tr>
+        <tr onclick="toast('#2840 — En route')"><td style="color:var(--grey)">#2840</td><td>Restaurant Tazi</td><td>FruitsLég</td><td><span class="num">186 DH</span></td><td style="color:var(--grey)">Hier</td><td><span class="badge bo">En route</span></td><td><button class="btn-edit-sm" onclick="toast('🗺️ Suivi #2840')">Suivi</button></td></tr>
+        <tr onclick="navigateTo('lit')"><td style="color:var(--grey)">#2839</td><td>Café Atlas</td><td>HuileMax</td><td><span class="num" style="color:var(--red)">440 DH</span></td><td style="color:var(--grey)">13 Jan</td><td><span class="badge br">⚠ Litige</span></td><td><button class="btn-edit-sm" style="color:var(--red)" onclick="navigateTo('lit')">Résoudre</button></td></tr>
+        <tr onclick="toast('#2838 — Normal')"><td style="color:var(--grey)">#2838</td><td>Chez Driss</td><td>ProViande</td><td><span class="num">850 DH</span></td><td style="color:var(--grey)">10 Jan</td><td><span class="badge bg">Livré</span></td><td><button class="btn-edit-sm" onclick="toast('📄 Facture #2838')">Voir</button></td></tr>
+      </tbody></table>
+    </div>`;
+
+  if (id === 'rest') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Restaurants</h1><p>Gestion des comptes restaurants</p></div><button class="btn-primary" onclick="moAddUser('restaurant')">+ Ajouter</button></div>
+    <div class="card">
+      <table><thead><tr><th>Nom</th><th>Email</th><th>Ville</th><th>Commandes</th><th>Dépenses</th><th>Plan</th><th>Statut</th><th>Action</th></tr></thead><tbody>
+        <tr onclick="toast('Café Atlas · Pro · Actif')"><td><strong>Café Atlas</strong></td><td style="color:var(--grey)">ahmed@cafeatlas.ma</td><td>Casablanca</td><td>24</td><td><span class="num">8 420 DH</span></td><td><span class="badge bb">Pro</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier Café Atlas')">Modifier</button></td></tr>
+        <tr onclick="toast('Restaurant Tazi · Starter')"><td><strong>Restaurant Tazi</strong></td><td style="color:var(--grey)">tazi@resto.ma</td><td>Rabat</td><td>18</td><td><span class="num">6 200 DH</span></td><td><span class="badge bgy">Starter</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier Tazi')">Modifier</button></td></tr>
+        <tr onclick="toast('Chez Driss · Impayé')"><td><strong>Chez Driss</strong></td><td style="color:var(--grey)">driss@restaurant.ma</td><td>Marrakech</td><td>12</td><td style="color:var(--red);font-weight:600">Impayé</td><td><span class="badge bgy">Starter</span></td><td><span class="badge br">⚠ Impayé</span></td><td><button class="btn-edit-sm" style="color:var(--red)" onclick="toast('🔒 Chez Driss suspendu')">Suspendre</button></td></tr>
+        <tr onclick="toast('Café Zitoun · Starter · Actif')"><td><strong>Café Zitoun</strong></td><td style="color:var(--grey)">zitoun@cafe.ma</td><td>Fès</td><td>8</td><td><span class="num">2 800 DH</span></td><td><span class="badge bgy">Starter</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier Zitoun')">Modifier</button></td></tr>
+      </tbody></table>
+    </div>`;
+
+  if (id === 'four') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Fournisseurs</h1><p>Gestion des comptes et scores qualité</p></div><button class="btn-primary" onclick="moAddUser('fournisseur')">+ Ajouter</button></div>
+    <div class="card">
+      <table><thead><tr><th>Nom</th><th>Catégorie</th><th>Produits</th><th>CA (DH)</th><th>Score</th><th>Statut</th><th>Action</th></tr></thead><tbody>
+        <tr onclick="toast('ProViande · 92/100')"><td><strong>ProViande SARL</strong></td><td>🥩 Viandes</td><td>8</td><td><span class="num">12 480</span></td><td><span class="badge bg">92/100</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier ProViande')">Modifier</button></td></tr>
+        <tr onclick="toast('FruitsLég · 78/100')"><td><strong>FruitsLég Express</strong></td><td>🥬 Légumes</td><td>12</td><td><span class="num">8 200</span></td><td><span class="badge bo">78/100</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier FruitsLég')">Modifier</button></td></tr>
+        <tr onclick="navigateTo('lit')"><td><strong>HuileMax Distrib.</strong></td><td>🫙 Huiles</td><td>4</td><td><span class="num" style="color:var(--red)">4 100</span></td><td><span class="badge br">61/100</span></td><td><span class="badge br">⚠ Litige</span></td><td><button class="btn-edit-sm" style="color:var(--red)" onclick="navigateTo('lit')">Litige</button></td></tr>
+        <tr onclick="toast('EpicesPro · 88/100')"><td><strong>EpicesPro</strong></td><td>🧂 Épices</td><td>6</td><td><span class="num">5 800</span></td><td><span class="badge bg">88/100</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier EpicesPro')">Modifier</button></td></tr>
+        <tr onclick="toast('LaitiersNord · 90/100')"><td><strong>LaitiersNord</strong></td><td>🥛 Laitiers</td><td>5</td><td><span class="num">6 200</span></td><td><span class="badge bg">90/100</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier LaitiersNord')">Modifier</button></td></tr>
+      </tbody></table>
+    </div>`;
+
+  if (id === 'fin') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Finances & GMV</h1><p>Performance financière de la plateforme</p></div></div>
+    <div class="stat-grid g4">
+      <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">68 400</div><div class="scard-lbl">GMV ce mois (DH)</div><div class="scard-delta up">↑ 41%</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">💳</div><div class="scard-val">2 097</div><div class="scard-lbl">Revenus ChefLink (DH)</div><div class="scard-delta up">3.07%</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">📈</div><div class="scard-val">142</div><div class="scard-lbl">Transactions</div><div class="scard-delta up">↑ 38%</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--grey2)"></div><div class="scard-ico">🎯</div><div class="scard-val">481 DH</div><div class="scard-lbl">Montant moy/transaction</div><div class="scard-delta up">↑ 2%</div></div>
+    </div>
+    <div class="two-col">
+      <div class="card cp">
+        <div class="card-title" style="margin-bottom:16px;">GMV mensuel</div>
+        <div class="chart-bars">
+          ${[30,45,55,70,82,100].map((h,i)=>`<div class="cbar-w"><div class="cbar" style="height:${h}%;background:${i===5?'var(--gold)':'var(--blue)'};opacity:${i===5?1:.5}"></div><div class="cbar-l">${['Oct','Nov','Déc','Jan','Fév','Mar'][i]}</div></div>`).join('')}
+        </div>
+      </div>
+      <div class="card cp">
+        <div class="card-title" style="margin-bottom:16px;">GMV par fournisseur</div>
+        <div class="prog-row"><div class="prog-head"><span>ProViande SARL</span><span style="color:var(--white);font-weight:600">12 480 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:18%;background:var(--gold)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>LaitiersNord</span><span style="color:var(--white);font-weight:600">6 200 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:9%;background:var(--green)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>EpicesPro</span><span style="color:var(--white);font-weight:600">5 800 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:8%;background:var(--blue)"></div></div></div>
+        <div class="prog-row"><div class="prog-head"><span>FruitsLég Express</span><span style="color:var(--white);font-weight:600">8 200 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:var(--red)"></div></div></div>
+      </div>
+    </div>`;
+
+  if (id === 'lit') return `
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Litiges & Anomalies</h1><p>Résolution des conflits de facturation</p></div></div>
+    <div class="litige-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div><div style="font-size:14px;font-weight:700">Café Atlas vs HuileMax Distrib.</div><div style="font-size:11px;color:var(--grey);margin-top:3px">Commande #2839 · Signalé le 13 Jan 2026</div></div>
+        <span class="badge br">Surfacturation</span>
+      </div>
+      <div style="font-size:13px;color:var(--white);line-height:1.65;margin-bottom:14px;">Café Atlas conteste un écart de <strong style="color:var(--red)">+40 DH</strong> entre la commande initiale (400 DH) et la facture reçue (440 DH). 3ème incident avec HuileMax ce trimestre.</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-primary" style="background:var(--green)" onclick="toast('✅ Remboursement 40 DH envoyé à Café Atlas')">Rembourser</button>
+        <button class="btn-secondary" onclick="toast('⚠️ Avertissement envoyé à HuileMax')">Avertir HuileMax</button>
+        <button class="btn-secondary" style="color:var(--red);border-color:rgba(255,59,59,.2)" onclick="toast('🔴 HuileMax suspendu')">Suspendre</button>
+      </div>
+    </div>
+    <div class="litige-card gold">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div><div style="font-size:14px;font-weight:700">ProViande vs Chez Driss</div><div style="font-size:11px;color:var(--grey);margin-top:3px">Paiement en retard · 18 jours</div></div>
+        <span class="badge bo">Paiement retard</span>
+      </div>
+      <div style="font-size:13px;color:var(--white);line-height:1.65;margin-bottom:14px;">Chez Driss n'a pas réglé sa facture de <strong style="color:var(--gold)">1 800 DH</strong> malgré 2 relances automatiques.</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-primary" style="background:var(--gold);color:var(--black)" onclick="toast('📧 Mise en demeure envoyée')">Mettre en demeure</button>
+        <button class="btn-secondary" style="color:var(--red);border-color:rgba(255,59,59,.2)" onclick="toast('🔒 Chez Driss suspendu')">Suspendre compte</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-head"><div class="card-title">Historique résolus</div></div>
+      <table><thead><tr><th>Date</th><th>Parties</th><th>Type</th><th>Montant</th><th>Résolution</th></tr></thead><tbody>
+        <tr onclick="toast('✅ Litige résolu')"><td style="color:var(--grey)">5 Jan</td><td>Tazi / EpicesPro</td><td>Produit manquant</td><td><span class="num">120 DH</span></td><td><span class="badge bg">Résolu ✓</span></td></tr>
+        <tr onclick="toast('✅ Remboursé')"><td style="color:var(--grey)">28 Déc</td><td>Zitoun / FruitsLég</td><td>Livraison retardée</td><td><span class="num">80 DH</span></td><td><span class="badge bg">Remboursé ✓</span></td></tr>
+      </tbody></table>
+    </div>`;
+
+  return `<div class="ph"><div class="ph-left"><h1 class="bebas">${id}</h1></div></div>`;
+}
+
+// ══ CATALOGUE RESTAURANT ══
+function renderProds() {
+  const g = document.getElementById('pgrid');
+  if (!g) return;
+  const list = PRODS.filter(p => (activeCat === 'all' || p.cat === activeCat) && (p.name.toLowerCase().includes(searchQ) || p.sup.toLowerCase().includes(searchQ)));
+  g.innerHTML = list.map(p => {
+    const q = cart[p.id] || 0;
     return `<div class="pcard${q>0?' selected':''}${p.rupt?' rupt':''}">
       <div class="p-emo">${p.emo}</div>
       <div class="p-name">${p.name}</div>
-      <div class="p-ar">${p.ar}</div>
       <div class="p-sup">${p.sup}</div>
       <div><span class="p-price">${p.price}</span> <span class="p-unit">DH/${p.unit}</span></div>
-      ${p.promo?`<div class="p-tag" style="background:rgba(61,158,106,.12);color:var(--mint2);">✓ ${p.promo}</div>`:''}
-      ${p.rupt?`<div class="p-tag" style="background:rgba(201,64,64,.12);color:var(--red2);">⚠ Rupture de stock</div>`:''}
+      ${p.promo?`<div class="p-badge" style="background:rgba(0,255,136,.08);color:var(--green);border:1px solid rgba(0,255,136,.15)">✓ ${p.promo}</div>`:''}
+      ${p.rupt?`<div class="p-badge" style="background:rgba(255,59,59,.08);color:var(--red)">⚠ Rupture</div>`:''}
       ${!p.rupt?`<div class="qty-row">
         <div class="qbtn" onclick="aq(${p.id},-1)">−</div>
         <div class="qval">${q}</div>
         <div class="qbtn" onclick="aq(${p.id},1)">+</div>
-      </div>`:``}
+      </div>`:''}
     </div>`;
-  }).join('')||`<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted);">Aucun produit trouvé</div>`;
+  }).join('') || `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--grey)">Aucun produit trouvé</div>`;
 }
 
-function aq(id,d){
-  cart[id]=(cart[id]||0)+d;
-  if(cart[id]<=0)delete cart[id];
-  renderProds();renderCart();
+function aq(id, d) {
+  cart[id] = (cart[id] || 0) + d;
+  if (cart[id] <= 0) delete cart[id];
+  renderProds(); renderCart();
 }
-function filterP(v){searchQ=v.toLowerCase();renderProds();}
-function catF(cat,el){
-  activeCat=cat;
-  document.querySelectorAll('.filt').forEach(e=>e.classList.remove('on'));
-  el.classList.add('on');renderProds();
-}
-function setDel(m){
-  delMode=m;
-  document.getElementById('do-std').classList.toggle('on',m==='std');
-  document.getElementById('do-exp').classList.toggle('on',m==='exp');
-  renderCart();
-}
-function cartTotal(){return Object.entries(cart).reduce((s,[id,q])=>{const p=PRODS.find(x=>x.id==id);return s+(p?p.price*q:0);},0);}
-function cartCount(){return Object.values(cart).reduce((s,q)=>s+q,0);}
 
-function renderCart(){
-  const items=Object.entries(cart).map(([id,q])=>({...PRODS.find(p=>p.id==id),qty:q})).filter(p=>p.id);
-  const n=cartCount();
-  const badge=document.getElementById('cart-badge');
-  badge.style.display=n>0?'block':'none';
-  badge.textContent=n;
-  document.getElementById('cart-sub-lbl').textContent=n+' article'+(n>1?'s':'');
-  const ci=document.getElementById('cart-items');
-  const cf=document.getElementById('cart-foot');
-  if(!items.length){
-    ci.innerHTML=`<div class="cart-empty"><div class="cart-empty-ico">🛒</div><div style="font-size:14px;font-weight:600;">Panier vide</div><div style="font-size:12px;margin-top:6px;">Ajoute des produits depuis le catalogue</div></div>`;
-    cf.style.display='none';return;
+// ══ CART ══
+function renderCart() {
+  const cp = document.getElementById('cart-panel');
+  if (!cp || currentRole !== 'restaurant') return;
+  const items = Object.entries(cart).map(([id,q]) => ({...PRODS.find(p=>p.id==id), qty:q})).filter(p=>p.id);
+  const n = Object.values(cart).reduce((s,q)=>s+q,0);
+  const nb = document.getElementById('n-cmd');
+  if (nb) {
+    const existing = nb.querySelector('.nav-badge');
+    if (n > 0) {
+      if (existing) existing.textContent = n;
+      else nb.innerHTML += `<span class="nav-badge">${n}</span>`;
+    } else if (existing) existing.remove();
   }
-  ci.innerHTML=items.map(p=>`<div class="citem">
-    <div class="citem-emo">${p.emo}</div>
-    <div class="citem-info"><div class="citem-name">${p.name}</div><div class="citem-qty">${p.qty} ${p.unit}</div></div>
-    <div class="citem-price">${p.qty*p.price} DH</div>
-    <div class="cdel" onclick="aq(${p.id},-99)">✕</div>
-  </div>`).join('');
-  const sub=cartTotal();
-  const sav=Math.round(sub*.06);
-  const del=delMode==='exp'?30:0;
-  document.getElementById('cv-sub').textContent=sub+' DH';
-  document.getElementById('cv-sav').textContent='−'+sav+' DH';
-  document.getElementById('cv-tot').textContent=(sub+del-sav)+' DH';
-  cf.style.display='block';
+  const sub = Object.entries(cart).reduce((s,[id,q])=>{const p=PRODS.find(x=>x.id==id);return s+(p?p.price*q:0);},0);
+  const sav = Math.round(sub * .06);
+  const del = delMode === 'exp' ? 30 : 0;
+  cp.innerHTML = `
+    <div class="cart-title">Panier</div>
+    <div class="cart-sub">${n} article${n>1?'s':''}</div>
+    <div style="flex:1;overflow-y:auto;">
+      ${!items.length ? `<div class="cart-empty"><div style="font-size:36px;margin-bottom:10px">🛒</div><div style="font-size:12px">Panier vide</div></div>` :
+        items.map(p=>`<div class="citem">
+          <div class="citem-emo">${p.emo}</div>
+          <div class="citem-info"><div class="citem-name">${p.name}</div><div class="citem-qty">${p.qty} ${p.unit}</div></div>
+          <div class="citem-price">${p.qty*p.price} DH</div>
+          <div class="cdel" onclick="aq(${p.id},-99)">✕</div>
+        </div>`).join('')}
+    </div>
+    ${items.length ? `<div class="cart-foot">
+      <div class="crow"><span>Sous-total</span><span>${sub} DH</span></div>
+      <div class="crow"><span>Économie IA</span><span style="color:var(--green)">−${sav} DH</span></div>
+      <div class="del-row">
+        <div class="dopt${delMode==='std'?' on':''}" id="do-std" onclick="delMode='std';renderCart()"><div class="dopt-t">Standard</div><div class="dopt-s">Demain · Gratuit</div></div>
+        <div class="dopt${delMode==='exp'?' on':''}" id="do-exp" onclick="delMode='exp';renderCart()"><div class="dopt-t" style="color:var(--gold)">🚀 Express</div><div class="dopt-s">45 min · +30 DH</div></div>
+      </div>
+      <div class="crow tot"><span>TOTAL</span><span>${sub+del-sav} DH</span></div>
+      <button class="btn-order" onclick="confirmOrder()">CONFIRMER LA COMMANDE</button>
+    </div>` : ''}`;
 }
 
-function confirmOrder(){
-  const n=cartCount();
-  if(!n){toast('🛒 Ton panier est vide');return;}
-  const tot=document.getElementById('cv-tot').textContent;
-  const isExp=delMode==='exp';
-  document.getElementById('s-det').innerHTML=`
-    <div class="s-row"><span>Numéro</span><span style="font-weight:700;">#${Math.floor(Math.random()*9000+1000)}</span></div>
+function confirmOrder() {
+  const n = Object.values(cart).reduce((s,q)=>s+q,0);
+  if (!n) { toast('Panier vide'); return; }
+  const sub = Object.entries(cart).reduce((s,[id,q])=>{const p=PRODS.find(x=>x.id==id);return s+(p?p.price*q:0);},0);
+  const sav = Math.round(sub*.06);
+  const del = delMode==='exp'?30:0;
+  const tot = sub+del-sav;
+  document.getElementById('s-det').innerHTML = `
+    <div class="s-row"><span>Numéro</span><span>#${Math.floor(Math.random()*9000+1000)}</span></div>
     <div class="s-row"><span>Articles</span><span>${n} article${n>1?'s':''}</span></div>
-    <div class="s-row"><span>Total</span><span style="color:var(--sand);font-weight:700;">${tot}</span></div>
-    <div class="s-row"><span>Livraison</span><span style="color:${isExp?'var(--sand)':'var(--mint2)'};">${isExp?'Express ~45 min':'Demain 7h00'}</span></div>
-    <div class="s-row"><span>Statut</span><span style="color:var(--mint2);">Confirmé ✓</span></div>`;
+    <div class="s-row"><span>Total</span><span>${tot} DH</span></div>
+    <div class="s-row"><span>Livraison</span><span>${delMode==='exp'?'Express ~45 min':'Demain 7h00'}</span></div>
+    <div class="s-row"><span>Statut</span><span style="color:var(--green)">Confirmé ✓</span></div>`;
   Object.keys(cart).forEach(k=>delete cart[k]);
-  renderCart();renderProds();
-  document.getElementById('app').style.display='none';
-  document.getElementById('success').style.display='flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('success').style.display = 'flex';
 }
 
-function moInvoice(){
-  openMo(`<div class="mo-title" style="color:var(--red2);">⚠ Anomalie facture détectée</div>
+// ══ FOURNISSEUR PRODUCTS ══
+function renderMyProds() {
+  const list = document.getElementById('prod-list');
+  const title = document.getElementById('prod-count-lbl');
+  if (!list) return;
+  if (title) title.textContent = `Catalogue actuel (${MY_PRODS.length} produits)`;
+  list.innerHTML = MY_PRODS.map(p => `
+    <div class="pmcard">
+      <div class="pm-emo">${p.emo}</div>
+      <div class="pm-info"><div class="pm-name">${p.name}</div><div class="pm-cat">${p.cat} · ${p.unit}</div></div>
+      <div class="pm-price">${p.price} DH</div>
+      <button class="btn-rupt ${p.rupt?'rupt-style':'dispo'}" onclick="toggleRupt(${p.id})">${p.rupt?'⚠ Rupture':'✓ Dispo'}</button>
+      <button class="btn-edit-sm" onclick="moEditPrice(${p.id})">Modifier prix</button>
+    </div>`).join('');
+}
+
+function toggleRupt(id) {
+  const p = MY_PRODS.find(x=>x.id===id);
+  if (!p) return;
+  p.rupt = !p.rupt;
+  renderMyProds();
+  toast(p.rupt ? `⚠ ${p.name} en rupture` : `✓ ${p.name} disponible`);
+}
+
+function addMyProd() {
+  const name = document.getElementById('np-name').value.trim();
+  const price = parseFloat(document.getElementById('np-price').value);
+  const unit = document.getElementById('np-unit').value;
+  const cat = document.getElementById('np-cat').value;
+  const emo = document.getElementById('np-emo').value || '📦';
+  if (!name || !price) { toast('❌ Remplis le nom et le prix'); return; }
+  MY_PRODS.push({id:Date.now(),emo,name,price,unit,cat,rupt:false});
+  ['np-name','np-price','np-emo'].forEach(i => document.getElementById(i).value='');
+  renderMyProds();
+  toast(`✅ ${emo} ${name} ajouté`);
+}
+
+// ══ MODALS ══
+function moInvoice() {
+  openMo(`<div class="mo-title" style="color:var(--red)">⚠ Anomalie facture</div>
     <div class="mo-sub">HuileMax Distrib. · Facture #1084 · 13 Janvier 2026</div>
-    <div style="display:flex;flex-direction:column;gap:0;margin-bottom:14px;">
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="color:var(--muted);">Commande initiale</span><strong>400 DH</strong></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="color:var(--muted);">Montant facturé</span><strong style="color:var(--red2);">440 DH</strong></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13px;"><span style="color:var(--muted);">Écart</span><strong style="color:var(--red2);">+40 DH</strong></div>
+    <div class="mo-row"><span>Commande initiale</span><span>400 DH</span></div>
+    <div class="mo-row"><span>Montant facturé</span><span style="color:var(--red)">440 DH</span></div>
+    <div class="mo-row"><span>Écart détecté</span><span style="color:var(--red)">+40 DH</span></div>
+    <div style="background:rgba(255,59,59,.05);border:1px solid rgba(255,59,59,.1);border-radius:6px;padding:12px;font-size:12px;color:var(--grey);line-height:1.6;margin:12px 0">
+      3ème incident avec ce fournisseur ce trimestre. Contestation recommandée par l'IA.
     </div>
-    <div style="background:rgba(201,64,64,.07);border:1px solid rgba(201,64,64,.18);border-radius:10px;padding:12px;font-size:12px;color:var(--red2);line-height:1.6;margin-bottom:16px;">
-      L'IA a détecté un écart de facturation. 3ème incident avec ce fournisseur ce trimestre. Contestation recommandée.
-    </div>
-    <div style="display:flex;gap:10px;">
-      <button style="flex:1;padding:12px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:10px;color:white;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;" onclick="closeMo();toast('📧 Contestation envoyée à HuileMax')">Contester</button>
-      <button style="flex:1;padding:12px;background:transparent;border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-weight:600;cursor:pointer;font-family:Arial,sans-serif;" onclick="closeMo()">Accepter</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn-primary" style="flex:1;background:var(--red)" onclick="closeMo();toast('📧 Contestation envoyée à HuileMax')">Contester</button>
+      <button class="btn-secondary" style="flex:1" onclick="closeMo()">Accepter</button>
     </div>`);
 }
 
-function openMo(h){document.getElementById('mo-body').innerHTML=h;document.getElementById('mo').classList.add('on');}
-function closeMo(){document.getElementById('mo').classList.remove('on');}
+function moReminder(name, amt, days) {
+  openMo(`<div class="mo-title">Rappel de paiement</div>
+    <div class="mo-sub">${name} · ${amt} DH · ${days} jours de retard</div>
+    <div style="background:var(--dark3);border:1px solid var(--border2);border-radius:6px;padding:14px;font-size:12px;color:var(--grey);line-height:1.7;margin-bottom:16px">
+      Bonjour,<br>Votre facture de <strong style="color:var(--white)">${amt} DH</strong> est en attente depuis <strong style="color:var(--white)">${days} jours</strong>.<br>Merci de procéder au règlement.<br><br>Cordialement, <strong style="color:var(--white)">ProViande · ChefLink</strong>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-primary" style="flex:1" onclick="closeMo();toast('📧 Rappel envoyé à ${name}')">Envoyer</button>
+      <button class="btn-secondary" style="flex:1" onclick="closeMo()">Annuler</button>
+    </div>`);
+}
 
+function moEditPrice(id) {
+  const p = MY_PRODS.find(x=>x.id===id);
+  if (!p) return;
+  openMo(`<div class="mo-title">Modifier le prix</div>
+    <div class="mo-sub">${p.emo} ${p.name} · actuellement ${p.price} DH/${p.unit}</div>
+    <div class="fg" style="margin-bottom:16px"><label class="flbl">Nouveau prix (DH)</label>
+    <input class="finp" id="ep" type="number" value="${p.price}" style="width:100%"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-primary" style="flex:1" onclick="savePrice(${p.id})">Confirmer</button>
+      <button class="btn-secondary" onclick="closeMo()">Annuler</button>
+    </div>`);
+}
+
+function savePrice(id) {
+  const v = parseFloat(document.getElementById('ep').value);
+  if (!v || v <= 0) { toast('❌ Prix invalide'); return; }
+  const p = MY_PRODS.find(x=>x.id===id);
+  if (p) p.price = v;
+  closeMo(); renderMyProds();
+  toast(`✅ Prix mis à jour : ${v} DH`);
+}
+
+function moAddUser(role) {
+  const label = role === 'restaurant' ? 'Restaurant' : 'Fournisseur';
+  openMo(`<div class="mo-title">Nouveau ${label}</div>
+    <div class="mo-sub">Créer un compte sur la plateforme</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      <div class="fg"><label class="flbl">Nom</label><input class="finp" placeholder="Nom du ${label.toLowerCase()}" style="width:100%"></div>
+      <div class="fg"><label class="flbl">Email</label><input class="finp" type="email" placeholder="email@exemple.ma" style="width:100%"></div>
+      <div class="fg"><label class="flbl">Ville</label><input class="finp" placeholder="Casablanca" style="width:100%"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-primary" style="flex:1" onclick="closeMo();toast('✅ Compte créé — invitation envoyée')">Créer le compte</button>
+      <button class="btn-secondary" onclick="closeMo()">Annuler</button>
+    </div>`);
+}
+
+function openMo(h) { document.getElementById('mo-body').innerHTML = h; document.getElementById('mo').classList.add('on'); }
+function closeMo() { document.getElementById('mo').classList.remove('on'); }
+
+// ══ UTILS ══
 let tT;
-function toast(m){
-  const t=document.getElementById('toast');
-  clearTimeout(tT);t.textContent=m;t.classList.
+function toast(m) {
+  const t = document.getElementById('toast');
+  clearTimeout(tT); t.textContent = m; t.classList.add('on');
+  tT = setTimeout(() => t.classList.remove('on'), 2600);
+}
+function setF(el) {
+  el.closest('.search-row').querySelectorAll('.filt').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+}
+</script>
+</body>
+</html>
