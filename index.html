@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChefLink · Restaurant</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>/* System fonts fallback */</style>
 <style>
 :root {
   --bg:#0D1209; --bg2:#111707; --card:#181F0C; --card2:#1E2810;
@@ -19,12 +19,12 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;}
+body{font-family:Arial,sans-serif;background:var(--bg);color:var(--white);min-height:100vh;}
 
 /* ── LAYOUT ── */
 #app{display:none;min-height:100vh;}
 .topbar{height:62px;background:rgba(13,18,9,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:200;}
-.logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-1px;cursor:pointer;}
+.logo{font-family:'Arial Black',Arial,sans-serif;font-size:22px;font-weight:800;letter-spacing:-1px;cursor:pointer;}
 .logo span{color:var(--olive2);}
 .logo-badge{padding:3px 10px;background:rgba(122,154,42,.15);border:1px solid rgba(122,154,42,.2);border-radius:6px;font-size:10px;font-weight:700;color:var(--olive2);letter-spacing:.5px;margin-left:10px;}
 .topbar-right{display:flex;align-items:center;gap:12px;}
@@ -59,7 +59,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);mi
 
 /* ── PAGE HEADER ── */
 .ph{margin-bottom:24px;}
-.ph h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;}
+.ph h1{font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;}
 .ph p{font-size:13px;color:var(--muted);margin-top:5px;}
 
 /* ── STAT GRID ── */
@@ -75,7 +75,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);mi
 .s3::before{background:linear-gradient(90deg,var(--sand),var(--sand2));}
 .s4::before{background:linear-gradient(90deg,var(--terr),var(--terr2));}
 .scard-ico{font-size:22px;margin-bottom:10px;}
-.scard-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;line-height:1;}
+.scard-val{font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:800;letter-spacing:-.5px;line-height:1;}
 .scard-lbl{font-size:12px;color:var(--muted);margin-top:4px;}
 .scard-delta{font-size:11px;font-weight:600;margin-top:6px;}
 .up{color:var(--mint2);} .dn{color:var(--red2);} .wn{color:var(--sand);}
@@ -89,15 +89,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);mi
 .ai-txt{font-size:14px;line-height:1.65;color:var(--white);}
 .ai-txt strong{color:var(--olive3);}
 .ai-btns{display:flex;gap:8px;margin-top:14px;}
-.btn-yes{padding:10px 20px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:9px;color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .15s;}
+.btn-yes{padding:10px 20px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:9px;color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:Arial,sans-serif;transition:transform .15s;}
 .btn-yes:active{transform:scale(.96);}
-.btn-no{padding:10px 20px;background:var(--card2);border:1px solid var(--border2);border-radius:9px;color:var(--muted);font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-no{padding:10px 20px;background:var(--card2);border:1px solid var(--border2);border-radius:9px;color:var(--muted);font-weight:600;font-size:13px;cursor:pointer;font-family:Arial,sans-serif;}
 
 /* ── CARD ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);}
 .cp{padding:20px;}
 .card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.card-title{font-family:'Arial Black',Arial,sans-serif;font-size:15px;font-weight:700;}
 .btn-sm{padding:6px 14px;border:1px solid var(--border2);background:transparent;border-radius:8px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
 .btn-sm:hover{border-color:var(--olive);color:var(--olive2);}
 
@@ -118,7 +118,7 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
 .search-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
 .search-wrap{flex:1;min-width:200px;position:relative;}
 .search-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2;}
-.search-inp{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px 11px 40px;font-size:13px;color:var(--white);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.search-inp{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px 11px 40px;font-size:13px;color:var(--white);font-family:Arial,sans-serif;outline:none;transition:border-color .2s;}
 .search-inp:focus{border-color:var(--olive);}
 .search-inp::placeholder{color:var(--muted2);}
 .filt{padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;}
@@ -132,18 +132,18 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
 .pcard.rupt{opacity:.55;border-style:dashed;}
 .p-emo{font-size:34px;margin-bottom:10px;}
 .p-name{font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.3;}
-.p-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:11px;color:var(--muted);margin-bottom:6px;direction:rtl;}
+.p-ar{font-family:Arial,sans-serif;font-size:11px;color:var(--muted);margin-bottom:6px;direction:rtl;}
 .p-sup{font-size:11px;color:var(--olive2);margin-bottom:8px;font-weight:500;}
-.p-price{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--sand);}
+.p-price{font-family:'Arial Black',Arial,sans-serif;font-size:22px;font-weight:800;color:var(--sand);}
 .p-unit{font-size:11px;color:var(--muted);}
 .p-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;margin-top:4px;}
 .qty-row{display:flex;align-items:center;background:var(--card2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-top:12px;}
 .qbtn{width:36px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:700;color:var(--olive2);transition:background .15s;}
 .qbtn:hover{background:rgba(122,154,42,.15);}
-.qval{flex:1;text-align:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.qval{flex:1;text-align:center;font-family:'Arial Black',Arial,sans-serif;font-size:15px;font-weight:700;}
 
 /* ── CART ── */
-.cart-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:4px;}
+.cart-title{font-family:'Arial Black',Arial,sans-serif;font-size:18px;font-weight:800;margin-bottom:4px;}
 .cart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
 .cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted);}
 .cart-empty-ico{font-size:44px;margin-bottom:12px;}
@@ -152,19 +152,19 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
 .citem-info{flex:1;}
 .citem-name{font-size:13px;font-weight:600;}
 .citem-qty{font-size:11px;color:var(--muted);margin-top:2px;}
-.citem-price{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--sand);}
+.citem-price{font-family:'Arial Black',Arial,sans-serif;font-size:14px;font-weight:700;color:var(--sand);}
 .cdel{width:26px;height:26px;background:rgba(201,64,64,.1);border:1px solid rgba(201,64,64,.18);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--red2);flex-shrink:0;}
 .cart-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);}
 .crow{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;}
 .crow span:first-child{color:var(--muted);}
-.crow.tot{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;border-top:1px solid var(--border2);padding-top:10px;margin-top:6px;margin-bottom:14px;}
+.crow.tot{font-family:'Arial Black',Arial,sans-serif;font-size:18px;font-weight:800;border-top:1px solid var(--border2);padding-top:10px;margin-top:6px;margin-bottom:14px;}
 .crow.tot span:last-child{color:var(--sand);}
 .del-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .dopt{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;}
 .dopt.on{border-color:var(--olive);background:rgba(122,154,42,.08);}
 .dopt-t{font-size:12px;font-weight:700;}
 .dopt-s{font-size:10px;color:var(--muted);margin-top:2px;}
-.btn-order{width:100%;padding:14px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:12px;color:white;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(122,154,42,.4);transition:transform .15s;}
+.btn-order{width:100%;padding:14px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:12px;color:white;font-family:'Arial Black',Arial,sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(122,154,42,.4);transition:transform .15s;}
 .btn-order:active{transform:scale(.97);}
 
 /* ── COMPARE ── */
@@ -195,21 +195,21 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.4;}
 .hero-content{position:relative;text-align:center;}
 .hero-badge{display:inline-block;padding:6px 16px;background:rgba(122,154,42,.12);border:1px solid rgba(122,154,42,.2);border-radius:20px;font-size:12px;font-weight:700;color:var(--olive2);letter-spacing:.5px;margin-bottom:20px;}
-.hero-title{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;letter-spacing:-2px;line-height:1.1;margin-bottom:16px;}
+.hero-title{font-family:'Arial Black',Arial,sans-serif;font-size:48px;font-weight:800;letter-spacing:-2px;line-height:1.1;margin-bottom:16px;}
 .hero-title span{color:var(--olive2);}
 .hero-desc{font-size:15px;color:var(--muted);line-height:1.7;max-width:400px;}
 .hero-stats{display:flex;gap:32px;margin-top:36px;justify-content:center;}
-.hstat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--olive2);}
+.hstat-val{font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:800;color:var(--olive2);}
 .hstat-lbl{font-size:12px;color:var(--muted);margin-top:4px;}
-.login-logo{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1.5px;margin-bottom:6px;}
+.login-logo{font-family:'Arial Black',Arial,sans-serif;font-size:32px;font-weight:800;letter-spacing:-1.5px;margin-bottom:6px;}
 .login-logo span{color:var(--olive2);}
 .login-tagline{font-size:13px;color:var(--muted);margin-bottom:36px;}
 .login-box{width:100%;}
 .lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.4px;display:block;margin-bottom:6px;}
-.inp{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:13px 16px;font-size:14px;color:var(--white);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;margin-bottom:14px;}
+.inp{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:13px 16px;font-size:14px;color:var(--white);font-family:Arial,sans-serif;outline:none;transition:border-color .2s;margin-bottom:14px;}
 .inp:focus{border-color:var(--olive);}
 .inp::placeholder{color:var(--muted2);}
-.btn-login{width:100%;padding:15px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:12px;color:white;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(122,154,42,.4);transition:transform .15s,box-shadow .15s;margin-top:4px;}
+.btn-login{width:100%;padding:15px;background:linear-gradient(135deg,var(--olive),var(--olive2));border:none;border-radius:12px;color:white;font-family:'Arial Black',Arial,sans-serif;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(122,154,42,.4);transition:transform .15s,box-shadow .15s;margin-top:4px;}
 .btn-login:hover{box-shadow:0 12px 32px rgba(122,154,42,.5);}
 .btn-login:active{transform:scale(.97);}
 .login-footer{text-align:center;margin-top:20px;font-size:12px;color:var(--muted);}
@@ -224,7 +224,7 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
 /* ── SUCCESS ── */
 #success{display:none;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:40px;background:var(--bg);}
 .s-ring{width:110px;height:110px;background:rgba(61,158,106,.1);border:2px solid var(--mint);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:52px;margin:0 auto 28px;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
-.s-h1{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin-bottom:10px;}
+.s-h1{font-family:'Arial Black',Arial,sans-serif;font-size:36px;font-weight:800;margin-bottom:10px;}
 .s-p{font-size:15px;color:var(--muted);line-height:1.7;max-width:400px;margin:0 auto 32px;}
 .s-details{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;max-width:360px;margin:0 auto 28px;text-align:left;}
 .s-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;}
@@ -237,7 +237,7 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
 #mo{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);z-index:500;display:none;align-items:center;justify-content:center;padding:24px;}
 #mo.on{display:flex;}
 .mo-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:28px;width:100%;max-width:460px;animation:pop .3s cubic-bezier(.34,1.4,.64,1);}
-.mo-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;}
+.mo-title{font-family:'Arial Black',Arial,sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;}
 .mo-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
 
 @media(max-width:1100px){.cart-col{display:none;} .g4{grid-template-columns:repeat(2,1fr);}}
@@ -279,7 +279,7 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
           <span style="font-size:20px;">🍽️</span>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:600;">Café Atlas · Ahmed Benali</div>
-            <div class="demo-item-lbl"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0577607671647077646b71456160686a2b666a68">[email&#160;protected]</a></div>
+            <div class="demo-item-lbl"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c0b2a5b3b4a1b5b2a1aeb480a4a5adafeea3afad">[email&#160;protected]</a></div>
           </div>
           <span class="demo-item-val">Accéder →</span>
         </div>
@@ -377,10 +377,10 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
           <table>
             <thead><tr><th>FOURNISSEUR</th><th>PRODUITS</th><th>MONTANT</th><th>DATE</th><th>STATUT</th></tr></thead>
             <tbody>
-              <tr onclick="toast('📦 ProViande — Livré 7h00')"><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">425 DH</td><td style="color:var(--muted);">Aujourd'hui</td><td><span class="badge bg">Livré ✓</span></td></tr>
-              <tr onclick="toast('🥬 FruitsLég — En route 11h30')"><td><strong>FruitsLég Express</strong></td><td>Légumes saison 8kg</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">186 DH</td><td style="color:var(--muted);">Hier</td><td><span class="badge bo">En route</span></td></tr>
-              <tr onclick="moInvoice()"><td><strong>HuileMax</strong></td><td>Huile d'olive 20L</td><td style="font-family:'Syne',sans-serif;color:var(--red2);font-weight:700;">440 DH</td><td style="color:var(--muted);">13 Jan</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
-              <tr onclick="toast('🧂 EpicesPro — Livré')"><td><strong>EpicesPro</strong></td><td>Épices & condiments</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">290 DH</td><td style="color:var(--muted);">12 Jan</td><td><span class="badge bg">Livré ✓</span></td></tr>
+              <tr onclick="toast('📦 ProViande — Livré 7h00')"><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">425 DH</td><td style="color:var(--muted);">Aujourd'hui</td><td><span class="badge bg">Livré ✓</span></td></tr>
+              <tr onclick="toast('🥬 FruitsLég — En route 11h30')"><td><strong>FruitsLég Express</strong></td><td>Légumes saison 8kg</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">186 DH</td><td style="color:var(--muted);">Hier</td><td><span class="badge bo">En route</span></td></tr>
+              <tr onclick="moInvoice()"><td><strong>HuileMax</strong></td><td>Huile d'olive 20L</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--red2);font-weight:700;">440 DH</td><td style="color:var(--muted);">13 Jan</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
+              <tr onclick="toast('🧂 EpicesPro — Livré')"><td><strong>EpicesPro</strong></td><td>Épices & condiments</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">290 DH</td><td style="color:var(--muted);">12 Jan</td><td><span class="badge bg">Livré ✓</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -440,11 +440,11 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
           <table>
             <thead><tr><th>#</th><th>FOURNISSEUR</th><th>PRODUITS</th><th>MONTANT</th><th>DATE</th><th>LIVRAISON</th><th>STATUT</th></tr></thead>
             <tbody>
-              <tr onclick="toast('📦 #2841 ProViande — Détails')"><td style="color:var(--muted);">#2841</td><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">425 DH</td><td style="color:var(--muted);">Auj</td><td style="color:var(--muted);">7h00</td><td><span class="badge bg">Livré</span></td></tr>
-              <tr onclick="toast('🥬 #2840 En route, livraison 11h30')"><td style="color:var(--muted);">#2840</td><td><strong>FruitsLég Express</strong></td><td>Légumes 8kg</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">186 DH</td><td style="color:var(--muted);">Hier</td><td style="color:var(--muted);">11h30</td><td><span class="badge bo">En route</span></td></tr>
-              <tr onclick="moInvoice()"><td style="color:var(--muted);">#2839</td><td><strong>HuileMax</strong></td><td>Huile olive 20L</td><td style="font-family:'Syne',sans-serif;color:var(--red2);font-weight:700;">440 DH</td><td style="color:var(--muted);">13 Jan</td><td style="color:var(--muted);">—</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
-              <tr onclick="toast('🧂 #2838 Livré')"><td style="color:var(--muted);">#2838</td><td><strong>EpicesPro</strong></td><td>Épices</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">290 DH</td><td style="color:var(--muted);">12 Jan</td><td style="color:var(--muted);">8h00</td><td><span class="badge bg">Livré</span></td></tr>
-              <tr onclick="toast('🥛 #2837 Livré')"><td style="color:var(--muted);">#2837</td><td><strong>LaitiersNord</strong></td><td>Fromage, lait</td><td style="font-family:'Syne',sans-serif;color:var(--sand);font-weight:700;">340 DH</td><td style="color:var(--muted);">11 Jan</td><td style="color:var(--muted);">7h30</td><td><span class="badge bg">Livré</span></td></tr>
+              <tr onclick="toast('📦 #2841 ProViande — Détails')"><td style="color:var(--muted);">#2841</td><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">425 DH</td><td style="color:var(--muted);">Auj</td><td style="color:var(--muted);">7h00</td><td><span class="badge bg">Livré</span></td></tr>
+              <tr onclick="toast('🥬 #2840 En route, livraison 11h30')"><td style="color:var(--muted);">#2840</td><td><strong>FruitsLég Express</strong></td><td>Légumes 8kg</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">186 DH</td><td style="color:var(--muted);">Hier</td><td style="color:var(--muted);">11h30</td><td><span class="badge bo">En route</span></td></tr>
+              <tr onclick="moInvoice()"><td style="color:var(--muted);">#2839</td><td><strong>HuileMax</strong></td><td>Huile olive 20L</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--red2);font-weight:700;">440 DH</td><td style="color:var(--muted);">13 Jan</td><td style="color:var(--muted);">—</td><td><span class="badge br">⚠ Anomalie</span></td></tr>
+              <tr onclick="toast('🧂 #2838 Livré')"><td style="color:var(--muted);">#2838</td><td><strong>EpicesPro</strong></td><td>Épices</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">290 DH</td><td style="color:var(--muted);">12 Jan</td><td style="color:var(--muted);">8h00</td><td><span class="badge bg">Livré</span></td></tr>
+              <tr onclick="toast('🥛 #2837 Livré')"><td style="color:var(--muted);">#2837</td><td><strong>LaitiersNord</strong></td><td>Fromage, lait</td><td style="font-family:'Arial Black',Arial,sans-serif;color:var(--sand);font-weight:700;">340 DH</td><td style="color:var(--muted);">11 Jan</td><td style="color:var(--muted);">7h30</td><td><span class="badge bg">Livré</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -461,11 +461,11 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
         <div class="two-col">
           <div class="card cp">
             <div class="card-title" style="margin-bottom:16px;">Dépenses par catégorie</div>
-            <div class="prog-row"><div class="prog-head"><span>🥩 Viandes</span><span style="font-family:'Syne',sans-serif;font-weight:700;">3 200 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:38%;background:linear-gradient(90deg,var(--olive),var(--olive2));"></div></div></div>
-            <div class="prog-row"><div class="prog-head"><span>🥬 Légumes</span><span style="font-family:'Syne',sans-serif;font-weight:700;">1 800 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:21%;background:linear-gradient(90deg,var(--mint),var(--mint2));"></div></div></div>
-            <div class="prog-row"><div class="prog-head"><span>🫙 Huiles</span><span style="font-family:'Syne',sans-serif;font-weight:700;">1 400 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:17%;background:linear-gradient(90deg,var(--sand),var(--sand2));"></div></div></div>
-            <div class="prog-row"><div class="prog-head"><span>🥛 Laitiers</span><span style="font-family:'Syne',sans-serif;font-weight:700;">1 020 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,var(--terr),var(--terr2));"></div></div></div>
-            <div class="prog-row"><div class="prog-head"><span>🧂 Épices</span><span style="font-family:'Syne',sans-serif;font-weight:700;">1 000 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,#8A6A9A,#A48AB4);"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🥩 Viandes</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">3 200 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:38%;background:linear-gradient(90deg,var(--olive),var(--olive2));"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🥬 Légumes</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">1 800 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:21%;background:linear-gradient(90deg,var(--mint),var(--mint2));"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🫙 Huiles</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">1 400 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:17%;background:linear-gradient(90deg,var(--sand),var(--sand2));"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🥛 Laitiers</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">1 020 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,var(--terr),var(--terr2));"></div></div></div>
+            <div class="prog-row"><div class="prog-head"><span>🧂 Épices</span><span style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">1 000 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,#8A6A9A,#A48AB4);"></div></div></div>
           </div>
           <div class="card cp">
             <div class="card-title" style="margin-bottom:16px;">Évolution dépenses · 7 jours</div>
@@ -496,7 +496,7 @@ tr:hover td{background:rgba(38,48,18,.4);cursor:pointer;}
         </div>
       </div>
       <div class="cart-footer" id="cart-foot" style="display:none;">
-        <div class="crow"><span>Sous-total</span><span id="cv-sub" style="font-family:'Syne',sans-serif;font-weight:700;">0 DH</span></div>
+        <div class="crow"><span>Sous-total</span><span id="cv-sub" style="font-family:'Arial Black',Arial,sans-serif;font-weight:700;">0 DH</span></div>
         <div class="crow"><span>Économie IA</span><span id="cv-sav" style="color:var(--olive2);font-weight:600;">−0 DH</span></div>
         <div class="del-opts">
           <div class="dopt on" id="do-std" onclick="setDel('std')"><div class="dopt-t">Standard</div><div class="dopt-s">Demain 7h · Gratuit</div></div>
@@ -673,8 +673,8 @@ function moInvoice(){
       L'IA a détecté un écart de facturation. 3ème incident avec ce fournisseur ce trimestre. Contestation recommandée.
     </div>
     <div style="display:flex;gap:10px;">
-      <button style="flex:1;padding:12px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:10px;color:white;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="closeMo();toast('📧 Contestation envoyée à HuileMax')">Contester</button>
-      <button style="flex:1;padding:12px;background:transparent;border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="closeMo()">Accepter</button>
+      <button style="flex:1;padding:12px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:10px;color:white;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;" onclick="closeMo();toast('📧 Contestation envoyée à HuileMax')">Contester</button>
+      <button style="flex:1;padding:12px;background:transparent;border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-weight:600;cursor:pointer;font-family:Arial,sans-serif;" onclick="closeMo()">Accepter</button>
     </div>`);
 }
 
