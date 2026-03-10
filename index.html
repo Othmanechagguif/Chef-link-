@@ -376,11 +376,12 @@ select.finp option{background:var(--dark3);}
       <input class="form-input" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
       <button class="btn-login" onclick="login()">ACCÉDER</button>
       <div style="margin-top:20px;text-align:center;font-size:11px;color:#555;">
-        Pas encore de compte ? <span style="color:#00FF88;cursor:pointer" onclick="toast('Contactez contact@mazaya.ma')">Contacter Mazaya →</span>
+        Accès sur invitation uniquement — <span style="color:#00FF88;">contact@mazaya.ma</span>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- ══ APP ══ -->
 <div id="app">
@@ -1206,22 +1207,94 @@ function savePrice(id) {
 }
 
 function moAddUser(role) {
-  const label = role === 'restaurant' ? 'Restaurant' : 'Fournisseur';
-  openMo(`<div class="mo-title">Nouveau ${label}</div>
-    <div class="mo-sub">Créer un compte sur la plateforme</div>
+  const isResto = role === 'restaurant';
+  const color = isResto ? 'var(--green)' : 'var(--gold)';
+  const icon = isResto ? '🍽️' : '🏭';
+  const label = isResto ? 'Restaurant' : 'Fournisseur';
+  const perks = isResto
+    ? ['Commander chez tous les fournisseurs','Comparer les prix en temps réel','Voir et contester les factures','Dashboard analytiques & food cost']
+    : ['Recevoir des commandes restaurants','Ajouter & gérer ses produits','Voir les statistiques de ventes','Suivre les paiements & relances'];
+
+  openMo(`<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:rgba(${isResto?'0,255,136':'255,184,0'},.08);border:1px solid rgba(${isResto?'0,255,136':'255,184,0'},.15);display:flex;align-items:center;justify-content:center;font-size:20px;">${icon}</div>
+      <div><div class="mo-title" style="margin-bottom:0">Nouveau ${label}</div><div style="font-size:11px;color:${color};letter-spacing:.5px;">MAZAYA · ACCÈS ${label.toUpperCase()}</div></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:14px 0;">
+      ${perks.map(p => `<div style="font-size:10px;padding:3px 8px;background:rgba(${isResto?'0,255,136':'255,184,0'},.05);border:1px solid rgba(${isResto?'0,255,136':'255,184,0'},.12);border-radius:4px;color:var(--grey);">${p}</div>`).join('')}
+    </div>
+    <div style="width:100%;height:1px;background:var(--border);margin-bottom:16px;"></div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-      <div class="fg"><label class="flbl">Nom</label><input class="finp" placeholder="Nom du ${label.toLowerCase()}" style="width:100%"></div>
-      <div class="fg"><label class="flbl">Email</label><input class="finp" type="email" placeholder="email@exemple.ma" style="width:100%"></div>
-      <div class="fg"><label class="flbl">Ville</label><input class="finp" placeholder="Casablanca" style="width:100%"></div>
+      <div class="fg"><label class="flbl">Nom / Entreprise</label><input class="finp" id="mu-name" placeholder="${isResto ? 'Café Atlas ou Ahmed Benali' : 'ProViande SARL'}" style="width:100%"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="fg"><label class="flbl">Email</label><input class="finp" id="mu-email" type="email" placeholder="email@exemple.ma" style="width:100%"></div>
+        <div class="fg"><label class="flbl">Ville</label><input class="finp" id="mu-ville" placeholder="Casablanca" style="width:100%"></div>
+      </div>
+      <div class="fg"><label class="flbl">Mot de passe temporaire</label>
+        <div style="position:relative;">
+          <input class="finp" id="mu-pass" type="text" value="Mazaya2026!" style="width:100%;padding-right:80px;">
+          <div onclick="document.getElementById('mu-pass').value=Math.random().toString(36).slice(2,10)+'!A'" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--green);cursor:pointer;font-weight:700;">GÉNÉRER</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(${isResto?'0,255,136':'255,184,0'},.04);border:1px solid rgba(${isResto?'0,255,136':'255,184,0'},.1);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--grey);margin-bottom:14px;">
+      ⚡ Le compte sera actif immédiatement. Communique les identifiants au ${label.toLowerCase()} en privé.
     </div>
     <div style="display:flex;gap:8px">
-      <button class="btn-primary" style="flex:1" onclick="closeMo();toast('✅ Compte créé — invitation envoyée')">Créer le compte</button>
+      <button class="btn-primary" style="flex:1;background:${color};color:var(--black)" id="mu-btn" onclick="adminCreateUser('${role}')">CRÉER LE COMPTE</button>
       <button class="btn-secondary" onclick="closeMo()">Annuler</button>
     </div>`);
 }
 
+async function adminCreateUser(role) {
+  const name = document.getElementById('mu-name').value.trim();
+  const email = document.getElementById('mu-email').value.trim().toLowerCase();
+  const pass = document.getElementById('mu-pass').value;
+  const ville = document.getElementById('mu-ville').value.trim() || 'Maroc';
+  if (!name || !email || !pass) { toast('❌ Remplis tous les champs'); return; }
+  if (pass.length < 6) { toast('❌ Mot de passe trop court (min 6)'); return; }
+  const btn = document.getElementById('mu-btn');
+  const origText = btn.textContent;
+  btn.textContent = 'CRÉATION...';
+  try {
+    const { data, error } = await sb.auth.signUp({ email, password: pass });
+    if (error) { toast('❌ ' + error.message); btn.textContent = origText; return; }
+    if (data.user) {
+      const { error: dbErr } = await sb.from('users').insert({
+        id: data.user.id, email, name, role, company: name, ville
+      });
+      if (dbErr) { toast('⚠️ Auth OK mais profil: ' + dbErr.message); return; }
+      closeMo();
+      toast('✅ ' + name + ' — compte ' + role + ' créé !');
+      // Refresh current panel
+      setTimeout(() => navigateTo(currentPanel), 500);
+    }
+  } catch(e) { toast('❌ ' + e.message); btn.textContent = origText; }
+}
+
+async function adminCreateUser(role) {
+  const name = document.getElementById('mu-name').value.trim();
+  const email = document.getElementById('mu-email').value.trim();
+  const pass = document.getElementById('mu-pass').value;
+  const ville = document.getElementById('mu-ville').value.trim();
+  if (!name || !email || !pass) { toast('Remplis tous les champs'); return; }
+  const btn = document.getElementById('mu-btn');
+  btn.textContent = 'Création...';
+  try {
+    const { data, error } = await sb.auth.signUp({ email, password: pass });
+    if (error) { toast('Erreur: ' + error.message); btn.textContent = 'Créer le compte'; return; }
+    if (data.user) {
+      await sb.from('users').insert({ id: data.user.id, email, name, role, company: name, ville: ville || 'Maroc' });
+      closeMo();
+      toast('Compte créé — ' + email);
+    }
+  } catch(e) { toast('Erreur: ' + e.message); btn.textContent = 'Créer le compte'; }
+}
+
 function openMo(h) { document.getElementById('mo-body').innerHTML = h; document.getElementById('mo').classList.add('on'); }
 function closeMo() { document.getElementById('mo').classList.remove('on'); }
+
+
+
 
 // ══ UTILS ══
 let tT;
