@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChefLink</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --black:#000000;--dark:#050505;--dark2:#0A0A0A;--dark3:#111111;--dark4:#1A1A1A;
@@ -433,7 +434,13 @@ let MY_PRODS = [
   {id:3,emo:'🐑',name:'Agneau épaule',price:115,unit:'kg',cat:'viande',rupt:false},
 ];
 
-const USERS = {
+// ══ SUPABASE ══
+const SUPABASE_URL = 'https://usslajplsapxzxfrcxlk.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzc2xhanBsc2FweHp4ZnJjeGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTgxOTIsImV4cCI6MjA4ODYzNDE5Mn0.dRRJ9tnk5rRNPRWtihhnVrG23nVj3z-UFi4sb0oEtwg';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// Demo users fallback (utilisé si Supabase non disponible)
+const DEMO_USERS = {
   'restaurant@demo.com': {pass:'demo123',role:'restaurant',name:'Ahmed Benali',company:'Café Atlas'},
   'fournisseur@demo.com': {pass:'demo123',role:'fournisseur',name:'Karim Mansouri',company:'ProViande SARL'},
   'admin@cheflink.ma': {pass:'admin123',role:'admin',name:'Admin ChefLink',company:'ChefLink HQ'},
@@ -448,11 +455,31 @@ let activeCat = 'all';
 let searchQ = '';
 
 // ══ AUTH ══
-function login() {
+async function login() {
   const e = document.getElementById('l-email').value.trim().toLowerCase();
   const p = document.getElementById('l-pass').value;
   if (!e || !p) { toast('Remplis tous les champs'); return; }
-  const u = USERS[e];
+
+  const btn = document.querySelector('.btn-login');
+  btn.textContent = 'CONNEXION...';
+
+  // Essayer Supabase auth
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email: e, password: p });
+    if (!error && data.user) {
+      // Récupérer le profil depuis la table users
+      const { data: profile } = await sb.from('users').select('*').eq('id', data.user.id).single();
+      if (profile) {
+        btn.textContent = 'ACCÉDER';
+        startApp({ name: profile.name, role: profile.role, company: profile.company, id: data.user.id });
+        return;
+      }
+    }
+  } catch(err) {}
+
+  // Fallback démo
+  const u = DEMO_USERS[e];
+  btn.textContent = 'ACCÉDER';
   if (!u || u.pass !== p) { toast('❌ Identifiants incorrects'); return; }
   startApp(u);
 }
@@ -463,8 +490,45 @@ function quickLogin(role) {
     fournisseur: 'fournisseur@demo.com',
     admin: 'admin@cheflink.ma'
   };
-  const u = USERS[map[role]];
+  const u = DEMO_USERS[map[role]];
   startApp(u);
+}
+
+// Charger produits depuis Supabase si disponible
+async function loadProdsFromDB(fournisseurId) {
+  try {
+    const { data, error } = await sb.from('produits').select('*').eq('fournisseur_id', fournisseurId);
+    if (!error && data && data.length > 0) {
+      MY_PRODS = data.map(p => ({
+        id: p.id, emo: p.emoji || '📦', name: p.nom,
+        price: p.prix, unit: p.unite, cat: p.categorie, rupt: p.rupture
+      }));
+      if (currentPanel === 'prod') renderMyProds();
+    }
+  } catch(e) {}
+}
+
+// Sauvegarder commande dans Supabase
+async function saveOrderToDB(items, total, livraison) {
+  if (!currentUser.id) return null;
+  try {
+    const { data: cmd } = await sb.from('commandes').insert({
+      restaurant_id: currentUser.id,
+      montant: total,
+      statut: 'confirme',
+      livraison: livraison
+    }).select().single();
+    if (cmd) {
+      const lignes = items.map(item => ({
+        commande_id: cmd.id,
+        produit_id: typeof item.id === 'number' ? null : item.id,
+        quantite: item.qty,
+        prix_unitaire: item.price
+      }));
+      await sb.from('commande_items').insert(lignes);
+    }
+    return cmd;
+  } catch(e) { return null; }
 }
 
 function startApp(u) {
@@ -1010,19 +1074,25 @@ function renderCart() {
     </div>` : ''}`;
 }
 
-function confirmOrder() {
+async function confirmOrder() {
   const n = Object.values(cart).reduce((s,q)=>s+q,0);
   if (!n) { toast('Panier vide'); return; }
-  const sub = Object.entries(cart).reduce((s,[id,q])=>{const p=PRODS.find(x=>x.id==id);return s+(p?p.price*q:0);},0);
+  const items = Object.entries(cart).map(([id,q]) => ({...PRODS.find(p=>p.id==id), qty:q})).filter(p=>p.id);
+  const sub = items.reduce((s,p)=>s+p.price*p.qty, 0);
   const sav = Math.round(sub*.06);
   const del = delMode==='exp'?30:0;
   const tot = sub+del-sav;
+
+  // Sauvegarder dans Supabase
+  const cmd = await saveOrderToDB(items, tot, delMode);
+  const num = cmd ? cmd.id.slice(0,6).toUpperCase() : Math.floor(Math.random()*9000+1000);
+
   document.getElementById('s-det').innerHTML = `
-    <div class="s-row"><span>Numéro</span><span>#${Math.floor(Math.random()*9000+1000)}</span></div>
+    <div class="s-row"><span>Numéro</span><span>#${num}</span></div>
     <div class="s-row"><span>Articles</span><span>${n} article${n>1?'s':''}</span></div>
     <div class="s-row"><span>Total</span><span>${tot} DH</span></div>
     <div class="s-row"><span>Livraison</span><span>${delMode==='exp'?'Express ~45 min':'Demain 7h00'}</span></div>
-    <div class="s-row"><span>Statut</span><span style="color:var(--green)">Confirmé ✓</span></div>`;
+    <div class="s-row"><span>Statut</span><span style="color:var(--green)">${cmd?'Enregistré ✓':'Confirmé ✓'}</span></div>`;
   Object.keys(cart).forEach(k=>delete cart[k]);
   document.getElementById('app').style.display = 'none';
   document.getElementById('success').style.display = 'flex';
@@ -1052,14 +1122,29 @@ function toggleRupt(id) {
   toast(p.rupt ? `⚠ ${p.name} en rupture` : `✓ ${p.name} disponible`);
 }
 
-function addMyProd() {
+async function addMyProd() {
   const name = document.getElementById('np-name').value.trim();
   const price = parseFloat(document.getElementById('np-price').value);
   const unit = document.getElementById('np-unit').value;
   const cat = document.getElementById('np-cat').value;
   const emo = document.getElementById('np-emo').value || '📦';
   if (!name || !price) { toast('❌ Remplis le nom et le prix'); return; }
-  MY_PRODS.push({id:Date.now(),emo,name,price,unit,cat,rupt:false});
+
+  const newProd = {id:Date.now(),emo,name,price,unit,cat,rupt:false};
+
+  // Sauvegarder dans Supabase si connecté
+  if (currentUser.id) {
+    try {
+      const { data } = await sb.from('produits').insert({
+        fournisseur_id: currentUser.id,
+        nom: name, prix: price, unite: unit,
+        categorie: cat, emoji: emo, rupture: false
+      }).select().single();
+      if (data) newProd.id = data.id;
+    } catch(e) {}
+  }
+
+  MY_PRODS.push(newProd);
   ['np-name','np-price','np-emo'].forEach(i => document.getElementById(i).value='');
   renderMyProds();
   toast(`✅ ${emo} ${name} ajouté`);
