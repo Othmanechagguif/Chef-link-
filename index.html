@@ -4,7 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mazaya · مزايا · منصة المطاعم</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;600&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mazaya">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;600&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -23,6 +32,32 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
 ::-webkit-scrollbar-track{background:var(--dark);}
 ::-webkit-scrollbar-thumb{background:var(--green2);}
 
+
+
+/* ── BOTTOM NAV ── */
+#bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(5,5,5,.97);
+  border-top:1px solid var(--border);
+  padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+  z-index:300;
+  justify-content:space-around;
+  align-items:center;
+}
+.bnav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 12px;cursor:pointer;color:var(--grey);
+  transition:color .15s;flex:1;
+}
+.bnav-item.active{color:var(--green);}
+.bnav-item.active-gold{color:var(--gold);}
+.bnav-item.active-blue{color:var(--blue);}
+.bnav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;}
+.bnav-item span{font-size:9px;font-weight:600;letter-spacing:.3px;}
+@media(max-width:768px){
+  .main{padding-bottom:80px !important;}
+}
 
 /* ── MAZAYA LOGO ── */
 .mz-logo { display:flex; flex-direction:column; align-items:flex-start; gap:0px; }
@@ -319,15 +354,65 @@ select.finp option{background:var(--dark3);}
 .mo-row:last-of-type{border:none;}
 .mo-row span:last-child{color:var(--white);font-weight:600;}
 
-@media(max-width:1100px){.cart-panel{display:none;}.g4{grid-template-columns:repeat(2,1fr);}}
+/* ── TABLET ── */
+@media(max-width:1100px){
+  .cart-panel{display:none !important;}
+  .g4{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ── MOBILE ── */
 @media(max-width:768px){
-  .login-right{width:100%;border-left:none;}.login-left{display:none;}
-  .main{padding:16px;}.sidebar{width:48px;padding:10px 4px;}
-  .sidebar .nav-item span,.sidebar .nav-section,.sidebar .nav-badge{display:none;}
-  .sidebar .nav-item{justify-content:center;padding:9px;}
+  /* Login */
+  .login-left{display:none;}
+  .login-right{width:100%;border-left:none;padding:32px 24px;}
+
+  /* App layout — single column */
+  #app{flex-direction:column;}
+  .app-body{flex-direction:column;}
+  .sidebar{display:none !important;}
+  .cart-panel{display:none !important;}
+  .main{padding:12px;width:100%;min-width:0;}
+
+  /* Bottom nav bar */
+  #bottom-nav{display:flex !important;}
+
+  /* Grids */
   .g4,.g3{grid-template-columns:repeat(2,1fr);}
+  .g2{grid-template-columns:1fr;}
   .two-col{grid-template-columns:1fr;}
   .form-grid{grid-template-columns:1fr;}
+
+  /* Topbar */
+  .topbar{padding:0 12px;}
+  .tb-user{display:none;}
+
+  /* Tables — scroll horizontal */
+  .card{overflow-x:auto;}
+  table{min-width:500px;}
+
+  /* Page header */
+  .ph{flex-direction:column;align-items:flex-start;gap:8px;}
+  .ph h1{font-size:28px;}
+
+  /* Stat cards */
+  .scard-val{font-size:24px;}
+
+  /* Search row */
+  .search-row{gap:6px;}
+  .filt{font-size:10px;padding:7px 10px;}
+
+  /* Product grid */
+  .prod-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .pcard{padding:10px;}
+  .p-price{font-size:20px;}
+
+  /* Login form */
+  .login-headline{font-size:44px !important;}
+  .form-input{padding:13px 14px;}
+  .btn-login{padding:15px;}
+
+  /* Modal */
+  .mo-box{padding:20px;margin:12px;}
 }
 </style>
 </head>
@@ -1362,5 +1447,109 @@ function setF(el) {
   el.classList.add('on');
 }
 </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log('Mazaya SW ready'))
+      .catch(e => console.log('SW error:', e));
+  });
+}
+
+// PWA install prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show install banner after login
+  setTimeout(() => {
+    if (deferredPrompt) showInstallBanner();
+  }, 3000);
+});
+
+function showInstallBanner() {
+  const app = document.getElementById('app');
+  if (!app || app.style.display === 'none') return;
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.innerHTML = `
+    <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;border:1px solid #222;border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.8);max-width:340px;width:90%;">
+      <div style="font-size:28px;">📱</div>
+      <div style="flex:1;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;">Installer Mazaya</div>
+        <div style="font-size:11px;color:#666;margin-top:2px;">Accès rapide depuis l'écran d'accueil</div>
+      </div>
+      <button onclick="installApp()" style="padding:8px 14px;background:#00FF88;border:none;border-radius:6px;color:#000;font-weight:700;font-size:12px;cursor:pointer;">Installer</button>
+      <div onclick="document.getElementById('install-banner').remove()" style="color:#444;cursor:pointer;font-size:18px;padding:4px;">✕</div>
+    </div>`;
+  document.body.appendChild(banner);
+}
+
+async function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner')?.remove();
+  if (outcome === 'accepted') toast('✅ Mazaya installé !');
+}
+</script>
+
+<!-- BOTTOM NAV MOBILE -->
+<div id="bottom-nav"></div>
+
 </body>
 </html>
+<script>
+// ── BOTTOM NAV MOBILE ──
+const BNAV = {
+  restaurant: [
+    {id:'dash', icon:'<svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>', label:'Home'},
+    {id:'cmd',  icon:'<svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>', label:'Commander'},
+    {id:'cmp',  icon:'<svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/></svg>', label:'Prix'},
+    {id:'ord',  icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>', label:'Commandes'},
+    {id:'ana',  icon:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>', label:'Stats'},
+  ],
+  fournisseur: [
+    {id:'dash',  icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>', label:'Home'},
+    {id:'prod',  icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>', label:'Produits'},
+    {id:'cmd',   icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>', label:'Commandes'},
+    {id:'pay',   icon:'<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>', label:'Paiements'},
+    {id:'stats', icon:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>', label:'Stats'},
+  ],
+  admin: [
+    {id:'dash', icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>', label:'Global'},
+    {id:'cmd',  icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>', label:'Commandes'},
+    {id:'rest', icon:'<svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>', label:'Restos'},
+    {id:'four', icon:'<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>', label:'Fournis.'},
+    {id:'lit',  icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>', label:'Litiges'},
+  ]
+};
+
+function buildBottomNav() {
+  const bn = document.getElementById('bottom-nav');
+  if (!bn || !currentRole) return;
+  const items = BNAV[currentRole] || [];
+  const ac = currentRole === 'restaurant' ? 'active' : currentRole === 'fournisseur' ? 'active-gold' : 'active-blue';
+  bn.innerHTML = items.map(item =>
+    `<div class="bnav-item${currentPanel===item.id?' '+ac:''}" id="bn-${item.id}" onclick="navigateTo('${item.id}')">
+      ${item.icon}<span>${item.label}</span>
+    </div>`
+  ).join('');
+}
+
+// Patch navigateTo to also update bottom nav
+const _origNavigate = navigateTo;
+navigateTo = function(id) {
+  _origNavigate(id);
+  buildBottomNav();
+};
+
+// Patch startApp to build bottom nav
+const _origStartApp = startApp;
+startApp = function(u) {
+  _origStartApp(u);
+  setTimeout(buildBottomNav, 100);
+};
+</script>
