@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChefLink</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>Mazaya · مزايا · منصة المطاعم</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;600&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -22,6 +22,13 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:var(--dark);}
 ::-webkit-scrollbar-thumb{background:var(--green2);}
+
+
+/* ── MAZAYA LOGO ── */
+.mz-logo { display:flex; flex-direction:column; align-items:flex-start; gap:0px; }
+.mz-en { font-family:'Cormorant Garamond',serif; font-weight:300; letter-spacing:14px; text-transform:uppercase; color:var(--white); line-height:1; }
+.mz-ar { font-family:'Noto Naskh Arabic',serif; font-weight:400; color:var(--green); direction:rtl; line-height:1.2; }
+.mz-line { width:100%; height:1px; background:linear-gradient(90deg,var(--green),transparent); margin:3px 0; }
 
 /* ── FONTS ── */
 .bebas{font-family:'Bebas Neue',sans-serif;letter-spacing:.5px;}
@@ -338,10 +345,13 @@ select.finp option{background:var(--dark3);}
   </div>
   <div class="login-left">
     <div class="brand-logo">
-      <div class="brand-logo-text">CHEF<span style="color:var(--green)">LINK</span></div>
-      <div class="brand-logo-dot"></div>
+      <div class="mz-logo" style="margin-bottom:60px;">
+        <div class="mz-en" style="font-size:56px;">MAZAYA</div>
+        <div class="mz-line"></div>
+        <div class="mz-ar" style="font-size:26px;letter-spacing:6px;">مَزايا</div>
+      </div>
     </div>
-    <div class="login-headline">LE SYSTÈME<br>D'EXPLOITATION<br>DE LA <span>RESTAURATION</span></div>
+    <div class="login-headline" style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:72px;letter-spacing:-1px;">Le système<br>d'exploitation<br>de la <span>restauration</span></div>
     <div class="login-sub">Commandez, négociez et gérez tous vos fournisseurs depuis une seule interface. L'IA travaille pour vous 24h/24.</div>
     <div class="stats-row">
       <div class="stat-item"><div class="stat-val">−18%</div><div class="stat-lbl">Dépenses moyennes</div></div>
@@ -351,15 +361,22 @@ select.finp option{background:var(--dark3);}
   </div>
   <div class="login-right">
     <div class="login-form">
-      <div class="form-logo">CHEF<span style="color:var(--green)">LINK</span></div>
-      <div class="form-tagline">Connectez-vous à votre espace</div>
+      <div class="mz-logo" style="margin-bottom:4px;">
+          <div class="mz-en" style="font-size:32px;">MAZAYA</div>
+          <div class="mz-line"></div>
+          <div class="mz-ar" style="font-size:15px;letter-spacing:4px;">مَزايا</div>
+        </div>
+      <div style="margin:10px 0 28px;">
+          <div style="font-size:13px;color:var(--grey);font-style:italic;font-family:'Cormorant Garamond',serif;line-height:1.5;">Le système d'exploitation<br>de la restauration au Maghreb</div>
+          <div style="width:40px;height:1px;background:var(--green);margin-top:10px;"></div>
+        </div>
       <label class="form-label">Email</label>
-      <input class="form-input" id="l-email" type="email" placeholder="vous@cheflink.ma">
+      <input class="form-input" id="l-email" type="email" placeholder="vous@mazaya.ma">
       <label class="form-label">Mot de passe</label>
       <input class="form-input" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
       <button class="btn-login" onclick="login()">ACCÉDER</button>
       <div style="margin-top:20px;text-align:center;font-size:11px;color:#555;">
-        Pas encore de compte ? <span style="color:#00FF88;cursor:pointer" onclick="toast('Contactez contact@cheflink.ma')">Contacter ChefLink →</span>
+        Pas encore de compte ? <span style="color:#00FF88;cursor:pointer" onclick="toast('Contactez contact@mazaya.ma')">Contacter Mazaya →</span>
       </div>
     </div>
   </div>
@@ -369,7 +386,10 @@ select.finp option{background:var(--dark3);}
 <div id="app">
   <div class="topbar">
     <div class="tb-left">
-      <div class="tb-logo">CHEF<span>LINK</span></div>
+      <div style="display:flex;flex-direction:column;line-height:1;">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:18px;letter-spacing:8px;color:var(--white)">MAZAYA</div>
+          <div style="font-family:'Noto Naskh Arabic',serif;font-size:11px;color:var(--green);direction:rtl;letter-spacing:2px;">مَزايا</div>
+        </div>
       <div class="tb-role" id="tb-role">—</div>
     </div>
     <div class="tb-right">
@@ -428,7 +448,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const DEMO_USERS = {
   'restaurant@demo.com': {pass:'demo123',role:'restaurant',name:'Ahmed Benali',company:'Café Atlas'},
   'fournisseur@demo.com': {pass:'demo123',role:'fournisseur',name:'Karim Mansouri',company:'ProViande SARL'},
-  'admin@cheflink.ma': {pass:'admin123',role:'admin',name:'Admin ChefLink',company:'ChefLink HQ'},
+  'admin@mazaya.ma': {pass:'admin123',role:'admin',name:'Admin Mazaya',company:'Mazaya HQ'},
 };
 
 let currentUser = null;
@@ -473,7 +493,7 @@ function quickLogin(role) {
   const map = {
     restaurant: 'restaurant@demo.com',
     fournisseur: 'fournisseur@demo.com',
-    admin: 'admin@cheflink.ma'
+    admin: 'admin@mazaya.ma'
   };
   const u = DEMO_USERS[map[role]];
   startApp(u);
@@ -754,7 +774,7 @@ function fournisseurPanel(id) {
       <div class="scard" onclick="navigateTo('stats')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">12 480</div><div class="scard-lbl">CA ce mois (DH)</div><div class="scard-delta up">↑ 24%</div></div>
       <div class="scard" onclick="navigateTo('cmd')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">📦</div><div class="scard-val">18</div><div class="scard-lbl">Commandes reçues</div><div class="scard-delta up">↑ 6 nouvelles</div></div>
       <div class="scard" onclick="navigateTo('pay')"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">⏳</div><div class="scard-val">3 200</div><div class="scard-lbl">Impayés (DH)</div><div class="scard-delta dn">2 restaurants</div></div>
-      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">⭐</div><div class="scard-val">92/100</div><div class="scard-lbl">Score ChefLink</div><div class="scard-delta up">↑ 3 pts</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">⭐</div><div class="scard-val">92/100</div><div class="scard-lbl">Score Mazaya</div><div class="scard-delta up">↑ 3 pts</div></div>
     </div>
     <div class="card" style="margin-bottom:16px;">
       <div class="card-head"><div class="card-title" style="color:var(--red)">⚠ Paiements en retard</div><button class="btn-sm" onclick="navigateTo('pay')">Voir tout →</button></div>
@@ -857,7 +877,7 @@ function fournisseurPanel(id) {
 // ══ ADMIN PANELS ══
 function adminPanel(id) {
   if (id === 'dash') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Vue globale</h1><p>ChefLink HQ · 9 Mars 2026 · <span style="color:var(--green)"><span class="sdot sdot-green"></span>Système opérationnel</span></p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">Vue globale</h1><p>Mazaya HQ · 9 Mars 2026 · <span style="color:var(--green)"><span class="sdot sdot-green"></span>Système opérationnel</span></p></div></div>
     <div class="stat-grid g4">
       <div class="scard" onclick="navigateTo('rest')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">🍽️</div><div class="scard-val">7</div><div class="scard-lbl">Restaurants actifs</div><div class="scard-delta up">↑ 2 ce mois</div></div>
       <div class="scard" onclick="navigateTo('four')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">🏭</div><div class="scard-val">5</div><div class="scard-lbl">Fournisseurs actifs</div><div class="scard-delta up">+1 cette semaine</div></div>
@@ -866,7 +886,7 @@ function adminPanel(id) {
     </div>
     <div class="stat-grid g4">
       <div class="scard" onclick="navigateTo('lit')"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">⚠</div><div class="scard-val">2</div><div class="scard-lbl">Litiges actifs</div><div class="scard-delta dn">Attention requise</div></div>
-      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">💳</div><div class="scard-val">2 097</div><div class="scard-lbl">Revenus ChefLink (DH)</div><div class="scard-delta up">3.07% commission</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">💳</div><div class="scard-val">2 097</div><div class="scard-lbl">Revenus Mazaya (DH)</div><div class="scard-delta up">3.07% commission</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">⭐</div><div class="scard-val">84</div><div class="scard-lbl">Score moyen fournisseurs</div><div class="scard-delta up">↑ 2 pts</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">📈</div><div class="scard-val">94%</div><div class="scard-lbl">Livraisons à temps</div><div class="scard-delta up">Excellent</div></div>
     </div>
@@ -933,7 +953,7 @@ function adminPanel(id) {
     <div class="ph"><div class="ph-left"><h1 class="bebas">Finances & GMV</h1><p>Performance financière de la plateforme</p></div></div>
     <div class="stat-grid g4">
       <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">68 400</div><div class="scard-lbl">GMV ce mois (DH)</div><div class="scard-delta up">↑ 41%</div></div>
-      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">💳</div><div class="scard-val">2 097</div><div class="scard-lbl">Revenus ChefLink (DH)</div><div class="scard-delta up">3.07%</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">💳</div><div class="scard-val">2 097</div><div class="scard-lbl">Revenus Mazaya (DH)</div><div class="scard-delta up">3.07%</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">📈</div><div class="scard-val">142</div><div class="scard-lbl">Transactions</div><div class="scard-delta up">↑ 38%</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--grey2)"></div><div class="scard-ico">🎯</div><div class="scard-val">481 DH</div><div class="scard-lbl">Montant moy/transaction</div><div class="scard-delta up">↑ 2%</div></div>
     </div>
@@ -1155,7 +1175,7 @@ function moReminder(name, amt, days) {
   openMo(`<div class="mo-title">Rappel de paiement</div>
     <div class="mo-sub">${name} · ${amt} DH · ${days} jours de retard</div>
     <div style="background:var(--dark3);border:1px solid var(--border2);border-radius:6px;padding:14px;font-size:12px;color:var(--grey);line-height:1.7;margin-bottom:16px">
-      Bonjour,<br>Votre facture de <strong style="color:var(--white)">${amt} DH</strong> est en attente depuis <strong style="color:var(--white)">${days} jours</strong>.<br>Merci de procéder au règlement.<br><br>Cordialement, <strong style="color:var(--white)">ProViande · ChefLink</strong>
+      Bonjour,<br>Votre facture de <strong style="color:var(--white)">${amt} DH</strong> est en attente depuis <strong style="color:var(--white)">${days} jours</strong>.<br>Merci de procéder au règlement.<br><br>Cordialement, <strong style="color:var(--white)">ProViande · Mazaya</strong>
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn-primary" style="flex:1" onclick="closeMo();toast('📧 Rappel envoyé à ${name}')">Envoyer</button>
