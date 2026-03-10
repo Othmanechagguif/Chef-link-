@@ -358,23 +358,8 @@ select.finp option{background:var(--dark3);}
       <label class="form-label">Mot de passe</label>
       <input class="form-input" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
       <button class="btn-login" onclick="login()">ACCÉDER</button>
-      <div class="demo-section">
-        <div class="demo-label">Comptes démo</div>
-        <div class="demo-item" onclick="quickLogin('restaurant')">
-          <div class="demo-icon d-resto">🍽️</div>
-          <div class="demo-info"><div class="demo-name">Café Atlas · Ahmed</div><div class="demo-role">restaurant@demo.com · demo123</div></div>
-          <div class="demo-arrow">→</div>
-        </div>
-        <div class="demo-item" onclick="quickLogin('fournisseur')">
-          <div class="demo-icon d-four">🏭</div>
-          <div class="demo-info"><div class="demo-name">ProViande · Karim</div><div class="demo-role">fournisseur@demo.com · demo123</div></div>
-          <div class="demo-arrow">→</div>
-        </div>
-        <div class="demo-item" onclick="quickLogin('admin')">
-          <div class="demo-icon d-admin">⚙️</div>
-          <div class="demo-info"><div class="demo-name">Admin ChefLink</div><div class="demo-role">admin@cheflink.ma · admin123</div></div>
-          <div class="demo-arrow">→</div>
-        </div>
+      <div style="margin-top:20px;text-align:center;font-size:11px;color:#555;">
+        Pas encore de compte ? <span style="color:#00FF88;cursor:pointer" onclick="toast('Contactez contact@cheflink.ma')">Contacter ChefLink →</span>
       </div>
     </div>
   </div>
