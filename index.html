@@ -396,6 +396,7 @@ select.finp option{background:var(--dark3);}
     <div class="tb-right">
       <span class="tb-user" id="tb-user">—</span>
       <div class="tb-notif" onclick="toast('🔔 2 nouvelles alertes')">🔔<div class="ndot"></div></div>
+      <button class="btn-out" onclick="moChangePass()" style="border-color:var(--border2);">🔑 Mot de passe</button>
       <button class="btn-out" onclick="logout()">Déconnexion</button>
     </div>
   </div>
@@ -477,7 +478,7 @@ async function login() {
       const { data: profile } = await sb.from('users').select('*').eq('id', data.user.id).single();
       if (profile) {
         btn.textContent = 'ACCÉDER';
-        startApp({ name: profile.name, role: profile.role, company: profile.company, id: data.user.id });
+        startApp({ name: profile.name, role: profile.role, company: profile.company, id: data.user.id, email: data.user.email });
         return;
       }
     }
@@ -1288,6 +1289,59 @@ async function adminCreateUser(role) {
       toast('Compte créé — ' + email);
     }
   } catch(e) { toast('Erreur: ' + e.message); btn.textContent = 'Créer le compte'; }
+}
+
+
+function moChangePass() {
+  openMo(`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);display:flex;align-items:center;justify-content:center;font-size:20px;">🔑</div>
+      <div><div class="mo-title" style="margin-bottom:0">Changer le mot de passe</div><div style="font-size:11px;color:var(--grey);">Votre nouveau mot de passe sera actif immédiatement</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+      <div class="fg">
+        <label class="flbl">Mot de passe actuel</label>
+        <input class="finp" id="cp-old" type="password" placeholder="••••••••" style="width:100%">
+      </div>
+      <div class="fg">
+        <label class="flbl">Nouveau mot de passe</label>
+        <input class="finp" id="cp-new" type="password" placeholder="Minimum 6 caractères" style="width:100%">
+      </div>
+      <div class="fg">
+        <label class="flbl">Confirmer le nouveau mot de passe</label>
+        <input class="finp" id="cp-conf" type="password" placeholder="Répéter le mot de passe" style="width:100%">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary" style="flex:1;" id="cp-btn" onclick="submitChangePass()">CONFIRMER</button>
+      <button class="btn-secondary" onclick="closeMo()">Annuler</button>
+    </div>
+  `);
+}
+
+async function submitChangePass() {
+  const oldPass = document.getElementById('cp-old').value;
+  const newPass = document.getElementById('cp-new').value;
+  const conf = document.getElementById('cp-conf').value;
+  if (!oldPass || !newPass || !conf) { toast('❌ Remplis tous les champs'); return; }
+  if (newPass.length < 6) { toast('❌ Nouveau mot de passe trop court (min 6)'); return; }
+  if (newPass !== conf) { toast('❌ Les mots de passe ne correspondent pas'); return; }
+  const btn = document.getElementById('cp-btn');
+  btn.textContent = 'VÉRIFICATION...';
+  try {
+    // Re-authenticate with old password first
+    const { error: signInErr } = await sb.auth.signInWithPassword({
+      email: currentUser.email || document.getElementById('l-email').value,
+      password: oldPass
+    });
+    if (signInErr) { toast('❌ Mot de passe actuel incorrect'); btn.textContent = 'CONFIRMER'; return; }
+    // Update password
+    btn.textContent = 'MISE À JOUR...';
+    const { error } = await sb.auth.updateUser({ password: newPass });
+    if (error) { toast('❌ ' + error.message); btn.textContent = 'CONFIRMER'; return; }
+    closeMo();
+    toast('✅ Mot de passe mis à jour avec succès !');
+  } catch(e) { toast('❌ ' + e.message); btn.textContent = 'CONFIRMER'; }
 }
 
 function openMo(h) { document.getElementById('mo-body').innerHTML = h; document.getElementById('mo').classList.add('on'); }
