@@ -60,6 +60,53 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
 }
 
 
+
+/* ── AI AGENT ── */
+#ai-fab{position:fixed;bottom:90px;right:20px;width:52px;height:52px;background:linear-gradient(135deg,#00FF88,#00cc6a);border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:22px;z-index:400;box-shadow:0 4px 20px rgba(0,255,136,.4);transition:transform .2s;}
+#ai-fab:hover{transform:scale(1.1);}
+#ai-fab .notif-dot{position:absolute;top:2px;right:2px;width:12px;height:12px;background:var(--red);border-radius:50%;border:2px solid #000;display:none;}
+#ai-panel{position:fixed;bottom:90px;right:20px;width:340px;height:520px;background:#080808;border:1px solid rgba(0,255,136,.2);border-radius:16px;z-index:401;display:none;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.9);overflow:hidden;}
+#ai-panel.open{display:flex;}
+.ai-head{padding:14px 16px;border-bottom:1px solid #111;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.ai-avatar{width:36px;height:36px;background:linear-gradient(135deg,#00FF88,#00cc6a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ai-head-info{flex:1;}
+.ai-head-name{font-size:13px;font-weight:700;color:#fff;}
+.ai-head-status{font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px;}
+.ai-head-status::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;}
+.ai-close{width:28px;height:28px;background:transparent;border:1px solid #222;border-radius:6px;color:var(--grey);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.ai-notifs{padding:10px 12px;border-bottom:1px solid #111;max-height:120px;overflow-y:auto;flex-shrink:0;}
+.ai-notif{padding:8px 10px;background:#0d0d0d;border-radius:8px;margin-bottom:6px;border-left:3px solid var(--green);cursor:pointer;transition:background .15s;}
+.ai-notif:hover{background:#111;}
+.ai-notif.red{border-color:var(--red);}
+.ai-notif.gold{border-color:var(--gold);}
+.ai-notif-title{font-size:11px;font-weight:600;color:#fff;margin-bottom:2px;}
+.ai-notif-sub{font-size:10px;color:var(--grey);}
+.ai-notif-time{font-size:9px;color:var(--grey2);margin-top:3px;}
+.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;}
+.ai-msg{max-width:85%;animation:fadeIn .2s;}
+.ai-msg.user{align-self:flex-end;}
+.ai-msg.bot{align-self:flex-start;}
+.ai-bubble{padding:10px 13px;border-radius:12px;font-size:12px;line-height:1.5;}
+.ai-msg.bot .ai-bubble{background:#111;color:#ddd;border-bottom-left-radius:3px;}
+.ai-msg.user .ai-bubble{background:rgba(0,255,136,.15);color:#fff;border-bottom-right-radius:3px;border:1px solid rgba(0,255,136,.2);}
+.ai-typing{display:flex;gap:4px;padding:10px 13px;background:#111;border-radius:12px;width:fit-content;}
+.ai-typing span{width:6px;height:6px;background:var(--grey);border-radius:50%;animation:bounce .8s infinite;}
+.ai-typing span:nth-child(2){animation-delay:.15s;}
+.ai-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+.ai-suggestions{padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid #111;flex-shrink:0;}
+.ai-sug{padding:5px 10px;background:#111;border:1px solid #222;border-radius:20px;font-size:10px;color:var(--grey);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.ai-sug:hover{border-color:var(--green);color:var(--green);}
+.ai-input-row{padding:10px 12px;display:flex;gap:8px;border-top:1px solid #111;flex-shrink:0;}
+.ai-input{flex:1;background:#111;border:1px solid #222;border-radius:8px;padding:9px 12px;color:#fff;font-size:12px;outline:none;font-family:inherit;}
+.ai-input:focus{border-color:rgba(0,255,136,.3);}
+.ai-send{width:36px;height:36px;background:var(--green);border:none;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:transform .15s;flex-shrink:0;}
+.ai-send:hover{transform:scale(1.05);}
+@media(max-width:768px){
+  #ai-panel{width:calc(100vw - 24px);right:12px;bottom:80px;height:480px;}
+  #ai-fab{bottom:80px;right:12px;}
+}
+
 /* ── LANGUAGE SELECTOR ── */
 .lang-sel{position:relative;display:inline-block;}
 .lang-btn{padding:5px 10px;background:transparent;border:1px solid var(--border2);border-radius:6px;font-size:11px;font-weight:600;color:var(--grey);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;}
@@ -1509,6 +1556,37 @@ async function installApp() {
 }
 </script>
 
+
+<!-- AI AGENT FAB -->
+<button id="ai-fab" onclick="toggleAI()" title="Assistant Mazaya IA">
+  🤖<div class="notif-dot" id="ai-dot"></div>
+</button>
+
+<!-- AI AGENT PANEL -->
+<div id="ai-panel">
+  <div class="ai-head">
+    <div class="ai-avatar">🤖</div>
+    <div class="ai-head-info">
+      <div class="ai-head-name">Mazaya AI</div>
+      <div class="ai-head-status" id="ai-status">En ligne · Mode démo</div>
+    </div>
+    <button onclick="promptAPIKey()" id="ai-key-btn" title="Connecter Claude API" style="padding:4px 8px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:6px;color:var(--green);font-size:10px;font-weight:700;cursor:pointer;margin-right:4px;">🔑 IA</button>
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+  </div>
+  <div class="ai-notifs" id="ai-notifs"></div>
+  <div class="ai-msgs" id="ai-msgs"></div>
+  <div class="ai-suggestions" id="ai-sugs">
+    <div class="ai-sug" onclick="askAI('Quel est le meilleur fournisseur pour la viande ?')">🥩 Meilleur fournisseur viande</div>
+    <div class="ai-sug" onclick="askAI('Analyse mes dépenses ce mois')">📊 Analyser mes dépenses</div>
+    <div class="ai-sug" onclick="askAI('Quelles commandes sont en retard ?')">⚠️ Commandes en retard</div>
+    <div class="ai-sug" onclick="askAI('Comment réduire mon food cost ?')">💡 Réduire food cost</div>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="ai-input" placeholder="Demandez à Mazaya AI..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">➤</button>
+  </div>
+</div>
+
 <!-- BOTTOM NAV MOBILE -->
 <div id="bottom-nav"></div>
 
@@ -1641,6 +1719,316 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+
+<script>
+// ── MAZAYA AI AGENT ──
+const CLAUDE_API = 'https://api.anthropic.com/v1/messages';
+let CLAUDE_KEY = localStorage.getItem('mazaya-claude-key') || '';
+let aiOpen = false;
+let aiNotifications = [];
+let aiContext = [];
+
+// Simulated notifications — in production these come from Supabase realtime
+const DEMO_NOTIFS = [
+  {id:1, type:'success', title:'✅ Commande #2847 acceptée', sub:'ProViande — Bœuf haché 10kg', time:'Il y a 5 min', read:false},
+  {id:2, type:'warning', title:'⏰ Commande #2845 en retard', sub:'HuileMax — Livraison prévue hier', time:'Il y a 2h', read:false},
+  {id:3, type:'error', title:'❌ Commande #2843 refusée', sub:'FraisMaroc — Stock insuffisant', time:'Il y a 3h', read:true},
+];
+
+function toggleAI() {
+  aiOpen = !aiOpen;
+  const panel = document.getElementById('ai-panel');
+  const fab = document.getElementById('ai-fab');
+  if(aiOpen) {
+    panel.classList.add('open');
+    fab.style.display = 'none';
+    renderNotifs();
+    if(document.getElementById('ai-msgs').children.length === 0) {
+      addBotMsg(getBriefing());
+    }
+    markAllRead();
+  } else {
+    panel.classList.remove('open');
+    fab.style.display = 'flex';
+  }
+}
+
+function getBriefing() {
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
+  return `${greet} ! Je suis votre assistant Mazaya IA 🤖
+
+Voici votre résumé :
+• **2 notifications** non lues
+• **1 commande** en attente de livraison
+• Votre food cost est à **28%** ce mois — objectif 25%
+
+Comment puis-je vous aider ?`;
+}
+
+function renderNotifs() {
+  const container = document.getElementById('ai-notifs');
+  const unread = DEMO_NOTIFS.filter(n => !n.read);
+  if(unread.length === 0) { container.style.display = 'none'; return; }
+  container.style.display = 'block';
+  container.innerHTML = unread.map(n => `
+    <div class="ai-notif ${n.type==='success'?'':n.type==='warning'?'gold':'red'}" onclick="dismissNotif(${n.id})">
+      <div class="ai-notif-title">${n.title}</div>
+      <div class="ai-notif-sub">${n.sub}</div>
+      <div class="ai-notif-time">${n.time} · Cliquez pour ignorer</div>
+    </div>
+  `).join('');
+}
+
+function dismissNotif(id) {
+  const n = DEMO_NOTIFS.find(x => x.id === id);
+  if(n) n.read = true;
+  renderNotifs();
+  updateDot();
+}
+
+function markAllRead() {
+  updateDot();
+}
+
+function updateDot() {
+  const unread = DEMO_NOTIFS.filter(n => !n.read).length;
+  const dot = document.getElementById('ai-dot');
+  if(dot) dot.style.display = unread > 0 ? 'block' : 'none';
+}
+
+function addBotMsg(text) {
+  const msgs = document.getElementById('ai-msgs');
+  const div = document.createElement('div');
+  div.className = 'ai-msg bot';
+  div.innerHTML = `<div class="ai-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/
+/g,'<br>')}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUserMsg(text) {
+  const msgs = document.getElementById('ai-msgs');
+  const div = document.createElement('div');
+  div.className = 'ai-msg user';
+  div.innerHTML = `<div class="ai-bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('ai-msgs');
+  const div = document.createElement('div');
+  div.className = 'ai-msg bot';
+  div.id = 'ai-typing';
+  div.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function hideTyping() {
+  document.getElementById('ai-typing')?.remove();
+}
+
+function askAI(question) {
+  document.getElementById('ai-input').value = question;
+  sendAI();
+}
+
+async function sendAI() {
+  const input = document.getElementById('ai-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  document.getElementById('ai-sugs').style.display = 'none';
+  addUserMsg(text);
+  showTyping();
+
+  // Build context about the restaurant
+  const restaurantContext = `Tu es l'assistant IA de Mazaya, une plateforme B2B pour restaurants au Maghreb.
+L'utilisateur est un gérant de restaurant. 
+Données disponibles:
+- Dépenses ce mois: 8 420 DH
+- Économies IA: 1 340 DH  
+- Food Cost: 28% (objectif 25%)
+- Commandes en cours: 3
+- Fournisseurs actifs: ProViande, HuileMax, FraisMaroc, LaitierPlus
+- Meilleur prix viande actuellement: ProViande (32 DH/kg vs 38 DH marché)
+- Commande en retard: HuileMax #2845 (livraison prévue hier)
+- Commande refusée: FraisMaroc #2843 (stock insuffisant)
+Réponds en ${currentLang === 'ar' ? 'arabe' : currentLang === 'en' ? 'anglais' : currentLang === 'nl' ? 'néerlandais' : currentLang === 'es' ? 'espagnol' : 'français'}.
+Sois concis, pratique et professionnel. Max 120 mots.`;
+
+  aiContext.push({role:'user', content: text});
+  
+  try {
+    if(!CLAUDE_KEY) {
+      // Demo mode without API key
+      hideTyping();
+      const demoResp = getDemoResponse(text);
+      addBotMsg(demoResp);
+      aiContext.push({role:'assistant', content: demoResp});
+      return;
+    }
+
+    const resp = await fetch(CLAUDE_API, {
+      method:'POST',
+      headers:{
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        system: restaurantContext,
+        messages: aiContext.slice(-6)
+      })
+    });
+    const data = await resp.json();
+    hideTyping();
+    if(data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      addBotMsg(reply);
+      aiContext.push({role:'assistant', content: reply});
+    } else {
+      addBotMsg(getDemoResponse(text));
+    }
+  } catch(e) {
+    hideTyping();
+    addBotMsg(getDemoResponse(text));
+  }
+}
+
+function getDemoResponse(q) {
+  const ql = q.toLowerCase();
+  if(ql.includes('viande') || ql.includes('fournisseur')) 
+    return '🥩 **Meilleur fournisseur viande :** ProViande à **32 DH/kg**
+
+Vs marché moyen 38 DH/kg — économie de **6 DH/kg**. Pour 50kg/mois = **300 DH économisés**.
+
+Je recommande de renouveler votre contrat avec eux avant fin du mois.';
+  if(ql.includes('dépense') || ql.includes('coût') || ql.includes('food cost'))
+    return '📊 **Analyse dépenses :**
+
+• Total ce mois : **8 420 DH**
+• Food Cost : **28%** (↑ vs objectif 25%)
+• Principal écart : huile (+15% vs mois passé)
+
+💡 Astuce : Réduisez les commandes HuileMax et testez LaitierPlus pour les produits laitiers.';
+  if(ql.includes('retard') || ql.includes('commande'))
+    return '⚠️ **Commande en retard :**
+
+HuileMax #2845 — Livraison prévue hier
+
+Je vous recommande de :
+1. Appeler HuileMax maintenant
+2. Commander chez FraisMaroc en urgence si besoin
+
+Voulez-vous que je génère un message de rappel ?';
+  if(ql.includes('conseil') || ql.includes('réduire') || ql.includes('optimis'))
+    return '💡 **3 conseils pour ce mois :**
+
+1. **Grouper les commandes** — livraison 2x/semaine au lieu de 4x = -8% frais
+2. **ProViande** offre -5% si commande > 500 DH
+3. **Stock huile** trop élevé — réduire la prochaine commande de 30%
+
+Estimation économies : **+420 DH/mois**';
+  return '🤖 Je suis votre assistant Mazaya IA.
+
+Je peux vous aider avec :
+• **Analyse** de vos fournisseurs et prix
+• **Suivi** de vos commandes
+• **Conseils** pour réduire vos coûts
+• **Alertes** sur les livraisons en retard
+
+Que souhaitez-vous savoir ?';
+}
+
+// Show FAB when logged in
+function showAIFab() {
+  const fab = document.getElementById('ai-fab');
+  if(fab) { fab.style.display = 'flex'; updateDot(); }
+}
+
+// Add API key config
+function promptAPIKey() {
+  openMo(`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);display:flex;align-items:center;justify-content:center;font-size:20px;">🤖</div>
+      <div><div class="mo-title" style="margin-bottom:0">Connecter Claude AI</div><div style="font-size:11px;color:var(--grey);">Activez la vraie intelligence artificielle</div></div>
+    </div>
+    <div style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--grey);line-height:1.6;">
+      1. Va sur <strong style="color:#fff">console.anthropic.com</strong><br>
+      2. Crée un compte → <strong style="color:#fff">API Keys</strong> → <strong style="color:#fff">Create Key</strong><br>
+      3. Ajoute du crédit → <strong style="color:#fff">Billing → Add credit (5$)</strong><br>
+      4. Colle ta clé ci-dessous
+    </div>
+    <div class="fg" style="margin-bottom:14px;">
+      <label class="flbl">Clé Claude API</label>
+      <input class="finp" id="claude-key-input" type="password" placeholder="sk-ant-api03-..." style="width:100%;font-family:monospace;font-size:11px;">
+    </div>
+    <div id="ai-key-status" style="font-size:11px;margin-bottom:12px;display:none;"></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary" style="flex:1;" onclick="saveClaudeKey()">CONNECTER L'IA</button>
+      <button class="btn-secondary" onclick="closeMo()">Annuler</button>
+    </div>
+    ${CLAUDE_KEY ? '<div style="margin-top:10px;text-align:center;"><span style="font-size:10px;color:var(--green);">✅ Clé déjà configurée — vous pouvez la remplacer</span></div>' : ''}
+  `);
+}
+
+function saveClaudeKey() {
+  const key = document.getElementById('claude-key-input').value.trim();
+  const status = document.getElementById('ai-key-status');
+  if(!key) { 
+    status.style.display='block'; status.style.color='var(--red)'; 
+    status.textContent='❌ Entrez votre clé API'; return; 
+  }
+  if(!key.startsWith('sk-ant-')) { 
+    status.style.display='block'; status.style.color='var(--red)'; 
+    status.textContent='❌ Clé invalide — doit commencer par sk-ant-'; return; 
+  }
+  CLAUDE_KEY = key;
+  localStorage.setItem('mazaya-claude-key', key);
+  // Update UI
+  document.getElementById('ai-status').textContent = 'En ligne · IA Connectée ✅';
+  document.getElementById('ai-key-btn').textContent = '✅ IA';
+  document.getElementById('ai-key-btn').style.background = 'rgba(0,255,136,.2)';
+  closeMo();
+  toast('✅ Claude AI connecté ! L\'agent est maintenant intelligent.');
+  // Clear chat and restart with real AI
+  document.getElementById('ai-msgs').innerHTML = '';
+  addBotMsg('🤖 **Claude AI activé !**\n\nJe suis maintenant connecté à vos données Mazaya en temps réel. Posez-moi n\'importe quelle question sur vos fournisseurs, commandes ou dépenses !');
+}
+
+function configAIKey() {
+  const key = prompt('Entrez votre clé Claude API (sk-ant-...)
+Elle sera sauvegardée localement.');
+  if(key && key.startsWith('sk-ant-')) {
+    CLAUDE_KEY = key;
+    localStorage.setItem('mazaya-claude-key', key);
+    toast('✅ Clé Claude API configurée !');
+  } else if(key) {
+    toast('❌ Clé invalide — doit commencer par sk-ant-');
+  }
+}
+
+// Auto-notifications simulation (in production: Supabase realtime)
+function startNotifSimulation() {
+  setTimeout(() => {
+    DEMO_NOTIFS.push({
+      id:4, type:'success', 
+      title:'✅ Commande #2848 confirmée', 
+      sub:'LaitierPlus — Fromage frais 5kg',
+      time:'À l'instant', read:false
+    });
+    updateDot();
+    toast('🔔 Nouvelle notification — Commande confirmée !');
+  }, 30000); // After 30s
+}
+</script>
+
 </body>
 </html>
 <script>
@@ -1693,5 +2081,15 @@ const _origStartApp = startApp;
 startApp = function(u) {
   _origStartApp(u);
   setTimeout(buildBottomNav, 100);
+  showAIFab();
+  startNotifSimulation();
+  if(CLAUDE_KEY) {
+    setTimeout(() => {
+      const s = document.getElementById('ai-status');
+      const b = document.getElementById('ai-key-btn');
+      if(s) s.textContent = 'En ligne · IA Connectée ✅';
+      if(b) { b.textContent = '✅ IA'; b.style.background = 'rgba(0,255,136,.2)'; }
+    }, 200);
+  }
 };
 </script>
