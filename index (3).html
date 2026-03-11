@@ -33,6 +33,156 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
 ::-webkit-scrollbar-thumb{background:var(--green2);}
 
 
+
+/* ── BOTTOM NAV ── */
+#bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(5,5,5,.97);
+  border-top:1px solid var(--border);
+  padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+  z-index:300;
+  justify-content:space-around;
+  align-items:center;
+}
+.bnav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 12px;cursor:pointer;color:var(--grey);
+  transition:color .15s;flex:1;
+}
+.bnav-item.active{color:var(--green);}
+.bnav-item.active-gold{color:var(--gold);}
+.bnav-item.active-blue{color:var(--blue);}
+.bnav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;}
+.bnav-item span{font-size:9px;font-weight:600;letter-spacing:.3px;}
+@media(max-width:768px){
+  .main{padding-bottom:80px !important;}
+}
+
+
+
+/* ── AI AGENT ── */
+#ai-fab{
+  position:fixed;bottom:90px;right:20px;
+  width:56px;height:56px;
+  background:linear-gradient(135deg,#00FF88,#00cc6a);
+  border-radius:50%;border:none;cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  z-index:400;
+  box-shadow:0 0 0 0 rgba(0,255,136,.5);
+  animation:aipulse 2.5s infinite;
+  transition:transform .2s;
+}
+#ai-fab:hover{transform:scale(1.12);}
+@keyframes aipulse{
+  0%{box-shadow:0 0 0 0 rgba(0,255,136,.5);}
+  70%{box-shadow:0 0 0 14px rgba(0,255,136,0);}
+  100%{box-shadow:0 0 0 0 rgba(0,255,136,0);}
+}
+#ai-fab .ai-fab-icon{font-size:24px;animation:airotate 4s linear infinite;}
+@keyframes airotate{0%,100%{transform:rotate(-10deg);}50%{transform:rotate(10deg);}}
+#ai-fab .notif-dot{
+  position:absolute;top:0;right:0;
+  width:16px;height:16px;
+  background:var(--red);border-radius:50%;
+  border:2px solid #000;
+  display:none;
+  font-size:9px;font-weight:700;color:#fff;
+  align-items:center;justify-content:center;
+}
+#ai-panel{
+  position:fixed;bottom:90px;right:20px;
+  width:350px;height:540px;
+  background:#060606;
+  border:1px solid rgba(0,255,136,.15);
+  border-radius:18px;z-index:401;
+  display:none;flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,.95), 0 0 0 1px rgba(0,255,136,.05);
+  overflow:hidden;
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+#ai-panel.open{display:flex;}
+.ai-head{
+  padding:14px 16px;
+  background:linear-gradient(135deg,rgba(0,255,136,.06),transparent);
+  border-bottom:1px solid #111;
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.ai-avatar{
+  width:38px;height:38px;
+  background:linear-gradient(135deg,#00FF88,#00cc6a);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  animation:airotate 4s linear infinite;
+}
+.ai-head-info{flex:1;}
+.ai-head-name{font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px;}
+.ai-head-status{font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:2px;}
+.ai-head-status::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.ai-close{width:28px;height:28px;background:transparent;border:1px solid #222;border-radius:6px;color:var(--grey);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.ai-close:hover{border-color:var(--red);color:var(--red);}
+.ai-notifs{padding:8px 10px;border-bottom:1px solid #0f0f0f;max-height:130px;overflow-y:auto;flex-shrink:0;}
+.ai-notifs:empty{display:none;}
+.ai-notif{
+  padding:8px 10px;background:#0a0a0a;
+  border-radius:8px;margin-bottom:5px;
+  border-left:3px solid var(--green);
+  cursor:pointer;transition:background .15s;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.ai-notif:hover{background:#111;}
+.ai-notif.red{border-color:var(--red);}
+.ai-notif.gold{border-color:var(--gold);}
+.ai-notif-body{flex:1;}
+.ai-notif-title{font-size:11px;font-weight:600;color:#fff;margin-bottom:1px;}
+.ai-notif-sub{font-size:10px;color:var(--grey);}
+.ai-notif-time{font-size:9px;color:var(--grey2);margin-top:2px;}
+.ai-notif-x{color:var(--grey2);font-size:12px;padding:2px 4px;cursor:pointer;}
+.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.ai-msg{max-width:88%;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.ai-msg.user{align-self:flex-end;}
+.ai-msg.bot{align-self:flex-start;}
+.ai-bubble{padding:10px 13px;border-radius:14px;font-size:12px;line-height:1.6;}
+.ai-msg.bot .ai-bubble{background:#0f0f0f;color:#ccc;border-bottom-left-radius:3px;border:1px solid #1a1a1a;}
+.ai-msg.user .ai-bubble{background:rgba(0,255,136,.12);color:#fff;border-bottom-right-radius:3px;border:1px solid rgba(0,255,136,.2);}
+.ai-typing{display:flex;gap:5px;padding:10px 13px;background:#0f0f0f;border-radius:14px;border-bottom-left-radius:3px;width:fit-content;border:1px solid #1a1a1a;}
+.ai-typing span{width:7px;height:7px;background:#444;border-radius:50%;animation:bounce .8s infinite;}
+.ai-typing span:nth-child(2){animation-delay:.15s;}
+.ai-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-7px);}}
+.ai-suggestions{padding:8px 10px;display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid #0f0f0f;flex-shrink:0;}
+.ai-sug{
+  padding:5px 10px;background:#0a0a0a;
+  border:1px solid #1a1a1a;border-radius:20px;
+  font-size:10px;color:var(--grey);cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.ai-sug:hover{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.05);}
+.ai-input-row{padding:10px 12px;display:flex;gap:8px;border-top:1px solid #0f0f0f;flex-shrink:0;background:#030303;}
+.ai-input{flex:1;background:#0f0f0f;border:1px solid #1a1a1a;border-radius:10px;padding:10px 13px;color:#fff;font-size:12px;outline:none;font-family:inherit;transition:border .15s;}
+.ai-input:focus{border-color:rgba(0,255,136,.3);}
+.ai-send{width:38px;height:38px;background:var(--green);border:none;border-radius:10px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;color:#000;font-weight:700;}
+.ai-send:hover{background:var(--green2);transform:scale(1.05);}
+@media(max-width:768px){
+  #ai-panel{width:calc(100vw - 20px);right:10px;bottom:75px;height:500px;}
+  #ai-fab{bottom:75px;right:14px;width:50px;height:50px;}
+}
+
+/* ── LANGUAGE SELECTOR ── */
+.lang-sel{position:relative;display:inline-block;}
+.lang-btn{padding:5px 10px;background:transparent;border:1px solid var(--border2);border-radius:6px;font-size:11px;font-weight:600;color:var(--grey);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;}
+.lang-btn:hover{border-color:var(--green);color:var(--green);}
+.lang-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#0a0a0a;border:1px solid var(--border);border-radius:8px;padding:4px;min-width:140px;z-index:500;display:none;box-shadow:0 8px 24px rgba(0,0,0,.8);}
+.lang-sel.open .lang-dropdown{display:block;}
+.lang-opt{padding:8px 12px;border-radius:5px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--grey);transition:all .15s;}
+.lang-opt:hover{background:rgba(255,255,255,.05);color:#fff;}
+.lang-opt.active{color:var(--green);}
+[dir="rtl"] .main{direction:rtl;text-align:right;}
+
 /* ── MAZAYA LOGO ── */
 .mz-logo { display:flex; flex-direction:column; align-items:flex-start; gap:0px; }
 .mz-en { font-family:'Cormorant Garamond',serif; font-weight:300; letter-spacing:14px; text-transform:uppercase; color:var(--white); line-height:1; }
@@ -328,15 +478,65 @@ select.finp option{background:var(--dark3);}
 .mo-row:last-of-type{border:none;}
 .mo-row span:last-child{color:var(--white);font-weight:600;}
 
-@media(max-width:1100px){.cart-panel{display:none;}.g4{grid-template-columns:repeat(2,1fr);}}
+/* ── TABLET ── */
+@media(max-width:1100px){
+  .cart-panel{display:none !important;}
+  .g4{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ── MOBILE ── */
 @media(max-width:768px){
-  .login-right{width:100%;border-left:none;}.login-left{display:none;}
-  .main{padding:16px;}.sidebar{width:48px;padding:10px 4px;}
-  .sidebar .nav-item span,.sidebar .nav-section,.sidebar .nav-badge{display:none;}
-  .sidebar .nav-item{justify-content:center;padding:9px;}
+  /* Login */
+  .login-left{display:none;}
+  .login-right{width:100%;border-left:none;padding:32px 24px;}
+
+  /* App layout — single column */
+  #app{flex-direction:column;}
+  .app-body{flex-direction:column;}
+  .sidebar{display:none !important;}
+  .cart-panel{display:none !important;}
+  .main{padding:12px;width:100%;min-width:0;}
+
+  /* Bottom nav bar */
+  #bottom-nav{display:flex !important;}
+
+  /* Grids */
   .g4,.g3{grid-template-columns:repeat(2,1fr);}
+  .g2{grid-template-columns:1fr;}
   .two-col{grid-template-columns:1fr;}
   .form-grid{grid-template-columns:1fr;}
+
+  /* Topbar */
+  .topbar{padding:0 12px;}
+  .tb-user{display:none;}
+
+  /* Tables — scroll horizontal */
+  .card{overflow-x:auto;}
+  table{min-width:500px;}
+
+  /* Page header */
+  .ph{flex-direction:column;align-items:flex-start;gap:8px;}
+  .ph h1{font-size:28px;}
+
+  /* Stat cards */
+  .scard-val{font-size:24px;}
+
+  /* Search row */
+  .search-row{gap:6px;}
+  .filt{font-size:10px;padding:7px 10px;}
+
+  /* Product grid */
+  .prod-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .pcard{padding:10px;}
+  .p-price{font-size:20px;}
+
+  /* Login form */
+  .login-headline{font-size:44px !important;}
+  .form-input{padding:13px 14px;}
+  .btn-login{padding:15px;}
+
+  /* Modal */
+  .mo-box{padding:20px;margin:12px;}
 }
 </style>
 </head>
@@ -405,6 +605,7 @@ select.finp option{background:var(--dark3);}
     <div class="tb-right">
       <span class="tb-user" id="tb-user">—</span>
       <div class="tb-notif" onclick="toast('🔔 2 nouvelles alertes')">🔔<div class="ndot"></div></div>
+      <div class="lang-sel" id="langSel"><button class="lang-btn" onclick="toggleLangMenu()"><span id="langFlag">🇫🇷</span><span id="langCode">FR</span>▾</button><div class="lang-dropdown" id="langDropdown"><div class="lang-opt active" onclick="setLang('fr')">🇫🇷 Français</div><div class="lang-opt" onclick="setLang('en')">🇬🇧 English</div><div class="lang-opt" onclick="setLang('ar')">🇲🇦 العربية</div><div class="lang-opt" onclick="setLang('nl')">🇳🇱 Nederlands</div><div class="lang-opt" onclick="setLang('es')">🇪🇸 Español</div></div></div>
       <button class="btn-out" onclick="moChangePass()" style="border-color:var(--border2);">🔑 Mot de passe</button>
       <button class="btn-out" onclick="logout()">Déconnexion</button>
     </div>
@@ -590,11 +791,11 @@ const NAV_CONFIG = {
   restaurant: [
     {section:'PRINCIPAL'},
     {id:'dash',label:'Dashboard',icon:'home'},
-    {id:'cmd',label:'Commander',icon:'shop',badge:'cart'},
-    {id:'cmp',label:'Comparer prix',icon:'compare'},
+    {id:'cmd',label:()=>t('catalogue'),icon:'shop',badge:'cart'},
+    {id:'cmp',label:()=>t('compare'),icon:'compare'},
     {section:'SUIVI'},
     {id:'ord',label:'Commandes',icon:'list'},
-    {id:'ana',label:'Analytiques',icon:'chart'},
+    {id:'ana',label:()=>t('analytics'),icon:'chart'},
   ],
   fournisseur: [
     {section:'PRINCIPAL'},
@@ -602,19 +803,19 @@ const NAV_CONFIG = {
     {id:'prod',label:'Mes produits',icon:'box'},
     {id:'cmd',label:'Commandes reçues',icon:'list',badge:'2'},
     {section:'FINANCES'},
-    {id:'pay',label:'Paiements',icon:'card',badge:'2'},
-    {id:'stats',label:'Statistiques',icon:'chart'},
+    {id:'pay',label:()=>t('payments'),icon:'card',badge:'2'},
+    {id:'stats',label:()=>t('stats'),icon:'chart'},
   ],
   admin: [
     {section:'VUE GLOBALE'},
     {id:'dash',label:'Vue globale',icon:'grid'},
     {id:'cmd',label:'Toutes commandes',icon:'list',badge:'142'},
     {section:'UTILISATEURS'},
-    {id:'rest',label:'Restaurants',icon:'resto'},
-    {id:'four',label:'Fournisseurs',icon:'truck'},
+    {id:'rest',label:()=>t('restaurants'),icon:'resto'},
+    {id:'four',label:()=>t('suppliers'),icon:'truck'},
     {section:'FINANCES'},
     {id:'fin',label:'Finances & GMV',icon:'chart'},
-    {id:'lit',label:'Litiges',icon:'alert',badge:'2'},
+    {id:'lit',label:()=>t('disputes'),icon:'alert',badge:'2'},
   ]
 };
 
@@ -1419,5 +1620,552 @@ async function installApp() {
   if (outcome === 'accepted') toast('✅ Mazaya installé !');
 }
 </script>
+
+
+<!-- AI AGENT FAB -->
+<button id="ai-fab" onclick="toggleAI()" title="Assistant Mazaya IA">
+  <span class="ai-fab-icon">🤖</span>
+  <div class="notif-dot" id="ai-dot"></div>
+</button>
+
+<!-- AI AGENT PANEL -->
+<div id="ai-panel">
+  <div class="ai-head">
+    <div class="ai-avatar">🤖</div>
+    <div class="ai-head-info">
+      <div class="ai-head-name">Mazaya AI</div>
+      <div class="ai-head-status" id="ai-status">En ligne · Mode démo</div>
+    </div>
+    <button onclick="promptAPIKey()" id="ai-key-btn" title="Connecter Claude API" style="padding:4px 8px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:6px;color:var(--green);font-size:10px;font-weight:700;cursor:pointer;margin-right:4px;">🔑 IA</button>
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+  </div>
+  <div class="ai-notifs" id="ai-notifs"></div>
+  <div class="ai-msgs" id="ai-msgs"></div>
+  <div class="ai-suggestions" id="ai-sugs">
+    <div class="ai-sug" onclick="askAI('Quel est le meilleur fournisseur pour la viande ?')">🥩 Meilleur fournisseur viande</div>
+    <div class="ai-sug" onclick="askAI('Analyse mes dépenses ce mois')">📊 Analyser mes dépenses</div>
+    <div class="ai-sug" onclick="askAI('Quelles commandes sont en retard ?')">⚠️ Commandes en retard</div>
+    <div class="ai-sug" onclick="askAI('Comment réduire mon food cost ?')">💡 Réduire food cost</div>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="ai-input" placeholder="Demandez à Mazaya AI..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">➤</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV MOBILE -->
+<div id="bottom-nav"></div>
+
+
+<script>
+// ── MAZAYA TRANSLATION SYSTEM ──
+const T = {
+  fr: {
+    dashboard:'Tableau de bord', orders:'Commandes', catalogue:'Commander', compare:'Comparer prix',
+    analytics:'Analytiques', invoices:'Factures', logout:'Déconnexion', password:'Mot de passe',
+    welcome:'Bonjour', search:'Rechercher...', addToCart:'Ajouter', cart:'Panier',
+    emptyCart:'Panier vide', checkout:'Commander', total:'Total', delivery:'Livraison',
+    standard:'Standard', express:'Express', confirm:'Confirmer', cancel:'Annuler',
+    save:'Enregistrer', products:'Produits', payments:'Paiements', stats:'Statistiques',
+    restaurants:'Restaurants', suppliers:'Fournisseurs', disputes:'Litiges', finances:'Finances',
+    addRestaurant:'+ Ajouter Restaurant', addSupplier:'+ Ajouter Fournisseur',
+    morningBriefing:'Briefing du matin', spending:'Dépenses du mois', savings:'Économies',
+    foodCost:'Food Cost', allCategories:'Toutes catégories', inStock:'En stock',
+    outOfStock:'Rupture', markDelivered:'Marquer livré', sendReminder:'Envoyer rappel',
+    profile:'Mon profil', settings:'Paramètres', language:'Langue',
+  },
+  en: {
+    dashboard:'Dashboard', orders:'Orders', catalogue:'Order', compare:'Compare prices',
+    analytics:'Analytics', invoices:'Invoices', logout:'Logout', password:'Password',
+    welcome:'Good morning', search:'Search...', addToCart:'Add', cart:'Cart',
+    emptyCart:'Empty cart', checkout:'Order now', total:'Total', delivery:'Delivery',
+    standard:'Standard', express:'Express', confirm:'Confirm', cancel:'Cancel',
+    save:'Save', products:'Products', payments:'Payments', stats:'Statistics',
+    restaurants:'Restaurants', suppliers:'Suppliers', disputes:'Disputes', finances:'Finances',
+    addRestaurant:'+ Add Restaurant', addSupplier:'+ Add Supplier',
+    morningBriefing:'Morning briefing', spending:'Monthly spending', savings:'Savings',
+    foodCost:'Food Cost', allCategories:'All categories', inStock:'In stock',
+    outOfStock:'Out of stock', markDelivered:'Mark delivered', sendReminder:'Send reminder',
+    profile:'My profile', settings:'Settings', language:'Language',
+  },
+  ar: {
+    dashboard:'لوحة التحكم', orders:'الطلبات', catalogue:'الطلب', compare:'مقارنة الأسعار',
+    analytics:'الإحصائيات', invoices:'الفواتير', logout:'تسجيل الخروج', password:'كلمة المرور',
+    welcome:'صباح الخير', search:'بحث...', addToCart:'إضافة', cart:'السلة',
+    emptyCart:'السلة فارغة', checkout:'تأكيد الطلب', total:'المجموع', delivery:'التوصيل',
+    standard:'عادي', express:'سريع', confirm:'تأكيد', cancel:'إلغاء',
+    save:'حفظ', products:'المنتجات', payments:'المدفوعات', stats:'الإحصائيات',
+    restaurants:'المطاعم', suppliers:'الموردون', disputes:'النزاعات', finances:'المالية',
+    addRestaurant:'+ إضافة مطعم', addSupplier:'+ إضافة مورد',
+    morningBriefing:'ملخص الصباح', spending:'مصاريف الشهر', savings:'التوفيرات',
+    foodCost:'تكلفة الطعام', allCategories:'كل الفئات', inStock:'متوفر',
+    outOfStock:'نفذ المخزون', markDelivered:'تم التسليم', sendReminder:'إرسال تذكير',
+    profile:'ملفي الشخصي', settings:'الإعدادات', language:'اللغة',
+  },
+  nl: {
+    dashboard:'Dashboard', orders:'Bestellingen', catalogue:'Bestellen', compare:'Prijzen vergelijken',
+    analytics:'Analyses', invoices:'Facturen', logout:'Uitloggen', password:'Wachtwoord',
+    welcome:'Goedemorgen', search:'Zoeken...', addToCart:'Toevoegen', cart:'Winkelwagen',
+    emptyCart:'Lege winkelwagen', checkout:'Bestelling plaatsen', total:'Totaal', delivery:'Levering',
+    standard:'Standaard', express:'Express', confirm:'Bevestigen', cancel:'Annuleren',
+    save:'Opslaan', products:'Producten', payments:'Betalingen', stats:'Statistieken',
+    restaurants:'Restaurants', suppliers:'Leveranciers', disputes:'Geschillen', finances:'Financiën',
+    addRestaurant:'+ Restaurant toevoegen', addSupplier:'+ Leverancier toevoegen',
+    morningBriefing:'Ochtendrapport', spending:'Maandelijkse uitgaven', savings:'Besparingen',
+    foodCost:'Voedselkosten', allCategories:'Alle categorieën', inStock:'Op voorraad',
+    outOfStock:'Uitverkocht', markDelivered:'Geleverd markeren', sendReminder:'Herinnering sturen',
+    profile:'Mijn profiel', settings:'Instellingen', language:'Taal',
+  },
+  es: {
+    dashboard:'Panel', orders:'Pedidos', catalogue:'Pedir', compare:'Comparar precios',
+    analytics:'Análisis', invoices:'Facturas', logout:'Cerrar sesión', password:'Contraseña',
+    welcome:'Buenos días', search:'Buscar...', addToCart:'Añadir', cart:'Carrito',
+    emptyCart:'Carrito vacío', checkout:'Hacer pedido', total:'Total', delivery:'Entrega',
+    standard:'Estándar', express:'Express', confirm:'Confirmar', cancel:'Cancelar',
+    save:'Guardar', products:'Productos', payments:'Pagos', stats:'Estadísticas',
+    restaurants:'Restaurantes', suppliers:'Proveedores', disputes:'Disputas', finances:'Finanzas',
+    addRestaurant:'+ Añadir restaurante', addSupplier:'+ Añadir proveedor',
+    morningBriefing:'Resumen matutino', spending:'Gasto mensual', savings:'Ahorros',
+    foodCost:'Coste alimentario', allCategories:'Todas las categorías', inStock:'En stock',
+    outOfStock:'Sin stock', markDelivered:'Marcar entregado', sendReminder:'Enviar recordatorio',
+    profile:'Mi perfil', settings:'Configuración', language:'Idioma',
+  }
+};
+
+const FLAGS = {fr:'🇫🇷',en:'🇬🇧',ar:'🇲🇦',nl:'🇳🇱',es:'🇪🇸'};
+const CODES = {fr:'FR',en:'EN',ar:'AR',nl:'NL',es:'ES'};
+let currentLang = localStorage.getItem('mazaya-lang') || 'fr';
+
+function t(key) { return (T[currentLang] && T[currentLang][key]) || T.fr[key] || key; }
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('mazaya-lang', lang);
+  document.getElementById('langFlag').textContent = FLAGS[lang];
+  document.getElementById('langCode').textContent = CODES[lang];
+  document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('.lang-opt').forEach(el => el.classList.remove('active'));
+  if(event && event.target) event.target.classList.add('active');
+  document.getElementById('langSel').classList.remove('open');
+  applyTranslations();
+  // Rebuild nav with new language
+  if(currentRole) buildNav(currentRole);
+  toast('🌍 ' + CODES[lang]);
+}
+
+function toggleLangMenu() {
+  document.getElementById('langSel').classList.toggle('open');
+}
+// Close on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('#langSel')) document.getElementById('langSel')?.classList.remove('open');
+});
+
+function applyTranslations() {
+  const lang = T[currentLang] || T.fr;
+  // data-t attributes
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    if (lang[key]) el.textContent = lang[key];
+  });
+  // Logout button
+  document.querySelectorAll('.btn-out').forEach(btn => {
+    if(btn.getAttribute('onclick') === 'logout()') btn.textContent = lang.logout || 'Déconnexion';
+    if(btn.getAttribute('onclick') === 'moChangePass()') btn.innerHTML = '🔑 ' + (lang.password || 'Mot de passe');
+  });
+}
+
+// Apply saved language on load
+document.addEventListener('DOMContentLoaded', () => {
+  if (currentLang !== 'fr') {
+    document.getElementById('langFlag').textContent = FLAGS[currentLang];
+    document.getElementById('langCode').textContent = CODES[currentLang];
+    document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  }
+});
+</script>
+
+
+<script>
+// ── MAZAYA AI AGENT ──
+const CLAUDE_API = 'https://api.anthropic.com/v1/messages';
+let CLAUDE_KEY = localStorage.getItem('mazaya-claude-key') || '';
+let aiOpen = false;
+let aiNotifications = [];
+let aiContext = [];
+
+// Simulated notifications — in production these come from Supabase realtime
+const DEMO_NOTIFS = [
+  {id:1, type:'success', title:'✅ Commande #2847 acceptée', sub:'ProViande — Bœuf haché 10kg', time:'Il y a 5 min', read:false},
+  {id:2, type:'warning', title:'⏰ Commande #2845 en retard', sub:'HuileMax — Livraison prévue hier', time:'Il y a 2h', read:false},
+  {id:3, type:'error', title:'❌ Commande #2843 refusée', sub:'FraisMaroc — Stock insuffisant', time:'Il y a 3h', read:true},
+];
+
+function toggleAI() {
+  aiOpen = !aiOpen;
+  const panel = document.getElementById('ai-panel');
+  const fab = document.getElementById('ai-fab');
+  if(aiOpen) {
+    panel.classList.add('open');
+    fab.style.display = 'none';
+    renderNotifs();
+    if(document.getElementById('ai-msgs').children.length === 0) {
+      addBotMsg(getBriefing());
+    }
+    markAllRead();
+  } else {
+    panel.classList.remove('open');
+    fab.style.display = 'flex';
+  }
+}
+
+function getBriefing() {
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
+  return `${greet} ! Je suis votre assistant Mazaya IA 🤖
+
+Voici votre résumé :
+• **2 notifications** non lues
+• **1 commande** en attente de livraison
+• Votre food cost est à **28%** ce mois — objectif 25%
+
+Comment puis-je vous aider ?`;
+}
+
+function renderNotifs() {
+  const container = document.getElementById('ai-notifs');
+  const unread = DEMO_NOTIFS.filter(n => !n.read);
+  if(unread.length === 0) { container.style.display = 'none'; return; }
+  container.style.display = 'block';
+  container.innerHTML = unread.map(n => `
+    <div class="ai-notif ${n.type==='success'?'':n.type==='warning'?'gold':'red'}">
+      <div class="ai-notif-body">
+        <div class="ai-notif-title">${n.title}</div>
+        <div class="ai-notif-sub">${n.sub}</div>
+        <div class="ai-notif-time">${n.time}</div>
+      </div>
+      <div class="ai-notif-x" onclick="dismissNotif(${n.id})">✕</div>
+    </div>
+  `).join('');
+}
+
+function dismissNotif(id) {
+  const n = DEMO_NOTIFS.find(x => x.id === id);
+  if(n) n.read = true;
+  renderNotifs();
+  updateDot();
+}
+
+function markAllRead() {
+  updateDot();
+}
+
+function updateDot() {
+  const unread = DEMO_NOTIFS.filter(n => !n.read).length;
+  const dot = document.getElementById('ai-dot');
+  if(dot) {
+    if(unread > 0) {
+      dot.style.display = 'flex';
+      dot.textContent = unread;
+    } else {
+      dot.style.display = 'none';
+    }
+  }
+}
+
+function addBotMsg(text) {
+  const msgs = document.getElementById('ai-msgs');
+  const div = document.createElement('div');
+  div.className = 'ai-msg bot';
+  div.innerHTML = `<div class="ai-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/
+/g,'<br>')}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUserMsg(text) {
+  const msgs = document.getElementById('ai-msgs');
+  const div = document.createElement('div');
+  div.className = 'ai-msg user';
+  div.innerHTML = `<div class="ai-bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('ai-msgs');
+  const div = document.createElement('div');
+  div.className = 'ai-msg bot';
+  div.id = 'ai-typing';
+  div.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function hideTyping() {
+  document.getElementById('ai-typing')?.remove();
+}
+
+function askAI(question) {
+  document.getElementById('ai-input').value = question;
+  sendAI();
+}
+
+async function sendAI() {
+  const input = document.getElementById('ai-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  document.getElementById('ai-sugs').style.display = 'none';
+  addUserMsg(text);
+  showTyping();
+
+  // Build context about the restaurant
+  const restaurantContext = `Tu es l'assistant IA de Mazaya, une plateforme B2B pour restaurants au Maghreb.
+L'utilisateur est un gérant de restaurant. 
+Données disponibles:
+- Dépenses ce mois: 8 420 DH
+- Économies IA: 1 340 DH  
+- Food Cost: 28% (objectif 25%)
+- Commandes en cours: 3
+- Fournisseurs actifs: ProViande, HuileMax, FraisMaroc, LaitierPlus
+- Meilleur prix viande actuellement: ProViande (32 DH/kg vs 38 DH marché)
+- Commande en retard: HuileMax #2845 (livraison prévue hier)
+- Commande refusée: FraisMaroc #2843 (stock insuffisant)
+Réponds en ${currentLang === 'ar' ? 'arabe' : currentLang === 'en' ? 'anglais' : currentLang === 'nl' ? 'néerlandais' : currentLang === 'es' ? 'espagnol' : 'français'}.
+Sois concis, pratique et professionnel. Max 120 mots.`;
+
+  aiContext.push({role:'user', content: text});
+  
+  try {
+    if(!CLAUDE_KEY) {
+      // Demo mode without API key
+      hideTyping();
+      const demoResp = getDemoResponse(text);
+      addBotMsg(demoResp);
+      aiContext.push({role:'assistant', content: demoResp});
+      return;
+    }
+
+    const resp = await fetch(CLAUDE_API, {
+      method:'POST',
+      headers:{
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        system: restaurantContext,
+        messages: aiContext.slice(-6)
+      })
+    });
+    const data = await resp.json();
+    hideTyping();
+    if(data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      addBotMsg(reply);
+      aiContext.push({role:'assistant', content: reply});
+    } else {
+      addBotMsg(getDemoResponse(text));
+    }
+  } catch(e) {
+    hideTyping();
+    addBotMsg(getDemoResponse(text));
+  }
+}
+
+function getDemoResponse(q) {
+  const ql = q.toLowerCase();
+  if(ql.includes('viande') || ql.includes('fournisseur')) 
+    return '🥩 **Meilleur fournisseur viande :** ProViande à **32 DH/kg**
+
+Vs marché moyen 38 DH/kg — économie de **6 DH/kg**. Pour 50kg/mois = **300 DH économisés**.
+
+Je recommande de renouveler votre contrat avec eux avant fin du mois.';
+  if(ql.includes('dépense') || ql.includes('coût') || ql.includes('food cost'))
+    return '📊 **Analyse dépenses :**
+
+• Total ce mois : **8 420 DH**
+• Food Cost : **28%** (↑ vs objectif 25%)
+• Principal écart : huile (+15% vs mois passé)
+
+💡 Astuce : Réduisez les commandes HuileMax et testez LaitierPlus pour les produits laitiers.';
+  if(ql.includes('retard') || ql.includes('commande'))
+    return '⚠️ **Commande en retard :**
+
+HuileMax #2845 — Livraison prévue hier
+
+Je vous recommande de :
+1. Appeler HuileMax maintenant
+2. Commander chez FraisMaroc en urgence si besoin
+
+Voulez-vous que je génère un message de rappel ?';
+  if(ql.includes('conseil') || ql.includes('réduire') || ql.includes('optimis'))
+    return '💡 **3 conseils pour ce mois :**
+
+1. **Grouper les commandes** — livraison 2x/semaine au lieu de 4x = -8% frais
+2. **ProViande** offre -5% si commande > 500 DH
+3. **Stock huile** trop élevé — réduire la prochaine commande de 30%
+
+Estimation économies : **+420 DH/mois**';
+  return '🤖 Je suis votre assistant Mazaya IA.
+
+Je peux vous aider avec :
+• **Analyse** de vos fournisseurs et prix
+• **Suivi** de vos commandes
+• **Conseils** pour réduire vos coûts
+• **Alertes** sur les livraisons en retard
+
+Que souhaitez-vous savoir ?';
+}
+
+// Show FAB when logged in
+function showAIFab() {
+  const fab = document.getElementById('ai-fab');
+  if(fab) { fab.style.display = 'flex'; updateDot(); }
+}
+
+// Add API key config
+function promptAPIKey() {
+  openMo(`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);display:flex;align-items:center;justify-content:center;font-size:20px;">🤖</div>
+      <div><div class="mo-title" style="margin-bottom:0">Connecter Claude AI</div><div style="font-size:11px;color:var(--grey);">Activez la vraie intelligence artificielle</div></div>
+    </div>
+    <div style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--grey);line-height:1.6;">
+      1. Va sur <strong style="color:#fff">console.anthropic.com</strong><br>
+      2. Crée un compte → <strong style="color:#fff">API Keys</strong> → <strong style="color:#fff">Create Key</strong><br>
+      3. Ajoute du crédit → <strong style="color:#fff">Billing → Add credit (5$)</strong><br>
+      4. Colle ta clé ci-dessous
+    </div>
+    <div class="fg" style="margin-bottom:14px;">
+      <label class="flbl">Clé Claude API</label>
+      <input class="finp" id="claude-key-input" type="password" placeholder="sk-ant-api03-..." style="width:100%;font-family:monospace;font-size:11px;">
+    </div>
+    <div id="ai-key-status" style="font-size:11px;margin-bottom:12px;display:none;"></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary" style="flex:1;" onclick="saveClaudeKey()">CONNECTER L'IA</button>
+      <button class="btn-secondary" onclick="closeMo()">Annuler</button>
+    </div>
+    ${CLAUDE_KEY ? '<div style="margin-top:10px;text-align:center;"><span style="font-size:10px;color:var(--green);">✅ Clé déjà configurée — vous pouvez la remplacer</span></div>' : ''}
+  `);
+}
+
+function saveClaudeKey() {
+  const key = document.getElementById('claude-key-input').value.trim();
+  const status = document.getElementById('ai-key-status');
+  if(!key) { 
+    status.style.display='block'; status.style.color='var(--red)'; 
+    status.textContent='❌ Entrez votre clé API'; return; 
+  }
+  if(!key.startsWith('sk-ant-')) { 
+    status.style.display='block'; status.style.color='var(--red)'; 
+    status.textContent='❌ Clé invalide — doit commencer par sk-ant-'; return; 
+  }
+  CLAUDE_KEY = key;
+  localStorage.setItem('mazaya-claude-key', key);
+  // Update UI
+  document.getElementById('ai-status').textContent = 'En ligne · IA Connectée ✅';
+  document.getElementById('ai-key-btn').textContent = '✅ IA';
+  document.getElementById('ai-key-btn').style.background = 'rgba(0,255,136,.2)';
+  closeMo();
+  toast('✅ Claude AI connecté ! L\'agent est maintenant intelligent.');
+  // Clear chat and restart with real AI
+  document.getElementById('ai-msgs').innerHTML = '';
+  addBotMsg('🤖 **Claude AI activé !**\n\nJe suis maintenant connecté à vos données Mazaya en temps réel. Posez-moi n\'importe quelle question sur vos fournisseurs, commandes ou dépenses !');
+}
+
+function configAIKey() {
+  const key = prompt('Entrez votre clé Claude API (sk-ant-...)
+Elle sera sauvegardée localement.');
+  if(key && key.startsWith('sk-ant-')) {
+    CLAUDE_KEY = key;
+    localStorage.setItem('mazaya-claude-key', key);
+    toast('✅ Clé Claude API configurée !');
+  } else if(key) {
+    toast('❌ Clé invalide — doit commencer par sk-ant-');
+  }
+}
+
+// Auto-notifications simulation (in production: Supabase realtime)
+function startNotifSimulation() {
+  setTimeout(() => {
+    DEMO_NOTIFS.push({
+      id:4, type:'success', 
+      title:'✅ Commande #2848 confirmée', 
+      sub:'LaitierPlus — Fromage frais 5kg',
+      time:'À l'instant', read:false
+    });
+    updateDot();
+    toast('🔔 Nouvelle notification — Commande confirmée !');
+  }, 30000); // After 30s
+}
+</script>
+
 </body>
 </html>
+<script>
+// ── BOTTOM NAV MOBILE ──
+const BNAV = {
+  restaurant: [
+    {id:'dash', icon:'<svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>', label:'Home'},
+    {id:'cmd',  icon:'<svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>', label:'Commander'},
+    {id:'cmp',  icon:'<svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/></svg>', label:'Prix'},
+    {id:'ord',  icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>', label:'Commandes'},
+    {id:'ana',  icon:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>', label:'Stats'},
+  ],
+  fournisseur: [
+    {id:'dash',  icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>', label:'Home'},
+    {id:'prod',  icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>', label:'Produits'},
+    {id:'cmd',   icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>', label:'Commandes'},
+    {id:'pay',   icon:'<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>', label:'Paiements'},
+    {id:'stats', icon:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>', label:'Stats'},
+  ],
+  admin: [
+    {id:'dash', icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>', label:'Global'},
+    {id:'cmd',  icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>', label:'Commandes'},
+    {id:'rest', icon:'<svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>', label:'Restos'},
+    {id:'four', icon:'<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>', label:'Fournis.'},
+    {id:'lit',  icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>', label:'Litiges'},
+  ]
+};
+
+function buildBottomNav() {
+  const bn = document.getElementById('bottom-nav');
+  if (!bn || !currentRole) return;
+  const items = BNAV[currentRole] || [];
+  const ac = currentRole === 'restaurant' ? 'active' : currentRole === 'fournisseur' ? 'active-gold' : 'active-blue';
+  bn.innerHTML = items.map(item =>
+    `<div class="bnav-item${currentPanel===item.id?' '+ac:''}" id="bn-${item.id}" onclick="navigateTo('${item.id}')">
+      ${item.icon}<span>${item.label}</span>
+    </div>`
+  ).join('');
+}
+
+// Patch navigateTo to also update bottom nav
+const _origNavigate = navigateTo;
+navigateTo = function(id) {
+  _origNavigate(id);
+  buildBottomNav();
+};
+
+// Patch startApp to build bottom nav
+const _origStartApp = startApp;
+startApp = function(u) {
+  _origStartApp(u);
+  setTimeout(buildBottomNav, 100);
+  showAIFab();
+  startNotifSimulation();
+  if(CLAUDE_KEY) {
+    setTimeout(() => {
+      const s = document.getElementById('ai-status');
+      const b = document.getElementById('ai-key-btn');
+      if(s) s.textContent = 'En ligne · IA Connectée ✅';
+      if(b) { b.textContent = '✅ IA'; b.style.background = 'rgba(0,255,136,.2)'; }
+    }, 200);
+  }
+};
+</script>
