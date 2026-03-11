@@ -59,6 +59,18 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
   .main{padding-bottom:80px !important;}
 }
 
+
+/* ── LANGUAGE SELECTOR ── */
+.lang-sel{position:relative;display:inline-block;}
+.lang-btn{padding:5px 10px;background:transparent;border:1px solid var(--border2);border-radius:6px;font-size:11px;font-weight:600;color:var(--grey);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;}
+.lang-btn:hover{border-color:var(--green);color:var(--green);}
+.lang-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#0a0a0a;border:1px solid var(--border);border-radius:8px;padding:4px;min-width:140px;z-index:500;display:none;box-shadow:0 8px 24px rgba(0,0,0,.8);}
+.lang-sel.open .lang-dropdown{display:block;}
+.lang-opt{padding:8px 12px;border-radius:5px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--grey);transition:all .15s;}
+.lang-opt:hover{background:rgba(255,255,255,.05);color:#fff;}
+.lang-opt.active{color:var(--green);}
+[dir="rtl"] .main{direction:rtl;text-align:right;}
+
 /* ── MAZAYA LOGO ── */
 .mz-logo { display:flex; flex-direction:column; align-items:flex-start; gap:0px; }
 .mz-en { font-family:'Cormorant Garamond',serif; font-weight:300; letter-spacing:14px; text-transform:uppercase; color:var(--white); line-height:1; }
@@ -481,6 +493,7 @@ select.finp option{background:var(--dark3);}
     <div class="tb-right">
       <span class="tb-user" id="tb-user">—</span>
       <div class="tb-notif" onclick="toast('🔔 2 nouvelles alertes')">🔔<div class="ndot"></div></div>
+      <div class="lang-sel" id="langSel"><button class="lang-btn" onclick="toggleLangMenu()"><span id="langFlag">🇫🇷</span><span id="langCode">FR</span>▾</button><div class="lang-dropdown" id="langDropdown"><div class="lang-opt active" onclick="setLang('fr')">🇫🇷 Français</div><div class="lang-opt" onclick="setLang('en')">🇬🇧 English</div><div class="lang-opt" onclick="setLang('ar')">🇲🇦 العربية</div><div class="lang-opt" onclick="setLang('nl')">🇳🇱 Nederlands</div><div class="lang-opt" onclick="setLang('es')">🇪🇸 Español</div></div></div>
       <button class="btn-out" onclick="moChangePass()" style="border-color:var(--border2);">🔑 Mot de passe</button>
       <button class="btn-out" onclick="logout()">Déconnexion</button>
     </div>
@@ -666,11 +679,11 @@ const NAV_CONFIG = {
   restaurant: [
     {section:'PRINCIPAL'},
     {id:'dash',label:'Dashboard',icon:'home'},
-    {id:'cmd',label:'Commander',icon:'shop',badge:'cart'},
-    {id:'cmp',label:'Comparer prix',icon:'compare'},
+    {id:'cmd',label:()=>t('catalogue'),icon:'shop',badge:'cart'},
+    {id:'cmp',label:()=>t('compare'),icon:'compare'},
     {section:'SUIVI'},
     {id:'ord',label:'Commandes',icon:'list'},
-    {id:'ana',label:'Analytiques',icon:'chart'},
+    {id:'ana',label:()=>t('analytics'),icon:'chart'},
   ],
   fournisseur: [
     {section:'PRINCIPAL'},
@@ -678,19 +691,19 @@ const NAV_CONFIG = {
     {id:'prod',label:'Mes produits',icon:'box'},
     {id:'cmd',label:'Commandes reçues',icon:'list',badge:'2'},
     {section:'FINANCES'},
-    {id:'pay',label:'Paiements',icon:'card',badge:'2'},
-    {id:'stats',label:'Statistiques',icon:'chart'},
+    {id:'pay',label:()=>t('payments'),icon:'card',badge:'2'},
+    {id:'stats',label:()=>t('stats'),icon:'chart'},
   ],
   admin: [
     {section:'VUE GLOBALE'},
     {id:'dash',label:'Vue globale',icon:'grid'},
     {id:'cmd',label:'Toutes commandes',icon:'list',badge:'142'},
     {section:'UTILISATEURS'},
-    {id:'rest',label:'Restaurants',icon:'resto'},
-    {id:'four',label:'Fournisseurs',icon:'truck'},
+    {id:'rest',label:()=>t('restaurants'),icon:'resto'},
+    {id:'four',label:()=>t('suppliers'),icon:'truck'},
     {section:'FINANCES'},
     {id:'fin',label:'Finances & GMV',icon:'chart'},
-    {id:'lit',label:'Litiges',icon:'alert',badge:'2'},
+    {id:'lit',label:()=>t('disputes'),icon:'alert',badge:'2'},
   ]
 };
 
@@ -1498,6 +1511,135 @@ async function installApp() {
 
 <!-- BOTTOM NAV MOBILE -->
 <div id="bottom-nav"></div>
+
+
+<script>
+// ── MAZAYA TRANSLATION SYSTEM ──
+const T = {
+  fr: {
+    dashboard:'Tableau de bord', orders:'Commandes', catalogue:'Commander', compare:'Comparer prix',
+    analytics:'Analytiques', invoices:'Factures', logout:'Déconnexion', password:'Mot de passe',
+    welcome:'Bonjour', search:'Rechercher...', addToCart:'Ajouter', cart:'Panier',
+    emptyCart:'Panier vide', checkout:'Commander', total:'Total', delivery:'Livraison',
+    standard:'Standard', express:'Express', confirm:'Confirmer', cancel:'Annuler',
+    save:'Enregistrer', products:'Produits', payments:'Paiements', stats:'Statistiques',
+    restaurants:'Restaurants', suppliers:'Fournisseurs', disputes:'Litiges', finances:'Finances',
+    addRestaurant:'+ Ajouter Restaurant', addSupplier:'+ Ajouter Fournisseur',
+    morningBriefing:'Briefing du matin', spending:'Dépenses du mois', savings:'Économies',
+    foodCost:'Food Cost', allCategories:'Toutes catégories', inStock:'En stock',
+    outOfStock:'Rupture', markDelivered:'Marquer livré', sendReminder:'Envoyer rappel',
+    profile:'Mon profil', settings:'Paramètres', language:'Langue',
+  },
+  en: {
+    dashboard:'Dashboard', orders:'Orders', catalogue:'Order', compare:'Compare prices',
+    analytics:'Analytics', invoices:'Invoices', logout:'Logout', password:'Password',
+    welcome:'Good morning', search:'Search...', addToCart:'Add', cart:'Cart',
+    emptyCart:'Empty cart', checkout:'Order now', total:'Total', delivery:'Delivery',
+    standard:'Standard', express:'Express', confirm:'Confirm', cancel:'Cancel',
+    save:'Save', products:'Products', payments:'Payments', stats:'Statistics',
+    restaurants:'Restaurants', suppliers:'Suppliers', disputes:'Disputes', finances:'Finances',
+    addRestaurant:'+ Add Restaurant', addSupplier:'+ Add Supplier',
+    morningBriefing:'Morning briefing', spending:'Monthly spending', savings:'Savings',
+    foodCost:'Food Cost', allCategories:'All categories', inStock:'In stock',
+    outOfStock:'Out of stock', markDelivered:'Mark delivered', sendReminder:'Send reminder',
+    profile:'My profile', settings:'Settings', language:'Language',
+  },
+  ar: {
+    dashboard:'لوحة التحكم', orders:'الطلبات', catalogue:'الطلب', compare:'مقارنة الأسعار',
+    analytics:'الإحصائيات', invoices:'الفواتير', logout:'تسجيل الخروج', password:'كلمة المرور',
+    welcome:'صباح الخير', search:'بحث...', addToCart:'إضافة', cart:'السلة',
+    emptyCart:'السلة فارغة', checkout:'تأكيد الطلب', total:'المجموع', delivery:'التوصيل',
+    standard:'عادي', express:'سريع', confirm:'تأكيد', cancel:'إلغاء',
+    save:'حفظ', products:'المنتجات', payments:'المدفوعات', stats:'الإحصائيات',
+    restaurants:'المطاعم', suppliers:'الموردون', disputes:'النزاعات', finances:'المالية',
+    addRestaurant:'+ إضافة مطعم', addSupplier:'+ إضافة مورد',
+    morningBriefing:'ملخص الصباح', spending:'مصاريف الشهر', savings:'التوفيرات',
+    foodCost:'تكلفة الطعام', allCategories:'كل الفئات', inStock:'متوفر',
+    outOfStock:'نفذ المخزون', markDelivered:'تم التسليم', sendReminder:'إرسال تذكير',
+    profile:'ملفي الشخصي', settings:'الإعدادات', language:'اللغة',
+  },
+  nl: {
+    dashboard:'Dashboard', orders:'Bestellingen', catalogue:'Bestellen', compare:'Prijzen vergelijken',
+    analytics:'Analyses', invoices:'Facturen', logout:'Uitloggen', password:'Wachtwoord',
+    welcome:'Goedemorgen', search:'Zoeken...', addToCart:'Toevoegen', cart:'Winkelwagen',
+    emptyCart:'Lege winkelwagen', checkout:'Bestelling plaatsen', total:'Totaal', delivery:'Levering',
+    standard:'Standaard', express:'Express', confirm:'Bevestigen', cancel:'Annuleren',
+    save:'Opslaan', products:'Producten', payments:'Betalingen', stats:'Statistieken',
+    restaurants:'Restaurants', suppliers:'Leveranciers', disputes:'Geschillen', finances:'Financiën',
+    addRestaurant:'+ Restaurant toevoegen', addSupplier:'+ Leverancier toevoegen',
+    morningBriefing:'Ochtendrapport', spending:'Maandelijkse uitgaven', savings:'Besparingen',
+    foodCost:'Voedselkosten', allCategories:'Alle categorieën', inStock:'Op voorraad',
+    outOfStock:'Uitverkocht', markDelivered:'Geleverd markeren', sendReminder:'Herinnering sturen',
+    profile:'Mijn profiel', settings:'Instellingen', language:'Taal',
+  },
+  es: {
+    dashboard:'Panel', orders:'Pedidos', catalogue:'Pedir', compare:'Comparar precios',
+    analytics:'Análisis', invoices:'Facturas', logout:'Cerrar sesión', password:'Contraseña',
+    welcome:'Buenos días', search:'Buscar...', addToCart:'Añadir', cart:'Carrito',
+    emptyCart:'Carrito vacío', checkout:'Hacer pedido', total:'Total', delivery:'Entrega',
+    standard:'Estándar', express:'Express', confirm:'Confirmar', cancel:'Cancelar',
+    save:'Guardar', products:'Productos', payments:'Pagos', stats:'Estadísticas',
+    restaurants:'Restaurantes', suppliers:'Proveedores', disputes:'Disputas', finances:'Finanzas',
+    addRestaurant:'+ Añadir restaurante', addSupplier:'+ Añadir proveedor',
+    morningBriefing:'Resumen matutino', spending:'Gasto mensual', savings:'Ahorros',
+    foodCost:'Coste alimentario', allCategories:'Todas las categorías', inStock:'En stock',
+    outOfStock:'Sin stock', markDelivered:'Marcar entregado', sendReminder:'Enviar recordatorio',
+    profile:'Mi perfil', settings:'Configuración', language:'Idioma',
+  }
+};
+
+const FLAGS = {fr:'🇫🇷',en:'🇬🇧',ar:'🇲🇦',nl:'🇳🇱',es:'🇪🇸'};
+const CODES = {fr:'FR',en:'EN',ar:'AR',nl:'NL',es:'ES'};
+let currentLang = localStorage.getItem('mazaya-lang') || 'fr';
+
+function t(key) { return (T[currentLang] && T[currentLang][key]) || T.fr[key] || key; }
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('mazaya-lang', lang);
+  document.getElementById('langFlag').textContent = FLAGS[lang];
+  document.getElementById('langCode').textContent = CODES[lang];
+  document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('.lang-opt').forEach(el => el.classList.remove('active'));
+  if(event && event.target) event.target.classList.add('active');
+  document.getElementById('langSel').classList.remove('open');
+  applyTranslations();
+  // Rebuild nav with new language
+  if(currentRole) buildNav(currentRole);
+  toast('🌍 ' + CODES[lang]);
+}
+
+function toggleLangMenu() {
+  document.getElementById('langSel').classList.toggle('open');
+}
+// Close on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('#langSel')) document.getElementById('langSel')?.classList.remove('open');
+});
+
+function applyTranslations() {
+  const lang = T[currentLang] || T.fr;
+  // data-t attributes
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    if (lang[key]) el.textContent = lang[key];
+  });
+  // Logout button
+  document.querySelectorAll('.btn-out').forEach(btn => {
+    if(btn.getAttribute('onclick') === 'logout()') btn.textContent = lang.logout || 'Déconnexion';
+    if(btn.getAttribute('onclick') === 'moChangePass()') btn.innerHTML = '🔑 ' + (lang.password || 'Mot de passe');
+  });
+}
+
+// Apply saved language on load
+document.addEventListener('DOMContentLoaded', () => {
+  if (currentLang !== 'fr') {
+    document.getElementById('langFlag').textContent = FLAGS[currentLang];
+    document.getElementById('langCode').textContent = CODES[currentLang];
+    document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  }
+});
+</script>
 
 </body>
 </html>
