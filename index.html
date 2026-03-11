@@ -62,49 +62,114 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
 
 
 /* ── AI AGENT ── */
-#ai-fab{position:fixed;bottom:90px;right:20px;width:52px;height:52px;background:linear-gradient(135deg,#00FF88,#00cc6a);border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:22px;z-index:400;box-shadow:0 4px 20px rgba(0,255,136,.4);transition:transform .2s;}
-#ai-fab:hover{transform:scale(1.1);}
-#ai-fab .notif-dot{position:absolute;top:2px;right:2px;width:12px;height:12px;background:var(--red);border-radius:50%;border:2px solid #000;display:none;}
-#ai-panel{position:fixed;bottom:90px;right:20px;width:340px;height:520px;background:#080808;border:1px solid rgba(0,255,136,.2);border-radius:16px;z-index:401;display:none;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.9);overflow:hidden;}
+#ai-fab{
+  position:fixed;bottom:90px;right:20px;
+  width:56px;height:56px;
+  background:linear-gradient(135deg,#00FF88,#00cc6a);
+  border-radius:50%;border:none;cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  z-index:400;
+  box-shadow:0 0 0 0 rgba(0,255,136,.5);
+  animation:aipulse 2.5s infinite;
+  transition:transform .2s;
+}
+#ai-fab:hover{transform:scale(1.12);}
+@keyframes aipulse{
+  0%{box-shadow:0 0 0 0 rgba(0,255,136,.5);}
+  70%{box-shadow:0 0 0 14px rgba(0,255,136,0);}
+  100%{box-shadow:0 0 0 0 rgba(0,255,136,0);}
+}
+#ai-fab .ai-fab-icon{font-size:24px;animation:airotate 4s linear infinite;}
+@keyframes airotate{0%,100%{transform:rotate(-10deg);}50%{transform:rotate(10deg);}}
+#ai-fab .notif-dot{
+  position:absolute;top:0;right:0;
+  width:16px;height:16px;
+  background:var(--red);border-radius:50%;
+  border:2px solid #000;
+  display:none;
+  font-size:9px;font-weight:700;color:#fff;
+  align-items:center;justify-content:center;
+}
+#ai-panel{
+  position:fixed;bottom:90px;right:20px;
+  width:350px;height:540px;
+  background:#060606;
+  border:1px solid rgba(0,255,136,.15);
+  border-radius:18px;z-index:401;
+  display:none;flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,.95), 0 0 0 1px rgba(0,255,136,.05);
+  overflow:hidden;
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 #ai-panel.open{display:flex;}
-.ai-head{padding:14px 16px;border-bottom:1px solid #111;display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.ai-avatar{width:36px;height:36px;background:linear-gradient(135deg,#00FF88,#00cc6a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ai-head{
+  padding:14px 16px;
+  background:linear-gradient(135deg,rgba(0,255,136,.06),transparent);
+  border-bottom:1px solid #111;
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.ai-avatar{
+  width:38px;height:38px;
+  background:linear-gradient(135deg,#00FF88,#00cc6a);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  animation:airotate 4s linear infinite;
+}
 .ai-head-info{flex:1;}
-.ai-head-name{font-size:13px;font-weight:700;color:#fff;}
-.ai-head-status{font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px;}
-.ai-head-status::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;}
-.ai-close{width:28px;height:28px;background:transparent;border:1px solid #222;border-radius:6px;color:var(--grey);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
-.ai-notifs{padding:10px 12px;border-bottom:1px solid #111;max-height:120px;overflow-y:auto;flex-shrink:0;}
-.ai-notif{padding:8px 10px;background:#0d0d0d;border-radius:8px;margin-bottom:6px;border-left:3px solid var(--green);cursor:pointer;transition:background .15s;}
+.ai-head-name{font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px;}
+.ai-head-status{font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:2px;}
+.ai-head-status::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.ai-close{width:28px;height:28px;background:transparent;border:1px solid #222;border-radius:6px;color:var(--grey);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.ai-close:hover{border-color:var(--red);color:var(--red);}
+.ai-notifs{padding:8px 10px;border-bottom:1px solid #0f0f0f;max-height:130px;overflow-y:auto;flex-shrink:0;}
+.ai-notifs:empty{display:none;}
+.ai-notif{
+  padding:8px 10px;background:#0a0a0a;
+  border-radius:8px;margin-bottom:5px;
+  border-left:3px solid var(--green);
+  cursor:pointer;transition:background .15s;
+  display:flex;align-items:flex-start;gap:8px;
+}
 .ai-notif:hover{background:#111;}
 .ai-notif.red{border-color:var(--red);}
 .ai-notif.gold{border-color:var(--gold);}
-.ai-notif-title{font-size:11px;font-weight:600;color:#fff;margin-bottom:2px;}
+.ai-notif-body{flex:1;}
+.ai-notif-title{font-size:11px;font-weight:600;color:#fff;margin-bottom:1px;}
 .ai-notif-sub{font-size:10px;color:var(--grey);}
-.ai-notif-time{font-size:9px;color:var(--grey2);margin-top:3px;}
-.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;}
-.ai-msg{max-width:85%;animation:fadeIn .2s;}
+.ai-notif-time{font-size:9px;color:var(--grey2);margin-top:2px;}
+.ai-notif-x{color:var(--grey2);font-size:12px;padding:2px 4px;cursor:pointer;}
+.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.ai-msg{max-width:88%;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 .ai-msg.user{align-self:flex-end;}
 .ai-msg.bot{align-self:flex-start;}
-.ai-bubble{padding:10px 13px;border-radius:12px;font-size:12px;line-height:1.5;}
-.ai-msg.bot .ai-bubble{background:#111;color:#ddd;border-bottom-left-radius:3px;}
-.ai-msg.user .ai-bubble{background:rgba(0,255,136,.15);color:#fff;border-bottom-right-radius:3px;border:1px solid rgba(0,255,136,.2);}
-.ai-typing{display:flex;gap:4px;padding:10px 13px;background:#111;border-radius:12px;width:fit-content;}
-.ai-typing span{width:6px;height:6px;background:var(--grey);border-radius:50%;animation:bounce .8s infinite;}
+.ai-bubble{padding:10px 13px;border-radius:14px;font-size:12px;line-height:1.6;}
+.ai-msg.bot .ai-bubble{background:#0f0f0f;color:#ccc;border-bottom-left-radius:3px;border:1px solid #1a1a1a;}
+.ai-msg.user .ai-bubble{background:rgba(0,255,136,.12);color:#fff;border-bottom-right-radius:3px;border:1px solid rgba(0,255,136,.2);}
+.ai-typing{display:flex;gap:5px;padding:10px 13px;background:#0f0f0f;border-radius:14px;border-bottom-left-radius:3px;width:fit-content;border:1px solid #1a1a1a;}
+.ai-typing span{width:7px;height:7px;background:#444;border-radius:50%;animation:bounce .8s infinite;}
 .ai-typing span:nth-child(2){animation-delay:.15s;}
 .ai-typing span:nth-child(3){animation-delay:.3s;}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-.ai-suggestions{padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid #111;flex-shrink:0;}
-.ai-sug{padding:5px 10px;background:#111;border:1px solid #222;border-radius:20px;font-size:10px;color:var(--grey);cursor:pointer;transition:all .15s;white-space:nowrap;}
-.ai-sug:hover{border-color:var(--green);color:var(--green);}
-.ai-input-row{padding:10px 12px;display:flex;gap:8px;border-top:1px solid #111;flex-shrink:0;}
-.ai-input{flex:1;background:#111;border:1px solid #222;border-radius:8px;padding:9px 12px;color:#fff;font-size:12px;outline:none;font-family:inherit;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-7px);}}
+.ai-suggestions{padding:8px 10px;display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid #0f0f0f;flex-shrink:0;}
+.ai-sug{
+  padding:5px 10px;background:#0a0a0a;
+  border:1px solid #1a1a1a;border-radius:20px;
+  font-size:10px;color:var(--grey);cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.ai-sug:hover{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.05);}
+.ai-input-row{padding:10px 12px;display:flex;gap:8px;border-top:1px solid #0f0f0f;flex-shrink:0;background:#030303;}
+.ai-input{flex:1;background:#0f0f0f;border:1px solid #1a1a1a;border-radius:10px;padding:10px 13px;color:#fff;font-size:12px;outline:none;font-family:inherit;transition:border .15s;}
 .ai-input:focus{border-color:rgba(0,255,136,.3);}
-.ai-send{width:36px;height:36px;background:var(--green);border:none;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:transform .15s;flex-shrink:0;}
-.ai-send:hover{transform:scale(1.05);}
+.ai-send{width:38px;height:38px;background:var(--green);border:none;border-radius:10px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;color:#000;font-weight:700;}
+.ai-send:hover{background:var(--green2);transform:scale(1.05);}
 @media(max-width:768px){
-  #ai-panel{width:calc(100vw - 24px);right:12px;bottom:80px;height:480px;}
-  #ai-fab{bottom:80px;right:12px;}
+  #ai-panel{width:calc(100vw - 20px);right:10px;bottom:75px;height:500px;}
+  #ai-fab{bottom:75px;right:14px;width:50px;height:50px;}
 }
 
 /* ── LANGUAGE SELECTOR ── */
@@ -1559,7 +1624,8 @@ async function installApp() {
 
 <!-- AI AGENT FAB -->
 <button id="ai-fab" onclick="toggleAI()" title="Assistant Mazaya IA">
-  🤖<div class="notif-dot" id="ai-dot"></div>
+  <span class="ai-fab-icon">🤖</span>
+  <div class="notif-dot" id="ai-dot"></div>
 </button>
 
 <!-- AI AGENT PANEL -->
@@ -1772,10 +1838,13 @@ function renderNotifs() {
   if(unread.length === 0) { container.style.display = 'none'; return; }
   container.style.display = 'block';
   container.innerHTML = unread.map(n => `
-    <div class="ai-notif ${n.type==='success'?'':n.type==='warning'?'gold':'red'}" onclick="dismissNotif(${n.id})">
-      <div class="ai-notif-title">${n.title}</div>
-      <div class="ai-notif-sub">${n.sub}</div>
-      <div class="ai-notif-time">${n.time} · Cliquez pour ignorer</div>
+    <div class="ai-notif ${n.type==='success'?'':n.type==='warning'?'gold':'red'}">
+      <div class="ai-notif-body">
+        <div class="ai-notif-title">${n.title}</div>
+        <div class="ai-notif-sub">${n.sub}</div>
+        <div class="ai-notif-time">${n.time}</div>
+      </div>
+      <div class="ai-notif-x" onclick="dismissNotif(${n.id})">✕</div>
     </div>
   `).join('');
 }
@@ -1794,7 +1863,14 @@ function markAllRead() {
 function updateDot() {
   const unread = DEMO_NOTIFS.filter(n => !n.read).length;
   const dot = document.getElementById('ai-dot');
-  if(dot) dot.style.display = unread > 0 ? 'block' : 'none';
+  if(dot) {
+    if(unread > 0) {
+      dot.style.display = 'flex';
+      dot.textContent = unread;
+    } else {
+      dot.style.display = 'none';
+    }
+  }
 }
 
 function addBotMsg(text) {
