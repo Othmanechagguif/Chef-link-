@@ -2404,13 +2404,26 @@ function startNotifSimulation() {
 
 <script>
 // ── PERTES & GASPILLAGE ──
-let pertesData = JSON.parse(localStorage.getItem('mazaya-pertes') || '[]');
+let pertesData = [];
 
-function savePertesLocal() {
-  localStorage.setItem('mazaya-pertes', JSON.stringify(pertesData));
+async function loadPertesFromDB() {
+  try {
+    const { data, error } = await sb
+      .from('pertes')
+      .select('*')
+      .eq('restaurant_id', currentUser.id)
+      .order('date', { ascending: false });
+    if (error) throw error;
+    pertesData = data || [];
+    renderPertes();
+    updatePertesStats();
+  } catch(e) {
+    console.log('Pertes load error:', e);
+    pertesData = [];
+  }
 }
 
-function addPerte() {
+async function addPerte() {
   const produit = document.getElementById('p-produit')?.value?.trim();
   const qty = parseFloat(document.getElementById('p-qty')?.value);
   const unit = document.getElementById('p-unit')?.value;
@@ -2421,38 +2434,53 @@ function addPerte() {
   if (!produit || !qty || !prix) { toast('❌ Remplissez tous les champs obligatoires'); return; }
 
   const perte = {
-    id: Date.now(),
+    restaurant_id: currentUser.id,
     produit, qty, unit, prix,
     total: qty * prix,
     raison, date
   };
 
-  pertesData.push(perte);
-  savePertesLocal();
-  renderPertes();
-  updatePertesStats();
-
-  // Clear form
-  document.getElementById('p-produit').value = '';
-  document.getElementById('p-qty').value = '';
-  document.getElementById('p-prix').value = '';
-  toast('✅ Perte enregistrée');
+  try {
+    const { data, error } = await sb.from('pertes').insert([perte]).select().single();
+    if (error) throw error;
+    pertesData.unshift(data);
+    renderPertes();
+    updatePertesStats();
+    document.getElementById('p-produit').value = '';
+    document.getElementById('p-qty').value = '';
+    document.getElementById('p-prix').value = '';
+    toast('✅ Perte enregistrée dans Supabase');
+  } catch(e) {
+    toast('❌ Erreur: ' + e.message);
+  }
 }
 
-function removePerte(id) {
-  pertesData = pertesData.filter(p => p.id !== id);
-  savePertesLocal();
-  renderPertes();
-  updatePertesStats();
+async function removePerte(id) {
+  try {
+    const { error } = await sb.from('pertes').delete().eq('id', id);
+    if (error) throw error;
+    pertesData = pertesData.filter(p => p.id !== id);
+    renderPertes();
+    updatePertesStats();
+    toast('🗑️ Perte supprimée');
+  } catch(e) {
+    toast('❌ Erreur: ' + e.message);
+  }
 }
 
-function clearPertes() {
+async function clearPertes() {
   if (!confirm('Vider toutes les pertes ?')) return;
-  pertesData = [];
-  savePertesLocal();
-  renderPertes();
-  updatePertesStats();
-  document.getElementById('ai-pertes-result').style.display = 'none';
+  try {
+    const { error } = await sb.from('pertes').delete().eq('restaurant_id', currentUser.id);
+    if (error) throw error;
+    pertesData = [];
+    renderPertes();
+    updatePertesStats();
+    document.getElementById('ai-pertes-result').style.display = 'none';
+    toast('🗑️ Toutes les pertes supprimées');
+  } catch(e) {
+    toast('❌ Erreur: ' + e.message);
+  }
 }
 
 function renderPertes() {
@@ -2633,9 +2661,7 @@ navigateTo = function(id) {
   _origNavToPertes(id);
   if (id === 'pertes') {
     setTimeout(() => {
-      renderPertes();
-      updatePertesStats();
-      // Set today's date
+      loadPertesFromDB();
       const dateInput = document.getElementById('p-date');
       if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
     }, 50);
