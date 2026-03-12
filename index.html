@@ -41,7 +41,7 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
   background:rgba(5,5,5,.97);
   border-top:1px solid var(--border);
   padding:8px 0 calc(8px + env(safe-area-inset-bottom));
-  z-index:300;
+  z-index:290;
   justify-content:space-around;
   align-items:center;
 }
@@ -96,7 +96,7 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
   width:350px;height:540px;
   background:#060606;
   border:1px solid rgba(0,255,136,.15);
-  border-radius:18px;z-index:401;
+  border-radius:18px;z-index:9998;
   display:none;flex-direction:column;
   box-shadow:0 20px 60px rgba(0,0,0,.95), 0 0 0 1px rgba(0,255,136,.05);
   overflow:hidden;
@@ -754,11 +754,7 @@ function startApp(u) {
   currentRole = u.role;
   document.getElementById('page-login').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
-  // Show AI FAB immediately
-  setTimeout(() => {
-    const fab = document.getElementById('ai-fab');
-    if(fab) { fab.classList.add('visible'); fab.style.cssText += ';display:flex!important;'; updateDot(); }
-  }, 500);
+  setTimeout(showAIFab, 300);
   document.getElementById('tb-user').textContent = u.name;
   const roleEl = document.getElementById('tb-role');
   roleEl.textContent = u.role.toUpperCase();
@@ -802,6 +798,7 @@ const NAV_CONFIG = {
     {section:'SUIVI'},
     {id:'ord',label:'Commandes',icon:'list'},
     {id:'ana',label:()=>t('analytics'),icon:'chart'},
+    {id:'pertes',label:()=>t('losses')||'Pertes',icon:'alert'},
   ],
   fournisseur: [
     {section:'PRINCIPAL'},
@@ -825,19 +822,11 @@ const NAV_CONFIG = {
   ]
 };
 
-const ICONS = {
-  home:`<svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-  shop:`<svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
-  compare:`<svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>`,
-  list:`<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>`,
-  chart:`<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
-  box:`<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`,
-  card:`<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,
-  grid:`<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
-  resto:`<svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>`,
-  truck:`<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
-  alert:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
-};
+const ICONS = {};
+function getIconSVG(name) {
+  const el = document.getElementById('ico-' + name);
+  return el ? el.innerHTML : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>';
+}
 
 function buildSidebar() {
   const nav = NAV_CONFIG[currentRole];
@@ -849,7 +838,7 @@ function buildSidebar() {
     } else {
       const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
       html += `<div class="nav-item" id="n-${item.id}" onclick="navigateTo('${item.id}')">
-        ${ICONS[item.icon]||''}<span>${typeof item.label==='function'?item.label():item.label}</span>${badge}</div>`;
+        ${getIconSVG(item.icon)}<span>${typeof item.label==='function'?item.label():item.label}</span>${badge}</div>`;
     }
   });
   document.getElementById('sidebar').innerHTML = html;
@@ -911,7 +900,7 @@ function restaurantPanel(id) {
   if (id === 'cmd') return `
     <div class="ph"><div class="ph-left"><h1 class="bebas">Commander</h1><p>Catalogue multi-fournisseurs · Comparaison prix IA</p></div></div>
     <div class="search-row">
-      <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input class="sinp" id="ps" placeholder="Chercher un produit..." oninput="searchQ=this.value.toLowerCase();renderProds()"></div>
+      <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg><input class="sinp" id="ps" placeholder="Chercher un produit..." oninput="searchQ=this.value.toLowerCase();renderProds()"></div>
       <div class="filt on" onclick="activeCat='all';setF(this);renderProds()">Tout</div>
       <div class="filt" onclick="activeCat='viande';setF(this);renderProds()">🥩 Viandes</div>
       <div class="filt" onclick="activeCat='legume';setF(this);renderProds()">🥬 Légumes</div>
@@ -941,7 +930,7 @@ function restaurantPanel(id) {
   if (id === 'ord') return `
     <div class="ph"><div class="ph-left"><h1 class="bebas">Mes commandes</h1><p>Historique et suivi des livraisons</p></div></div>
     <div class="search-row">
-      <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input class="sinp" placeholder="Rechercher..."></div>
+      <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg><input class="sinp" placeholder="Rechercher..."></div>
       <div class="filt on" onclick="setF(this)">Toutes</div>
       <div class="filt" onclick="setF(this)">En cours</div>
       <div class="filt" onclick="setF(this)">Livrées</div>
@@ -980,6 +969,130 @@ function restaurantPanel(id) {
         </div>
       </div>
     </div>`;
+
+
+  if (id === 'pertes') return `
+    <div class="ph">
+      <div class="ph-left">
+        <h1 class="bebas">Pertes & Gaspillage</h1>
+        <p>Saisissez vos pertes · L'IA analyse et génère des recommandations</p>
+      </div>
+      <button class="btn-primary" onclick="analyzePertes()" style="padding:10px 20px;font-size:12px;">
+        🤖 Analyser avec l'IA
+      </button>
+    </div>
+
+    <!-- SAISIE PERTES -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head">
+        <div class="card-title">📝 Saisir une perte</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:16px;">
+        <div class="fg">
+          <label class="flbl">Produit perdu</label>
+          <input class="finp" id="p-produit" placeholder="ex: Bœuf haché" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Quantité</label>
+          <input class="finp" id="p-qty" type="number" placeholder="ex: 2" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Unité</label>
+          <select class="finp" id="p-unit" style="width:100%">
+            <option>kg</option><option>L</option><option>pièces</option><option>boîtes</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Coût unitaire (DH)</label>
+          <input class="finp" id="p-prix" type="number" placeholder="ex: 32" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Raison</label>
+          <select class="finp" id="p-raison" style="width:100%">
+            <option>Périmé</option>
+            <option>Sur-production</option>
+            <option>Erreur commande</option>
+            <option>Mauvais stockage</option>
+            <option>Erreur cuisine</option>
+            <option>Retour client</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Date</label>
+          <input class="finp" id="p-date" type="date" style="width:100%">
+        </div>
+      </div>
+      <div style="padding:0 16px 16px;">
+        <button class="btn-primary" onclick="addPerte()" style="padding:10px 24px;">+ Ajouter la perte</button>
+      </div>
+    </div>
+
+    <!-- TABLEAU PERTES -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head">
+        <div class="card-title">📊 Tableau des pertes</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="font-size:11px;color:var(--grey)">Total : <span id="total-pertes" style="color:var(--red);font-weight:700;">0 DH</span></div>
+          <button onclick="clearPertes()" style="padding:4px 10px;background:transparent;border:1px solid #333;border-radius:5px;color:var(--grey);font-size:10px;cursor:pointer;">🗑️ Vider</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Quantité</th>
+              <th>Coût unitaire</th>
+              <th>Perte totale</th>
+              <th>Raison</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="pertes-tbody">
+            <tr><td colspan="7" style="text-align:center;color:var(--grey);padding:24px;">Aucune perte enregistrée</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AI ANALYSE -->
+    <div class="card" id="ai-pertes-result" style="display:none;">
+      <div class="card-head">
+        <div class="card-title">🤖 Analyse IA & Recommandations</div>
+        <div class="ai-pulse" style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;"></div>
+      </div>
+      <div id="ai-pertes-content" style="padding:16px;line-height:1.8;font-size:13px;color:#ccc;"></div>
+    </div>
+
+    <!-- STATS RAPIDES -->
+    <div class="g4" style="margin-top:0;">
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--red)"></div>
+        <div class="scard-ico">🗑️</div>
+        <div class="scard-val" id="stat-total-dh">0 DH</div>
+        <div class="scard-lbl">Pertes ce mois</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--gold)"></div>
+        <div class="scard-ico">📦</div>
+        <div class="scard-val" id="stat-nb-pertes">0</div>
+        <div class="scard-lbl">Incidents enregistrés</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--red)"></div>
+        <div class="scard-ico">⚠️</div>
+        <div class="scard-val" id="stat-top-raison">—</div>
+        <div class="scard-lbl">Cause principale</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--green)"></div>
+        <div class="scard-ico">💡</div>
+        <div class="scard-val" id="stat-potentiel">0 DH</div>
+        <div class="scard-lbl">Économies potentielles</div>
+      </div>
+    </div>
+  `;
 
   return `<div class="ph"><div class="ph-left"><h1 class="bebas">${id}</h1></div></div>`;
 }
@@ -1088,6 +1201,130 @@ function fournisseurPanel(id) {
         <div class="prog-row"><div class="prog-head"><span>Café Zitoun</span><span style="color:var(--white);font-weight:600">1 560 DH</span></div><div class="prog-track"><div class="prog-fill" style="width:31%;background:var(--red)"></div></div></div>
       </div>
     </div>`;
+
+
+  if (id === 'pertes') return `
+    <div class="ph">
+      <div class="ph-left">
+        <h1 class="bebas">Pertes & Gaspillage</h1>
+        <p>Saisissez vos pertes · L'IA analyse et génère des recommandations</p>
+      </div>
+      <button class="btn-primary" onclick="analyzePertes()" style="padding:10px 20px;font-size:12px;">
+        🤖 Analyser avec l'IA
+      </button>
+    </div>
+
+    <!-- SAISIE PERTES -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head">
+        <div class="card-title">📝 Saisir une perte</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:16px;">
+        <div class="fg">
+          <label class="flbl">Produit perdu</label>
+          <input class="finp" id="p-produit" placeholder="ex: Bœuf haché" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Quantité</label>
+          <input class="finp" id="p-qty" type="number" placeholder="ex: 2" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Unité</label>
+          <select class="finp" id="p-unit" style="width:100%">
+            <option>kg</option><option>L</option><option>pièces</option><option>boîtes</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Coût unitaire (DH)</label>
+          <input class="finp" id="p-prix" type="number" placeholder="ex: 32" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Raison</label>
+          <select class="finp" id="p-raison" style="width:100%">
+            <option>Périmé</option>
+            <option>Sur-production</option>
+            <option>Erreur commande</option>
+            <option>Mauvais stockage</option>
+            <option>Erreur cuisine</option>
+            <option>Retour client</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Date</label>
+          <input class="finp" id="p-date" type="date" style="width:100%">
+        </div>
+      </div>
+      <div style="padding:0 16px 16px;">
+        <button class="btn-primary" onclick="addPerte()" style="padding:10px 24px;">+ Ajouter la perte</button>
+      </div>
+    </div>
+
+    <!-- TABLEAU PERTES -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head">
+        <div class="card-title">📊 Tableau des pertes</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="font-size:11px;color:var(--grey)">Total : <span id="total-pertes" style="color:var(--red);font-weight:700;">0 DH</span></div>
+          <button onclick="clearPertes()" style="padding:4px 10px;background:transparent;border:1px solid #333;border-radius:5px;color:var(--grey);font-size:10px;cursor:pointer;">🗑️ Vider</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Quantité</th>
+              <th>Coût unitaire</th>
+              <th>Perte totale</th>
+              <th>Raison</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="pertes-tbody">
+            <tr><td colspan="7" style="text-align:center;color:var(--grey);padding:24px;">Aucune perte enregistrée</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AI ANALYSE -->
+    <div class="card" id="ai-pertes-result" style="display:none;">
+      <div class="card-head">
+        <div class="card-title">🤖 Analyse IA & Recommandations</div>
+        <div class="ai-pulse" style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;"></div>
+      </div>
+      <div id="ai-pertes-content" style="padding:16px;line-height:1.8;font-size:13px;color:#ccc;"></div>
+    </div>
+
+    <!-- STATS RAPIDES -->
+    <div class="g4" style="margin-top:0;">
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--red)"></div>
+        <div class="scard-ico">🗑️</div>
+        <div class="scard-val" id="stat-total-dh">0 DH</div>
+        <div class="scard-lbl">Pertes ce mois</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--gold)"></div>
+        <div class="scard-ico">📦</div>
+        <div class="scard-val" id="stat-nb-pertes">0</div>
+        <div class="scard-lbl">Incidents enregistrés</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--red)"></div>
+        <div class="scard-ico">⚠️</div>
+        <div class="scard-val" id="stat-top-raison">—</div>
+        <div class="scard-lbl">Cause principale</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--green)"></div>
+        <div class="scard-ico">💡</div>
+        <div class="scard-val" id="stat-potentiel">0 DH</div>
+        <div class="scard-lbl">Économies potentielles</div>
+      </div>
+    </div>
+  `;
 
   return `<div class="ph"><div class="ph-left"><h1 class="bebas">${id}</h1></div></div>`;
 }
@@ -1223,6 +1460,130 @@ function adminPanel(id) {
         <tr onclick="toast('✅ Remboursé')"><td style="color:var(--grey)">28 Déc</td><td>Zitoun / FruitsLég</td><td>Livraison retardée</td><td><span class="num">80 DH</span></td><td><span class="badge bg">Remboursé ✓</span></td></tr>
       </tbody></table>
     </div>`;
+
+
+  if (id === 'pertes') return `
+    <div class="ph">
+      <div class="ph-left">
+        <h1 class="bebas">Pertes & Gaspillage</h1>
+        <p>Saisissez vos pertes · L'IA analyse et génère des recommandations</p>
+      </div>
+      <button class="btn-primary" onclick="analyzePertes()" style="padding:10px 20px;font-size:12px;">
+        🤖 Analyser avec l'IA
+      </button>
+    </div>
+
+    <!-- SAISIE PERTES -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head">
+        <div class="card-title">📝 Saisir une perte</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:16px;">
+        <div class="fg">
+          <label class="flbl">Produit perdu</label>
+          <input class="finp" id="p-produit" placeholder="ex: Bœuf haché" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Quantité</label>
+          <input class="finp" id="p-qty" type="number" placeholder="ex: 2" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Unité</label>
+          <select class="finp" id="p-unit" style="width:100%">
+            <option>kg</option><option>L</option><option>pièces</option><option>boîtes</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Coût unitaire (DH)</label>
+          <input class="finp" id="p-prix" type="number" placeholder="ex: 32" style="width:100%">
+        </div>
+        <div class="fg">
+          <label class="flbl">Raison</label>
+          <select class="finp" id="p-raison" style="width:100%">
+            <option>Périmé</option>
+            <option>Sur-production</option>
+            <option>Erreur commande</option>
+            <option>Mauvais stockage</option>
+            <option>Erreur cuisine</option>
+            <option>Retour client</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flbl">Date</label>
+          <input class="finp" id="p-date" type="date" style="width:100%">
+        </div>
+      </div>
+      <div style="padding:0 16px 16px;">
+        <button class="btn-primary" onclick="addPerte()" style="padding:10px 24px;">+ Ajouter la perte</button>
+      </div>
+    </div>
+
+    <!-- TABLEAU PERTES -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head">
+        <div class="card-title">📊 Tableau des pertes</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="font-size:11px;color:var(--grey)">Total : <span id="total-pertes" style="color:var(--red);font-weight:700;">0 DH</span></div>
+          <button onclick="clearPertes()" style="padding:4px 10px;background:transparent;border:1px solid #333;border-radius:5px;color:var(--grey);font-size:10px;cursor:pointer;">🗑️ Vider</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Quantité</th>
+              <th>Coût unitaire</th>
+              <th>Perte totale</th>
+              <th>Raison</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="pertes-tbody">
+            <tr><td colspan="7" style="text-align:center;color:var(--grey);padding:24px;">Aucune perte enregistrée</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AI ANALYSE -->
+    <div class="card" id="ai-pertes-result" style="display:none;">
+      <div class="card-head">
+        <div class="card-title">🤖 Analyse IA & Recommandations</div>
+        <div class="ai-pulse" style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;"></div>
+      </div>
+      <div id="ai-pertes-content" style="padding:16px;line-height:1.8;font-size:13px;color:#ccc;"></div>
+    </div>
+
+    <!-- STATS RAPIDES -->
+    <div class="g4" style="margin-top:0;">
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--red)"></div>
+        <div class="scard-ico">🗑️</div>
+        <div class="scard-val" id="stat-total-dh">0 DH</div>
+        <div class="scard-lbl">Pertes ce mois</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--gold)"></div>
+        <div class="scard-ico">📦</div>
+        <div class="scard-val" id="stat-nb-pertes">0</div>
+        <div class="scard-lbl">Incidents enregistrés</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--red)"></div>
+        <div class="scard-ico">⚠️</div>
+        <div class="scard-val" id="stat-top-raison">—</div>
+        <div class="scard-lbl">Cause principale</div>
+      </div>
+      <div class="scard">
+        <div class="scard-accent" style="background:var(--green)"></div>
+        <div class="scard-ico">💡</div>
+        <div class="scard-val" id="stat-potentiel">0 DH</div>
+        <div class="scard-lbl">Économies potentielles</div>
+      </div>
+    </div>
+  `;
 
   return `<div class="ph"><div class="ph-left"><h1 class="bebas">${id}</h1></div></div>`;
 }
@@ -1629,12 +1990,17 @@ async function installApp() {
 
 
 <!-- AI AGENT FAB -->
+
+
+<!-- AI AGENT PANEL -->
+
+
+
+<!-- AI AGENT -->
 <button id="ai-fab" onclick="toggleAI()" title="Assistant Mazaya IA">
   <span class="ai-fab-icon">🤖</span>
   <div class="notif-dot" id="ai-dot"></div>
 </button>
-
-<!-- AI AGENT PANEL -->
 <div id="ai-panel">
   <div class="ai-head">
     <div class="ai-avatar">🤖</div>
@@ -1642,7 +2008,6 @@ async function installApp() {
       <div class="ai-head-name">Mazaya AI</div>
       <div class="ai-head-status" id="ai-status">En ligne · Mode démo</div>
     </div>
-    <button onclick="promptAPIKey()" id="ai-key-btn" title="Connecter Claude API" style="padding:4px 8px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:6px;color:var(--green);font-size:10px;font-weight:700;cursor:pointer;margin-right:4px;">🔑 IA</button>
     <button class="ai-close" onclick="toggleAI()">✕</button>
   </div>
   <div class="ai-notifs" id="ai-notifs"></div>
@@ -1657,6 +2022,22 @@ async function installApp() {
     <input class="ai-input" id="ai-input" placeholder="Demandez à Mazaya AI..." onkeydown="if(event.key==='Enter')sendAI()">
     <button class="ai-send" onclick="sendAI()">➤</button>
   </div>
+</div>
+
+
+<div id="svg-icons" style="display:none">
+  <span id="ico-home"><svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span>
+  <span id="ico-shop"><svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span>
+  <span id="ico-compare"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line></svg></span>
+  <span id="ico-orders"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect></svg></span>
+  <span id="ico-chart"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
+  <span id="ico-grid"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
+  <span id="ico-box"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg></span>
+  <span id="ico-card"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span>
+  <span id="ico-truck"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></span>
+  <span id="ico-alert"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>
+  <span id="ico-pin"><svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"></path></svg></span>
+  <span id="ico-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
 </div>
 
 <!-- BOTTOM NAV MOBILE -->
@@ -1676,7 +2057,7 @@ const T = {
     restaurants:'Restaurants', suppliers:'Fournisseurs', disputes:'Litiges', finances:'Finances',
     addRestaurant:'+ Ajouter Restaurant', addSupplier:'+ Ajouter Fournisseur',
     morningBriefing:'Briefing du matin', spending:'Dépenses du mois', savings:'Économies',
-    foodCost:'Food Cost', allCategories:'Toutes catégories', inStock:'En stock',
+    foodCost:'Food Cost', losses:'Pertes & Gaspillage', allCategories:'Toutes catégories', inStock:'En stock',
     outOfStock:'Rupture', markDelivered:'Marquer livré', sendReminder:'Envoyer rappel',
     profile:'Mon profil', settings:'Paramètres', language:'Langue',
   },
@@ -1690,7 +2071,7 @@ const T = {
     restaurants:'Restaurants', suppliers:'Suppliers', disputes:'Disputes', finances:'Finances',
     addRestaurant:'+ Add Restaurant', addSupplier:'+ Add Supplier',
     morningBriefing:'Morning briefing', spending:'Monthly spending', savings:'Savings',
-    foodCost:'Food Cost', allCategories:'All categories', inStock:'In stock',
+    foodCost:'Food Cost', losses:'Waste & Losses', allCategories:'All categories', inStock:'In stock',
     outOfStock:'Out of stock', markDelivered:'Mark delivered', sendReminder:'Send reminder',
     profile:'My profile', settings:'Settings', language:'Language',
   },
@@ -1704,7 +2085,7 @@ const T = {
     restaurants:'المطاعم', suppliers:'الموردون', disputes:'النزاعات', finances:'المالية',
     addRestaurant:'+ إضافة مطعم', addSupplier:'+ إضافة مورد',
     morningBriefing:'ملخص الصباح', spending:'مصاريف الشهر', savings:'التوفيرات',
-    foodCost:'تكلفة الطعام', allCategories:'كل الفئات', inStock:'متوفر',
+    foodCost:'تكلفة الطعام', losses:'الخسائر والهدر', allCategories:'كل الفئات', inStock:'متوفر',
     outOfStock:'نفذ المخزون', markDelivered:'تم التسليم', sendReminder:'إرسال تذكير',
     profile:'ملفي الشخصي', settings:'الإعدادات', language:'اللغة',
   },
@@ -1718,7 +2099,7 @@ const T = {
     restaurants:'Restaurants', suppliers:'Leveranciers', disputes:'Geschillen', finances:'Financiën',
     addRestaurant:'+ Restaurant toevoegen', addSupplier:'+ Leverancier toevoegen',
     morningBriefing:'Ochtendrapport', spending:'Maandelijkse uitgaven', savings:'Besparingen',
-    foodCost:'Voedselkosten', allCategories:'Alle categorieën', inStock:'Op voorraad',
+    foodCost:'Voedselkosten', losses:'Verliezen', allCategories:'Alle categorieën', inStock:'Op voorraad',
     outOfStock:'Uitverkocht', markDelivered:'Geleverd markeren', sendReminder:'Herinnering sturen',
     profile:'Mijn profiel', settings:'Instellingen', language:'Taal',
   },
@@ -1732,7 +2113,7 @@ const T = {
     restaurants:'Restaurantes', suppliers:'Proveedores', disputes:'Disputas', finances:'Finanzas',
     addRestaurant:'+ Añadir restaurante', addSupplier:'+ Añadir proveedor',
     morningBriefing:'Resumen matutino', spending:'Gasto mensual', savings:'Ahorros',
-    foodCost:'Coste alimentario', allCategories:'Todas las categorías', inStock:'En stock',
+    foodCost:'Coste alimentario', losses:'Pérdidas', allCategories:'Todas las categorías', inStock:'En stock',
     outOfStock:'Sin stock', markDelivered:'Marcar entregado', sendReminder:'Enviar recordatorio',
     profile:'Mi perfil', settings:'Configuración', language:'Idioma',
   }
@@ -1816,9 +2197,9 @@ let aiContext = [];
 
 // Simulated notifications — in production these come from Supabase realtime
 const DEMO_NOTIFS = [
-  {id:1, type:'success', title:'✅ Commande #2847 acceptée', sub:'ProViande — Bœuf haché 10kg', time:'Il y a 5 min', read:false},
-  {id:2, type:'warning', title:'⏰ Commande #2845 en retard', sub:'HuileMax — Livraison prévue hier', time:'Il y a 2h', read:false},
-  {id:3, type:'error', title:'❌ Commande #2843 refusée', sub:'FraisMaroc — Stock insuffisant', time:'Il y a 3h', read:true},
+  {id:1, type:'success', title:'✅ Commande #2847 acceptée', sub:'ProViande — Bœuf haché 10kg', time:"Il y a 5 min", read:false},
+  {id:2, type:'warning', title:'⏰ Commande #2845 en retard', sub:'HuileMax — Livraison prévue hier', time:"Il y a 2h", read:false},
+  {id:3, type:'error', title:'❌ Commande #2843 refusée', sub:'FraisMaroc — Stock insuffisant', time:"Il y a 3h", read:true},
 ];
 
 function toggleAI() {
@@ -1826,31 +2207,23 @@ function toggleAI() {
   const panel = document.getElementById('ai-panel');
   const fab = document.getElementById('ai-fab');
   if(aiOpen) {
-    panel.classList.add('open');
-    fab.style.cssText = 'display:none!important';
+    panel.style.display = 'flex';
+    fab.style.display = 'none';
     renderNotifs();
     if(document.getElementById('ai-msgs').children.length === 0) {
       addBotMsg(getBriefing());
     }
     markAllRead();
   } else {
-    panel.classList.remove('open');
-    fab.classList.add('visible');
-    fab.style.cssText += ';display:flex!important;';
+    panel.style.display = 'none';
+    fab.style.display = 'flex';
   }
 }
 
 function getBriefing() {
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
-  return `${greet} ! Je suis votre assistant Mazaya IA 🤖
-
-Voici votre résumé :
-• **2 notifications** non lues
-• **1 commande** en attente de livraison
-• Votre food cost est à **28%** ce mois — objectif 25%
-
-Comment puis-je vous aider ?`;
+  return greet + ' ! Je suis votre assistant Mazaya IA 🤖<br><br>Voici votre résumé :<br>• <strong>2 notifications</strong> non lues<br>• <strong>1 commande</strong> en attente de livraison<br>• Votre food cost est à <strong>28%</strong> ce mois — objectif 25%<br><br>Comment puis-je vous aider ?';
 }
 
 function renderNotifs() {
@@ -1898,8 +2271,7 @@ function addBotMsg(text) {
   const msgs = document.getElementById('ai-msgs');
   const div = document.createElement('div');
   div.className = 'ai-msg bot';
-  div.innerHTML = `<div class="ai-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/
-/g,'<br>')}</div>`;
+  div.innerHTML = `<div class="ai-bubble">${text}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1942,19 +2314,7 @@ async function sendAI() {
   showTyping();
 
   // Build context about the restaurant
-  const restaurantContext = `Tu es l'assistant IA de Mazaya, une plateforme B2B pour restaurants au Maghreb.
-L'utilisateur est un gérant de restaurant. 
-Données disponibles:
-- Dépenses ce mois: 8 420 DH
-- Économies IA: 1 340 DH  
-- Food Cost: 28% (objectif 25%)
-- Commandes en cours: 3
-- Fournisseurs actifs: ProViande, HuileMax, FraisMaroc, LaitierPlus
-- Meilleur prix viande actuellement: ProViande (32 DH/kg vs 38 DH marché)
-- Commande en retard: HuileMax #2845 (livraison prévue hier)
-- Commande refusée: FraisMaroc #2843 (stock insuffisant)
-Réponds en ${currentLang === 'ar' ? 'arabe' : currentLang === 'en' ? 'anglais' : currentLang === 'nl' ? 'néerlandais' : currentLang === 'es' ? 'espagnol' : 'français'}.
-Sois concis, pratique et professionnel. Max 120 mots.`;
+  const restaurantContext = `Tu es Mazaya AI, assistant pour restaurants au Maghreb. Données: Dépenses ce mois: 8420 DH, Food Cost: 28% (objectif 25%), Fournisseurs: ProViande (32 DH/kg viande - meilleur), HuileMax (22 DH/L), FraisMaroc, LaitierPlus. Commande en retard: HuileMax #2845. Réponds en ${currentLang === 'ar' ? 'arabe' : currentLang === 'en' ? 'anglais' : currentLang === 'nl' ? 'néerlandais' : currentLang === 'es' ? 'espagnol' : 'français'}. Sois concis, max 100 mots, utilise du HTML simple pour le formatage.`;
 
   aiContext.push({role:'user', content: text});
   
@@ -2000,112 +2360,23 @@ Sois concis, pratique et professionnel. Max 120 mots.`;
 
 function getDemoResponse(q) {
   const ql = q.toLowerCase();
-  if(ql.includes('viande') || ql.includes('fournisseur')) 
-    return '🥩 **Meilleur fournisseur viande :** ProViande à **32 DH/kg**
-
-Vs marché moyen 38 DH/kg — économie de **6 DH/kg**. Pour 50kg/mois = **300 DH économisés**.
-
-Je recommande de renouveler votre contrat avec eux avant fin du mois.';
+  if(ql.includes('viande') || ql.includes('fournisseur'))
+    return '🥩 <strong>Meilleur fournisseur viande :</strong> ProViande à <strong>32 DH/kg</strong><br><br>Vs marché moyen 38 DH/kg — économie de <strong>6 DH/kg</strong>. Pour 50kg/mois = <strong>300 DH économisés</strong>.<br><br>Je recommande de renouveler votre contrat avant fin du mois.';
   if(ql.includes('dépense') || ql.includes('coût') || ql.includes('food cost'))
-    return '📊 **Analyse dépenses :**
-
-• Total ce mois : **8 420 DH**
-• Food Cost : **28%** (↑ vs objectif 25%)
-• Principal écart : huile (+15% vs mois passé)
-
-💡 Astuce : Réduisez les commandes HuileMax et testez LaitierPlus pour les produits laitiers.';
+    return '📊 <strong>Analyse dépenses :</strong><br><br>• Total ce mois : <strong>8 420 DH</strong><br>• Food Cost : <strong>28%</strong> (↑ vs objectif 25%)<br>• Principal écart : huile (+15% vs mois passé)<br><br>💡 Réduisez les commandes HuileMax et testez LaitierPlus pour les laitiers.';
   if(ql.includes('retard') || ql.includes('commande'))
-    return '⚠️ **Commande en retard :**
-
-HuileMax #2845 — Livraison prévue hier
-
-Je vous recommande de :
-1. Appeler HuileMax maintenant
-2. Commander chez FraisMaroc en urgence si besoin
-
-Voulez-vous que je génère un message de rappel ?';
+    return '⚠️ <strong>Commande en retard :</strong><br><br>HuileMax #2845 — Livraison prévue hier<br><br>Je recommande :<br>1. Appeler HuileMax maintenant<br>2. Commander chez FraisMaroc en urgence si besoin';
   if(ql.includes('conseil') || ql.includes('réduire') || ql.includes('optimis'))
-    return '💡 **3 conseils pour ce mois :**
-
-1. **Grouper les commandes** — livraison 2x/semaine au lieu de 4x = -8% frais
-2. **ProViande** offre -5% si commande > 500 DH
-3. **Stock huile** trop élevé — réduire la prochaine commande de 30%
-
-Estimation économies : **+420 DH/mois**';
-  return '🤖 Je suis votre assistant Mazaya IA.
-
-Je peux vous aider avec :
-• **Analyse** de vos fournisseurs et prix
-• **Suivi** de vos commandes
-• **Conseils** pour réduire vos coûts
-• **Alertes** sur les livraisons en retard
-
-Que souhaitez-vous savoir ?';
-}
-
-// Show FAB when logged in
-function showAIFab() {
-  const fab = document.getElementById('ai-fab');
-  if(fab) {
-    fab.classList.add('visible');
-    fab.style.cssText += ';display:flex!important;';
-    updateDot();
-  }
-}
-
-// Add API key config
-function promptAPIKey() {
-  openMo(`
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-      <div style="width:40px;height:40px;border-radius:10px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);display:flex;align-items:center;justify-content:center;font-size:20px;">🤖</div>
-      <div><div class="mo-title" style="margin-bottom:0">Connecter Claude AI</div><div style="font-size:11px;color:var(--grey);">Activez la vraie intelligence artificielle</div></div>
-    </div>
-    <div style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--grey);line-height:1.6;">
-      1. Va sur <strong style="color:#fff">console.anthropic.com</strong><br>
-      2. Crée un compte → <strong style="color:#fff">API Keys</strong> → <strong style="color:#fff">Create Key</strong><br>
-      3. Ajoute du crédit → <strong style="color:#fff">Billing → Add credit (5$)</strong><br>
-      4. Colle ta clé ci-dessous
-    </div>
-    <div class="fg" style="margin-bottom:14px;">
-      <label class="flbl">Clé Claude API</label>
-      <input class="finp" id="claude-key-input" type="password" placeholder="sk-ant-api03-..." style="width:100%;font-family:monospace;font-size:11px;">
-    </div>
-    <div id="ai-key-status" style="font-size:11px;margin-bottom:12px;display:none;"></div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn-primary" style="flex:1;" onclick="saveClaudeKey()">CONNECTER L'IA</button>
-      <button class="btn-secondary" onclick="closeMo()">Annuler</button>
-    </div>
-    ${CLAUDE_KEY ? '<div style="margin-top:10px;text-align:center;"><span style="font-size:10px;color:var(--green);">✅ Clé déjà configurée — vous pouvez la remplacer</span></div>' : ''}
-  `);
-}
-
-function saveClaudeKey() {
-  const key = document.getElementById('claude-key-input').value.trim();
-  const status = document.getElementById('ai-key-status');
-  if(!key) { 
-    status.style.display='block'; status.style.color='var(--red)'; 
-    status.textContent='❌ Entrez votre clé API'; return; 
-  }
-  if(!key.startsWith('sk-ant-')) { 
-    status.style.display='block'; status.style.color='var(--red)'; 
-    status.textContent='❌ Clé invalide — doit commencer par sk-ant-'; return; 
-  }
-  CLAUDE_KEY = key;
-  localStorage.setItem('mazaya-claude-key', key);
-  // Update UI
-  document.getElementById('ai-status').textContent = 'En ligne · IA Connectée ✅';
-  document.getElementById('ai-key-btn').textContent = '✅ IA';
-  document.getElementById('ai-key-btn').style.background = 'rgba(0,255,136,.2)';
-  closeMo();
-  toast('✅ Claude AI connecté ! L\'agent est maintenant intelligent.');
-  // Clear chat and restart with real AI
-  document.getElementById('ai-msgs').innerHTML = '';
-  addBotMsg('🤖 **Claude AI activé !**\n\nJe suis maintenant connecté à vos données Mazaya en temps réel. Posez-moi n\'importe quelle question sur vos fournisseurs, commandes ou dépenses !');
+    return '💡 <strong>3 conseils pour ce mois :</strong><br><br>1. <strong>Grouper les commandes</strong> — 2x/semaine au lieu de 4x = -8% frais<br>2. <strong>ProViande</strong> offre -5% si commande > 500 DH<br>3. <strong>Stock huile</strong> trop élevé — réduire de 30%<br><br>Estimation économies : <strong>+420 DH/mois</strong>';
+  if(ql.includes('prix') || ql.includes('compar'))
+    return '📈 <strong>Comparaison prix actuels :</strong><br><br>🥩 Viande : ProViande <strong>32 DH/kg</strong> ✅ (meilleur)<br>🫒 Huile : HuileMax <strong>22 DH/L</strong> ✅ (meilleur)<br>🥛 Lait : LaitierPlus <strong>8 DH/L</strong> ✅ (meilleur)<br>🥦 Légumes : FraisMaroc <strong>12 DH/kg</strong> ✅ (meilleur)';
+  if(ql.includes('manquant') || ql.includes('missing'))
+    return '📦 <strong>Commandes manquantes cette semaine :</strong><br><br>• Œufs frais — dernière commande il y a 12 jours<br>• Farine T55 — stock critique (2 jours restants)<br>• Tomates — non commandées ce mois<br><br>Voulez-vous que je génère ces commandes automatiquement ?';
+  return '🤖 Je suis votre assistant Mazaya IA.<br><br>Je peux vous aider avec :<br>• <strong>Analyse</strong> de vos fournisseurs et prix<br>• <strong>Suivi</strong> de vos commandes<br>• <strong>Conseils</strong> pour réduire vos coûts<br>• <strong>Alertes</strong> sur les livraisons en retard<br><br>Que souhaitez-vous savoir ?';
 }
 
 function configAIKey() {
-  const key = prompt('Entrez votre clé Claude API (sk-ant-...)
-Elle sera sauvegardée localement.');
+  const key = prompt('Entrez votre clé Claude API (sk-ant-...) - Elle sera sauvegardée localement.');
   if(key && key.startsWith('sk-ant-')) {
     CLAUDE_KEY = key;
     localStorage.setItem('mazaya-claude-key', key);
@@ -2122,12 +2393,254 @@ function startNotifSimulation() {
       id:4, type:'success', 
       title:'✅ Commande #2848 confirmée', 
       sub:'LaitierPlus — Fromage frais 5kg',
-      time:'À l'instant', read:false
+      time:"À l'instant", read:false
     });
     updateDot();
     toast('🔔 Nouvelle notification — Commande confirmée !');
   }, 30000); // After 30s
 }
+</script>
+
+
+<script>
+// ── PERTES & GASPILLAGE ──
+let pertesData = JSON.parse(localStorage.getItem('mazaya-pertes') || '[]');
+
+function savePertesLocal() {
+  localStorage.setItem('mazaya-pertes', JSON.stringify(pertesData));
+}
+
+function addPerte() {
+  const produit = document.getElementById('p-produit')?.value?.trim();
+  const qty = parseFloat(document.getElementById('p-qty')?.value);
+  const unit = document.getElementById('p-unit')?.value;
+  const prix = parseFloat(document.getElementById('p-prix')?.value);
+  const raison = document.getElementById('p-raison')?.value;
+  const date = document.getElementById('p-date')?.value || new Date().toISOString().split('T')[0];
+
+  if (!produit || !qty || !prix) { toast('❌ Remplissez tous les champs obligatoires'); return; }
+
+  const perte = {
+    id: Date.now(),
+    produit, qty, unit, prix,
+    total: qty * prix,
+    raison, date
+  };
+
+  pertesData.push(perte);
+  savePertesLocal();
+  renderPertes();
+  updatePertesStats();
+
+  // Clear form
+  document.getElementById('p-produit').value = '';
+  document.getElementById('p-qty').value = '';
+  document.getElementById('p-prix').value = '';
+  toast('✅ Perte enregistrée');
+}
+
+function removePerte(id) {
+  pertesData = pertesData.filter(p => p.id !== id);
+  savePertesLocal();
+  renderPertes();
+  updatePertesStats();
+}
+
+function clearPertes() {
+  if (!confirm('Vider toutes les pertes ?')) return;
+  pertesData = [];
+  savePertesLocal();
+  renderPertes();
+  updatePertesStats();
+  document.getElementById('ai-pertes-result').style.display = 'none';
+}
+
+function renderPertes() {
+  const tbody = document.getElementById('pertes-tbody');
+  if (!tbody) return;
+
+  if (pertesData.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--grey);padding:24px;">Aucune perte enregistrée</td></tr>';
+    document.getElementById('total-pertes').textContent = '0 DH';
+    return;
+  }
+
+  const total = pertesData.reduce((s, p) => s + p.total, 0);
+  document.getElementById('total-pertes').textContent = total.toFixed(0) + ' DH';
+
+  tbody.innerHTML = pertesData.map(p => `
+    <tr>
+      <td><strong>${p.produit}</strong></td>
+      <td>${p.qty} ${p.unit}</td>
+      <td>${p.prix} DH/${p.unit}</td>
+      <td><span style="color:var(--red);font-weight:700;">${p.total.toFixed(0)} DH</span></td>
+      <td><span class="badge" style="background:rgba(255,59,59,.1);color:var(--red);border:1px solid rgba(255,59,59,.2);">${p.raison}</span></td>
+      <td style="color:var(--grey)">${p.date}</td>
+      <td><button onclick="removePerte(${p.id})" style="background:transparent;border:none;color:var(--grey);cursor:pointer;font-size:14px;">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+function updatePertesStats() {
+  const total = pertesData.reduce((s, p) => s + p.total, 0);
+  const nb = pertesData.length;
+
+  // Top raison
+  const raisonsCount = {};
+  pertesData.forEach(p => { raisonsCount[p.raison] = (raisonsCount[p.raison] || 0) + 1; });
+  const topRaison = Object.entries(raisonsCount).sort((a,b) => b[1]-a[1])[0];
+
+  const s1 = document.getElementById('stat-total-dh');
+  const s2 = document.getElementById('stat-nb-pertes');
+  const s3 = document.getElementById('stat-top-raison');
+  const s4 = document.getElementById('stat-potentiel');
+
+  if (s1) s1.textContent = total.toFixed(0) + ' DH';
+  if (s2) s2.textContent = nb;
+  if (s3) s3.textContent = topRaison ? topRaison[0].split(' ')[0] : '—';
+  if (s4) s4.textContent = Math.round(total * 0.6) + ' DH';
+}
+
+async function analyzePertes() {
+  if (pertesData.length === 0) { toast('❌ Ajoutez des pertes avant d\'analyser'); return; }
+
+  const resultDiv = document.getElementById('ai-pertes-result');
+  const contentDiv = document.getElementById('ai-pertes-content');
+  if (!resultDiv || !contentDiv) return;
+
+  resultDiv.style.display = 'block';
+  contentDiv.innerHTML = '<div class="ai-typing" style="margin:8px 0;"><span></span><span></span><span></span></div><span style="color:var(--grey);font-size:12px;">L\'IA analyse vos pertes...</span>';
+
+  const total = pertesData.reduce((s, p) => s + p.total, 0);
+  const resume = pertesData.map(p => `${p.produit}: ${p.qty}${p.unit} (${p.total.toFixed(0)} DH) - ${p.raison}`).join(', ');
+
+  // Group by raison
+  const raisonsTotal = {};
+  pertesData.forEach(p => { raisonsTotal[p.raison] = (raisonsTotal[p.raison] || 0) + p.total; });
+  const raisonsStr = Object.entries(raisonsTotal).map(([r,t]) => `${r}: ${t.toFixed(0)} DH`).join(', ');
+
+  const prompt = `Tu es un expert en gestion de restaurant au Maghreb. Voici les pertes enregistrées par ce restaurant:
+Pertes: ${resume}
+Total pertes: ${total.toFixed(0)} DH
+Par cause: ${raisonsStr}
+
+Génère en français:
+1. Un tableau HTML récapitulatif des pertes par catégorie (utilise des balises <table><tr><td> avec du style inline minimal)
+2. Les 3 causes principales avec pourcentage
+3. 5 recommandations concrètes et actionnables pour réduire ces pertes (avec estimation économies en DH)
+4. Un objectif de réduction réaliste sur 30 jours
+
+Utilise des emojis, du HTML simple avec des couleurs (rouge #FF3B3B pour pertes, vert #00FF88 pour économies). Max 400 mots.`;
+
+  try {
+    if (CLAUDE_KEY) {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': CLAUDE_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 800,
+          messages: [{role:'user', content: prompt}]
+        })
+      });
+      const data = await resp.json();
+      if (data.content && data.content[0]) {
+        contentDiv.innerHTML = data.content[0].text;
+        return;
+      }
+    }
+    // Demo mode
+    contentDiv.innerHTML = getDemoAnalysePertes(pertesData, total, raisonsTotal);
+  } catch(e) {
+    contentDiv.innerHTML = getDemoAnalysePertes(pertesData, total, raisonsTotal);
+  }
+}
+
+function getDemoAnalysePertes(pertes, total, raisonsTotal) {
+  const topRaison = Object.entries(raisonsTotal).sort((a,b) => b[1]-a[1]);
+  const economie = Math.round(total * 0.6);
+
+  return `
+    <div style="margin-bottom:20px;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:#fff;">📊 Récapitulatif des pertes</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="border-bottom:1px solid #222;">
+            <th style="text-align:left;padding:8px;color:#888;">Cause</th>
+            <th style="text-align:right;padding:8px;color:#888;">Montant</th>
+            <th style="text-align:right;padding:8px;color:#888;">% du total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${topRaison.map(([r,t]) => `
+            <tr style="border-bottom:1px solid #111;">
+              <td style="padding:8px;">${r}</td>
+              <td style="padding:8px;text-align:right;color:#FF3B3B;font-weight:600;">${t.toFixed(0)} DH</td>
+              <td style="padding:8px;text-align:right;color:#888;">${((t/total)*100).toFixed(0)}%</td>
+            </tr>
+          `).join('')}
+          <tr style="border-top:2px solid #333;">
+            <td style="padding:8px;font-weight:700;">TOTAL</td>
+            <td style="padding:8px;text-align:right;font-weight:700;color:#FF3B3B;">${total.toFixed(0)} DH</td>
+            <td style="padding:8px;text-align:right;color:#888;">100%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:#fff;">💡 Recommandations pour économiser <span style="color:#00FF88;">${economie} DH/mois</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${topRaison[0] && topRaison[0][0] === 'Périmé' ? `
+        <div style="padding:12px;background:#0a0a0a;border-left:3px solid #00FF88;border-radius:6px;">
+          <div style="font-weight:600;margin-bottom:4px;">1. 🗓️ Système FIFO strict</div>
+          <div style="color:#888;font-size:12px;">Étiquetez chaque produit avec la date d'arrivée. Utilisez en premier ce qui est arrivé en premier. Économie estimée : <strong style="color:#00FF88;">${Math.round(topRaison[0][1]*0.5)} DH/mois</strong></div>
+        </div>` : ''}
+        <div style="padding:12px;background:#0a0a0a;border-left:3px solid #00FF88;border-radius:6px;">
+          <div style="font-weight:600;margin-bottom:4px;">2. 📦 Commander en petites quantités</div>
+          <div style="color:#888;font-size:12px;">Réduisez les commandes de 20% pour les produits frais. Livraisons 3x/semaine au lieu de 1x. Économie estimée : <strong style="color:#00FF88;">${Math.round(total*0.2)} DH/mois</strong></div>
+        </div>
+        <div style="padding:12px;background:#0a0a0a;border-left:3px solid #FFB800;border-radius:6px;">
+          <div style="font-weight:600;margin-bottom:4px;">3. 📋 Menu anti-gaspi hebdomadaire</div>
+          <div style="color:#888;font-size:12px;">Créez un plat du jour avec les produits qui approchent de la péremption. Réduit les pertes de 30-40%.</div>
+        </div>
+        <div style="padding:12px;background:#0a0a0a;border-left:3px solid #FFB800;border-radius:6px;">
+          <div style="font-weight:600;margin-bottom:4px;">4. 🌡️ Contrôle température réfrigérateurs</div>
+          <div style="color:#888;font-size:12px;">Vérifiez 2x/jour. Un réfrigérateur mal réglé peut causer 15-20% des pertes alimentaires.</div>
+        </div>
+        <div style="padding:12px;background:#0a0a0a;border-left:3px solid #0066FF;border-radius:6px;">
+          <div style="font-weight:600;margin-bottom:4px;">5. 📊 Suivi quotidien des pertes</div>
+          <div style="color:#888;font-size:12px;">Continuez à utiliser Mazaya pour enregistrer chaque perte. En 30 jours vous aurez assez de données pour optimiser vos commandes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:16px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px;margin-top:16px;">
+      <div style="font-size:14px;font-weight:700;color:#00FF88;margin-bottom:6px;">🎯 Objectif 30 jours</div>
+      <div style="color:#ccc;font-size:12px;">En appliquant ces recommandations, vous pouvez réduire vos pertes de <strong style="color:#00FF88;">60%</strong> soit <strong style="color:#00FF88;">${economie} DH économisés</strong> le mois prochain.</div>
+    </div>
+  `;
+}
+
+// Render on page load when on pertes tab
+const _origNavToPertes = navigateTo;
+navigateTo = function(id) {
+  _origNavToPertes(id);
+  if (id === 'pertes') {
+    setTimeout(() => {
+      renderPertes();
+      updatePertesStats();
+      // Set today's date
+      const dateInput = document.getElementById('p-date');
+      if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+    }, 50);
+  }
+};
 </script>
 
 </body>
