@@ -843,7 +843,7 @@ function buildSidebar() {
     } else {
       const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
       html += `<div class="nav-item" id="n-${item.id}" onclick="navigateTo('${item.id}')">
-        ${ICONS[item.icon]||''}<span>${item.label}</span>${badge}</div>`;
+        ${ICONS[item.icon]||''}<span>${typeof item.label==='function'?item.label():item.label}</span>${badge}</div>`;
     }
   });
   document.getElementById('sidebar').innerHTML = html;
@@ -1749,7 +1749,7 @@ function setLang(lang) {
   document.getElementById('langSel').classList.remove('open');
   applyTranslations();
   // Rebuild nav with new language
-  if(currentRole) buildNav(currentRole);
+  if(currentRole) buildSidebar();
   toast('🌍 ' + CODES[lang]);
 }
 
@@ -1773,6 +1773,20 @@ function applyTranslations() {
     if(btn.getAttribute('onclick') === 'logout()') btn.textContent = lang.logout || 'Déconnexion';
     if(btn.getAttribute('onclick') === 'moChangePass()') btn.innerHTML = '🔑 ' + (lang.password || 'Mot de passe');
   });
+  // Rebuild sidebar with translated labels
+  if(currentRole) buildSidebar();
+  // AI suggestions
+  const sugs = document.getElementById('ai-sugs');
+  if(sugs) {
+    const s = T[currentLang] || T.fr;
+    const suggestions = [
+      {q:'Quel est le meilleur fournisseur pour la viande ?', icon:'🥩', label: currentLang==='en'?'Best supplier':currentLang==='ar'?'أفضل مورد':currentLang==='es'?'Mejor proveedor':currentLang==='nl'?'Beste leverancier':'Meilleur fournisseur'},
+      {q:'Analyse mes dépenses ce mois', icon:'📊', label: currentLang==='en'?'My expenses':currentLang==='ar'?'مصاريفي':currentLang==='es'?'Mis gastos':currentLang==='nl'?'Mijn uitgaven':'Mes dépenses'},
+      {q:'Quelles commandes sont en retard ?', icon:'⚠️', label: currentLang==='en'?'Late orders':currentLang==='ar'?'طلبات متأخرة':currentLang==='es'?'Pedidos tardíos':currentLang==='nl'?'Late bestellingen':'Retards livraison'},
+      {q:'Comment réduire mon food cost ?', icon:'💡', label: currentLang==='en'?'Reduce food cost':currentLang==='ar'?'تقليل التكلفة':currentLang==='es'?'Reducir costes':currentLang==='nl'?'Kosten verlagen':'Réduire food cost'},
+    ];
+    sugs.innerHTML = suggestions.map(s => `<div class="ai-sug" onclick="askAI('${s.q}')">${s.icon} ${s.label}</div>`).join('');
+  }
 }
 
 // Apply saved language on load
@@ -2025,7 +2039,10 @@ Que souhaitez-vous savoir ?';
 // Show FAB when logged in
 function showAIFab() {
   const fab = document.getElementById('ai-fab');
-  if(fab) { fab.style.display = 'flex'; updateDot(); }
+  if(fab) { 
+    fab.style.display = 'flex';
+    updateDot();
+  }
 }
 
 // Add API key config
@@ -2140,7 +2157,7 @@ function buildBottomNav() {
   const ac = currentRole === 'restaurant' ? 'active' : currentRole === 'fournisseur' ? 'active-gold' : 'active-blue';
   bn.innerHTML = items.map(item =>
     `<div class="bnav-item${currentPanel===item.id?' '+ac:''}" id="bn-${item.id}" onclick="navigateTo('${item.id}')">
-      ${item.icon}<span>${item.label}</span>
+      ${item.icon}<span>${typeof item.label==='function'?item.label():item.label}</span>
     </div>`
   ).join('');
 }
@@ -2159,13 +2176,6 @@ startApp = function(u) {
   setTimeout(buildBottomNav, 100);
   showAIFab();
   startNotifSimulation();
-  if(CLAUDE_KEY) {
-    setTimeout(() => {
-      const s = document.getElementById('ai-status');
-      const b = document.getElementById('ai-key-btn');
-      if(s) s.textContent = 'En ligne · IA Connectée ✅';
-      if(b) { b.textContent = '✅ IA'; b.style.background = 'rgba(0,255,136,.2)'; }
-    }, 200);
-  }
+
 };
 </script>
