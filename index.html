@@ -68,11 +68,12 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
   background:linear-gradient(135deg,#00FF88,#00cc6a);
   border-radius:50%;border:none;cursor:pointer;
   display:none;align-items:center;justify-content:center;
-  z-index:400;
-  box-shadow:0 0 0 0 rgba(0,255,136,.5);
+  z-index:9999;
+  box-shadow:0 4px 20px rgba(0,255,136,.5);
   animation:aipulse 2.5s infinite;
   transition:transform .2s;
 }
+#ai-fab.visible{display:flex !important;}
 #ai-fab:hover{transform:scale(1.12);}
 @keyframes aipulse{
   0%{box-shadow:0 0 0 0 rgba(0,255,136,.5);}
@@ -753,6 +754,11 @@ function startApp(u) {
   currentRole = u.role;
   document.getElementById('page-login').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
+  // Show AI FAB immediately
+  setTimeout(() => {
+    const fab = document.getElementById('ai-fab');
+    if(fab) { fab.classList.add('visible'); fab.style.cssText += ';display:flex!important;'; updateDot(); }
+  }, 500);
   document.getElementById('tb-user').textContent = u.name;
   const roleEl = document.getElementById('tb-role');
   roleEl.textContent = u.role.toUpperCase();
@@ -1821,7 +1827,7 @@ function toggleAI() {
   const fab = document.getElementById('ai-fab');
   if(aiOpen) {
     panel.classList.add('open');
-    fab.style.display = 'none';
+    fab.style.cssText = 'display:none!important';
     renderNotifs();
     if(document.getElementById('ai-msgs').children.length === 0) {
       addBotMsg(getBriefing());
@@ -1829,7 +1835,8 @@ function toggleAI() {
     markAllRead();
   } else {
     panel.classList.remove('open');
-    fab.style.display = 'flex';
+    fab.classList.add('visible');
+    fab.style.cssText += ';display:flex!important;';
   }
 }
 
@@ -2039,8 +2046,9 @@ Que souhaitez-vous savoir ?';
 // Show FAB when logged in
 function showAIFab() {
   const fab = document.getElementById('ai-fab');
-  if(fab) { 
-    fab.style.display = 'flex';
+  if(fab) {
+    fab.classList.add('visible');
+    fab.style.cssText += ';display:flex!important;';
     updateDot();
   }
 }
