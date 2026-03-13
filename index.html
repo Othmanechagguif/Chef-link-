@@ -560,6 +560,8 @@ select.finp option{background:var(--dark3);}
   .mo-box{padding:20px;margin:12px;}
 }
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -743,48 +745,42 @@ let MY_PRODS = [
 
 // ══ SUPABASE — Mode démo (CORS fix) ══
 // Supabase désactivé pour GitHub Pages — mode démo local actif
-const sb = {
-  auth: {
-    signInWithPassword: async () => ({ data: null, error: new Error('demo') }),
-    signUp: async () => ({ data: null, error: new Error('demo') }),
-    updateUser: async () => ({ data: null, error: new Error('demo') }),
-    signOut: async () => ({})
-  },
-  from: () => ({
-    select: () => ({ eq: () => ({ single: async () => ({ data: null, error: true }) }) }),
-    insert: () => ({ select: () => ({ single: async () => ({ data: null, error: true }) }) }),
-    upsert: () => ({ eq: () => ({ single: async () => ({ data: null, error: true }) }) })
-  })
-};
 
 // Demo users fallback (utilisé si Supabase non disponible)
-const DEMO_USERS = {
-  'restaurant@demo.com': {pass:'demo123',role:'restaurant',name:'Ahmed Benali',company:'Café Atlas'},
-  'fournisseur@demo.com': {pass:'demo123',role:'fournisseur',name:'Karim Mansouri',company:'ProViande SARL'},
-  'admin@mazaya.ma': {pass:'admin123',role:'admin',name:'Admin Mazaya',company:'Mazaya HQ'},
-};
+// ══ SUPABASE ══
+const SUPA_URL = 'https://usslajplsapxzxfrcxlk.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzc2xhanBsc2FweHp4ZnJjeGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTgxOTIsImV4cCI6MjA4ODYzNDE5Mn0.dRRJ9tnk5rRNPRWtihhnVrG23nVj3z-UFi4sb0oEtwg';
 
-let currentUser = null;
-let currentRole = null;
-let currentPanel = '';
-let cart = {};
-let delMode = 'std';
-let activeCat = 'all';
-let searchQ = '';
 
-// ══ AUTH ══
 async function login() {
   const e = document.getElementById('l-email').value.trim().toLowerCase();
   const p = document.getElementById('l-pass').value;
   if (!e || !p) { toast('Remplis tous les champs'); return; }
   const btn = document.querySelector('.btn-login');
   btn.textContent = 'CONNEXION...';
-  setTimeout(() => {
-    const u = DEMO_USERS[e];
-    btn.textContent = 'ACCÉDER';
-    if (!u || u.pass !== p) { toast('❌ Identifiants incorrects'); return; }
-    startApp({...u, email: e});
-  }, 400);
+
+  // Try Supabase with 3s timeout, fallback to demo instantly
+  if (sb) {
+    try {
+      const authPromise = sb.auth.signInWithPassword({ email: e, password: p });
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
+      const { data, error } = await Promise.race([authPromise, timeoutPromise]);
+      if (data && data.user && !error) {
+        const meta = data.user.user_metadata || {};
+        const role = meta.role || (DEMO_USERS[e] ? DEMO_USERS[e].role : 'restaurant');
+        const name = meta.name || (DEMO_USERS[e] ? DEMO_USERS[e].name : e.split('@')[0]);
+        btn.textContent = 'ACCÉDER';
+        startApp({ email: e, role, name, pass: p });
+        return;
+      }
+    } catch(err) { /* timeout or error — use demo */ }
+  }
+
+  // Demo fallback (instant)
+  btn.textContent = 'ACCÉDER';
+  const u = DEMO_USERS[e];
+  if (!u || u.pass !== p) { toast('❌ Identifiants incorrects'); return; }
+  startApp({...u, email: e});
 }
 
 function quickLogin(role) {
@@ -832,6 +828,7 @@ function startApp(u) {
 
 function logout() {
   try { sessionStorage.removeItem('mazaya-session'); } catch(e) {}
+  if (sb) { try { sb.auth.signOut(); } catch(e) {} }
   currentUser = null; currentRole = null;
   Object.keys(cart).forEach(k => delete cart[k]);
   document.getElementById('app').style.display = 'none';
