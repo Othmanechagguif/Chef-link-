@@ -182,6 +182,27 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
 .lang-opt:hover{background:rgba(255,255,255,.05);color:#fff;}
 .lang-opt.active{color:var(--green);}
 [dir="rtl"] .main{direction:rtl;text-align:right;}
+[dir="rtl"] .scard{text-align:right;}
+[dir="rtl"] .scard-val{direction:ltr;display:inline-block;}
+[dir="rtl"] .scard-delta{direction:ltr;}
+[dir="rtl"] .scard-accent{left:auto;right:0;border-radius:0 2px 2px 0;}
+[dir="rtl"] .nav-item{flex-direction:row-reverse;}
+[dir="rtl"] .nav-item.active,[dir="rtl"] .nav-item.active-gold,[dir="rtl"] .nav-item.active-blue{border-left:none;border-right:2px solid;}
+[dir="rtl"] .nav-item.active{border-right-color:var(--green);}
+[dir="rtl"] .nav-item.active-gold{border-right-color:var(--gold);}
+[dir="rtl"] .nav-item.active-blue{border-right-color:var(--blue);}
+[dir="rtl"] .ph{flex-direction:row-reverse;}
+[dir="rtl"] .tb-left{flex-direction:row-reverse;}
+[dir="rtl"] .tb-right{flex-direction:row-reverse;}
+[dir="rtl"] .topbar{flex-direction:row-reverse;}
+[dir="rtl"] table{direction:rtl;}
+[dir="rtl"] th,[dir="rtl"] td{text-align:right;}
+[dir="rtl"] .num{direction:ltr;display:inline-block;}
+[dir="rtl"] .ai-card{text-align:right;}
+[dir="rtl"] .stat-grid{direction:rtl;}
+[dir="rtl"] .prog-head{flex-direction:row-reverse;}
+[dir="rtl"] .crow{flex-direction:row-reverse;}
+[dir="rtl"] .bnav-item{flex-direction:column;}
 
 /* ── MAZAYA LOGO ── */
 .mz-logo { display:flex; flex-direction:column; align-items:flex-start; gap:0px; }
@@ -299,7 +320,7 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
 .scard-ico{font-size:18px;margin-bottom:10px;}
 .scard-val{font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;color:var(--white);}
 .scard-lbl{font-size:11px;color:var(--grey);margin-top:3px;}
-.scard-delta{font-size:10px;font-weight:600;margin-top:6px;}
+.scard-delta{font-size:10px;font-weight:600;margin-top:6px;unicode-bidi:plaintext;}
 .up{color:var(--green);} .dn{color:var(--red);} .wn{color:var(--gold);}
 
 /* AI CARD */
@@ -785,6 +806,8 @@ async function saveOrderToDB(items, total, livraison) { return null; }
 function startApp(u) {
   currentUser = u;
   currentRole = u.role;
+  // Persist session across refresh
+  try { sessionStorage.setItem('mazaya-session', JSON.stringify(u)); } catch(e) {}
   document.getElementById('page-login').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   setTimeout(()=>{const f=document.getElementById("ai-fab");if(f)f.style.display="flex";},300);
@@ -808,6 +831,7 @@ function startApp(u) {
 }
 
 function logout() {
+  try { sessionStorage.removeItem('mazaya-session'); } catch(e) {}
   currentUser = null; currentRole = null;
   Object.keys(cart).forEach(k => delete cart[k]);
   document.getElementById('app').style.display = 'none';
@@ -905,23 +929,23 @@ function renderPanel(id) {
 // ══ RESTAURANT PANELS ══
 function restaurantPanel(id) {
   if (id === 'dash') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Bonjour Ahmed</h1><p>Café Atlas · Casablanca · 9 Mars 2026</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas" style="direction:ltr;text-align:right;">${t('welcome')}, Ahmed</h1><p>Café Atlas · Casablanca · 9 Mars 2026</p></div></div>
     <div class="ai-card">
-      <div class="ai-tag"><div class="ai-pulse"></div>BRIEFING IA · AUJOURD'HUI</div>
-      <div class="ai-text">Stock <strong>bœuf haché</strong> probablement épuisé. ProViande propose <strong>68 DH/kg</strong> cette semaine (économie <strong>136 DH</strong> sur 8kg). Anomalie facture HuileMax détectée : <strong>+40 DH</strong> non justifiés.</div>
+      <div class="ai-tag"><div class="ai-pulse"></div>${t('briefingTag')}</div>
+      <div class="ai-text">${t('briefingText')}</div>
       <div class="ai-btns">
-        <button class="btn-confirm" onclick="toast('✅ Commande confirmée — Livraison vendredi 7h')">Confirmer la commande</button>
-        <button class="btn-skip" onclick="this.closest('.ai-card').style.opacity='.4'">Plus tard</button>
+        <button class="btn-confirm" onclick="toast(t('orderConfirmed'))">${t('confirmOrder')}</button>
+        <button class="btn-skip" onclick="this.closest('.ai-card').style.opacity='.4'">${t('later')}</button>
       </div>
     </div>
     <div class="stat-grid g4">
-      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">💸</div><div class="scard-val">8 420</div><div class="scard-lbl">Dépenses ce mois (DH)</div><div class="scard-delta dn">↓ 18% vs mois passé</div></div>
-      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">1 340</div><div class="scard-lbl">Économies IA (DH)</div><div class="scard-delta up">↑ 32% ce mois</div></div>
-      <div class="scard" onclick="navigateTo('ord')"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">📦</div><div class="scard-val">24</div><div class="scard-lbl">Commandes ce mois</div><div class="scard-delta up">↑ 3 cette semaine</div></div>
-      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">Food cost actuel</div><div class="scard-delta wn">⚠ Objectif 25%</div></div>
+      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">💸</div><div class="scard-val">8 420</div><div class="scard-lbl">${t('spending')} (DH)</div><div class="scard-delta dn">${t('vsPrevMonth')}</div></div>
+      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">1 340</div><div class="scard-lbl">${t('savings')} (DH)</div><div class="scard-delta up">${t('thisMonth32')}</div></div>
+      <div class="scard" onclick="navigateTo('ord')"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">📦</div><div class="scard-val">24</div><div class="scard-lbl">${t('ordersThisMonth')}</div><div class="scard-delta up">${t('thisWeekUp')}</div></div>
+      <div class="scard" onclick="navigateTo('ana')"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">${t('foodCost')}</div><div class="scard-delta wn">${t('target25')}</div></div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="card-title">Commandes récentes</div><button class="btn-sm" onclick="navigateTo('ord')">Voir tout →</button></div>
+      <div class="card-head"><div class="card-title">${t('recentOrders')}</div><button class="btn-sm" onclick="navigateTo('ord')">Voir tout →</button></div>
       <table><thead><tr><th>Fournisseur</th><th>Produits</th><th>Montant</th><th>Date</th><th>Statut</th></tr></thead><tbody>
         <tr onclick="toast('📦 ProViande — Livré 7h00')"><td><strong>ProViande SARL</strong></td><td>Bœuf haché 5kg</td><td><span class="num">425 DH</span></td><td style="color:var(--grey)">Auj</td><td><span class="badge bg">Livré ✓</span></td></tr>
         <tr onclick="toast('🥬 FruitsLég — En route 11h30')"><td><strong>FruitsLég Express</strong></td><td>Légumes 8kg</td><td><span class="num">186 DH</span></td><td style="color:var(--grey)">Hier</td><td><span class="badge bo">En route</span></td></tr>
@@ -931,7 +955,7 @@ function restaurantPanel(id) {
     </div>`;
 
   if (id === 'cmd') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Commander</h1><p>Catalogue multi-fournisseurs · Comparaison prix IA</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('orderTitle')}</h1><p>${t('catalogueSubtitle')}</p></div></div>
     <div class="search-row">
       <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg><input class="sinp" id="ps" placeholder="Chercher un produit..." oninput="searchQ=this.value.toLowerCase();renderProds()"></div>
       <div class="filt on" onclick="activeCat='all';setF(this);renderProds()">Tout</div>
@@ -944,14 +968,14 @@ function restaurantPanel(id) {
     <div class="prod-grid" id="pgrid"></div>`;
 
   if (id === 'cmp') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Comparer les prix</h1><p>L'IA sélectionne le meilleur fournisseur pour chaque produit</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('compare')}</h1><p>${t('compareSubtitle')}</p></div></div>
     <div class="ai-card" style="margin-bottom:18px;">
-      <div class="ai-tag"><div class="ai-pulse"></div>ANALYSE IA</div>
+      <div class="ai-tag"><div class="ai-pulse"></div>${t('aiAnalysis')}</div>
       <div class="ai-text">Ce mois, l'IA t'a économisé <strong>1 340 DH</strong>. <strong>ProViande</strong> est 12% moins cher que la moyenne marché sur les viandes.</div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="card-title">Comparaison par produit</div></div>
-      <table><thead><tr><th>Produit</th><th>Fournisseur A</th><th>Fournisseur B</th><th>Fournisseur C</th><th>Recommandation IA</th></tr></thead><tbody>
+      <div class="card-head"><div class="card-title">${t('compareTitle')}</div></div>
+      <table><thead><tr><th>Produit</th><th>${t('supplierA')}</th><th>${t('supplierB')}</th><th>${t('supplierC')}</th><th>${t('aiReco')}</th></tr></thead><tbody>
         <tr onclick="toast('🥩 ProViande sélectionné')"><td><strong>🥩 Bœuf haché/kg</strong></td><td style="font-weight:700">85 DH</td><td style="color:var(--grey)">92 DH</td><td style="color:var(--grey)">88 DH</td><td><span class="badge bg">85 DH · ProViande</span></td></tr>
         <tr onclick="toast('🍅 FruitsLég sélectionné')"><td><strong>🍅 Tomates/kg</strong></td><td style="color:var(--grey)">9 DH</td><td style="font-weight:700">8 DH</td><td style="color:var(--grey)">8.5 DH</td><td><span class="badge bg">8 DH · FruitsLég</span></td></tr>
         <tr onclick="toast('🫙 HuileMax sélectionné')"><td><strong>🫙 Huile olive/L</strong></td><td style="color:var(--grey)">24 DH</td><td style="color:var(--grey)">23 DH</td><td style="font-weight:700">22 DH</td><td><span class="badge bg">22 DH · HuileMax</span></td></tr>
@@ -961,7 +985,7 @@ function restaurantPanel(id) {
     </div>`;
 
   if (id === 'ord') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Mes commandes</h1><p>Historique et suivi des livraisons</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('ordersTitle')}</h1><p>${t('ordersHistory')}</p></div></div>
     <div class="search-row">
       <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg><input class="sinp" placeholder="Rechercher..."></div>
       <div class="filt on" onclick="setF(this)">Toutes</div>
@@ -980,11 +1004,11 @@ function restaurantPanel(id) {
     </div>`;
 
   if (id === 'ana') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Analytiques</h1><p>Dépenses, food cost, économies réalisées</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('analyticsTitle')}</h1><p>${t('spending')}, food cost, ${t('savings')}</p></div></div>
     <div class="stat-grid g3">
       <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">💸</div><div class="scard-val">8 420 DH</div><div class="scard-lbl">Dépenses totales janvier</div><div class="scard-delta dn">↓ 18% vs décembre</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">1 340 DH</div><div class="scard-lbl">Économies IA ce mois</div><div class="scard-delta up">↑ 32%</div></div>
-      <div class="scard"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">Food cost actuel</div><div class="scard-delta wn">⚠ Objectif 25%</div></div>
+      <div class="scard"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">🎯</div><div class="scard-val">27.4%</div><div class="scard-lbl">${t('foodCost')}</div><div class="scard-delta wn">${t('target25')}</div></div>
     </div>
     <div class="two-col">
       <div class="card cp">
@@ -1133,7 +1157,7 @@ function restaurantPanel(id) {
 // ══ FOURNISSEUR PANELS ══
 function fournisseurPanel(id) {
   if (id === 'dash') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Bonjour Karim</h1><p>ProViande SARL · Casablanca · 9 Mars 2026</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas" style="direction:ltr;text-align:right;">${t('welcome')}, Karim</h1><p>ProViande SARL · Casablanca · 9 Mars 2026</p></div></div>
     <div class="stat-grid g4">
       <div class="scard" onclick="navigateTo('stats')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">12 480</div><div class="scard-lbl">CA ce mois (DH)</div><div class="scard-delta up">↑ 24%</div></div>
       <div class="scard" onclick="navigateTo('cmd')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">📦</div><div class="scard-val">18</div><div class="scard-lbl">Commandes reçues</div><div class="scard-delta up">↑ 6 nouvelles</div></div>
@@ -1159,7 +1183,7 @@ function fournisseurPanel(id) {
     </div>`;
 
   if (id === 'prod') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Mes produits</h1><p>Gérez votre catalogue, prix et disponibilités</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('products')}</h1><p>Gérez votre catalogue, prix et disponibilités</p></div></div>
     <div class="card cp" style="margin-bottom:16px;">
       <div class="card-title" style="margin-bottom:16px;">Ajouter un produit</div>
       <div class="form-grid">
@@ -1180,7 +1204,7 @@ function fournisseurPanel(id) {
     </div>`;
 
   if (id === 'cmd') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Commandes reçues</h1><p>Toutes les commandes de vos restaurants clients</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('orders')}</h1><p>${t('mySuppliers')}</p></div></div>
     <div class="card">
       <table><thead><tr><th>#</th><th>Restaurant</th><th>Produits</th><th>Montant</th><th>Date</th><th>Statut</th><th>Paiement</th><th>Action</th></tr></thead><tbody>
         <tr><td style="color:var(--grey)">#2841</td><td><strong>Café Atlas</strong></td><td>Bœuf haché 5kg</td><td><span class="num">425 DH</span></td><td style="color:var(--grey)">Auj</td><td><span class="badge bg">Livré</span></td><td><span class="badge bg">Payé</span></td><td><button class="btn-edit-sm" onclick="toast('📄 Facture #2841')">Facture</button></td></tr>
@@ -1190,7 +1214,7 @@ function fournisseurPanel(id) {
     </div>`;
 
   if (id === 'pay') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Paiements</h1><p>Suivi des encaissements et relances</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('payments')}</h1><p>Suivi des encaissements et relances</p></div></div>
     <div class="stat-grid g3">
       <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">✅</div><div class="scard-val">9 280 DH</div><div class="scard-lbl">Encaissé ce mois</div><div class="scard-delta up">↑ 18%</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--red)"></div><div class="scard-ico">⏳</div><div class="scard-val">3 200 DH</div><div class="scard-lbl">En attente</div><div class="scard-delta dn">2 clients</div></div>
@@ -1212,7 +1236,7 @@ function fournisseurPanel(id) {
     </div>`;
 
   if (id === 'stats') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Statistiques</h1><p>Performance, CA et analyse clients</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('stats')}</h1><p>Performance, CA et analyse clients</p></div></div>
     <div class="stat-grid g4">
       <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">12 480</div><div class="scard-lbl">CA ce mois (DH)</div><div class="scard-delta up">↑ 24%</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">📦</div><div class="scard-val">18</div><div class="scard-lbl">Commandes livrées</div><div class="scard-delta up">↑ 6</div></div>
@@ -1365,11 +1389,11 @@ function fournisseurPanel(id) {
 // ══ ADMIN PANELS ══
 function adminPanel(id) {
   if (id === 'dash') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Vue globale</h1><p>Mazaya HQ · 9 Mars 2026 · <span style="color:var(--green)"><span class="sdot sdot-green"></span>Système opérationnel</span></p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('dashboard')}</h1><p>Mazaya HQ · 9 Mars 2026 · <span style="color:var(--green)"><span class="sdot sdot-green"></span>Système opérationnel</span></p></div></div>
     <div class="stat-grid g4">
       <div class="scard" onclick="navigateTo('rest')"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">🍽️</div><div class="scard-val">7</div><div class="scard-lbl">Restaurants actifs</div><div class="scard-delta up">↑ 2 ce mois</div></div>
       <div class="scard" onclick="navigateTo('four')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">🏭</div><div class="scard-val">5</div><div class="scard-lbl">Fournisseurs actifs</div><div class="scard-delta up">+1 cette semaine</div></div>
-      <div class="scard" onclick="navigateTo('cmd')"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">📦</div><div class="scard-val">142</div><div class="scard-lbl">Commandes ce mois</div><div class="scard-delta up">↑ 38%</div></div>
+      <div class="scard" onclick="navigateTo('cmd')"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">📦</div><div class="scard-val">142</div><div class="scard-lbl">${t('ordersThisMonth')}</div><div class="scard-delta up">↑ 38%</div></div>
       <div class="scard" onclick="navigateTo('fin')"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">68 400</div><div class="scard-lbl">GMV ce mois (DH)</div><div class="scard-delta up">↑ 41%</div></div>
     </div>
     <div class="stat-grid g4">
@@ -1399,7 +1423,7 @@ function adminPanel(id) {
     </div>`;
 
   if (id === 'cmd') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Toutes les commandes</h1><p>Vue complète de l'activité plateforme</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('orders')}</h1><p>Vue complète de l'activité plateforme</p></div></div>
     <div class="stat-grid g3">
       <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">📦</div><div class="scard-val">142</div><div class="scard-lbl">Total ce mois</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--green)"></div><div class="scard-ico">✅</div><div class="scard-val">138</div><div class="scard-lbl">Livrées avec succès</div></div>
@@ -1415,7 +1439,7 @@ function adminPanel(id) {
     </div>`;
 
   if (id === 'rest') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Restaurants</h1><p>Gestion des comptes restaurants</p></div><button class="btn-primary" onclick="moAddUser('restaurant')">+ Ajouter</button></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('restaurants')}</h1><p>Gestion des comptes restaurants</p></div><button class="btn-primary" onclick="moAddUser('restaurant')">+ Ajouter</button></div>
     <div class="card">
       <table><thead><tr><th>Nom</th><th>Email</th><th>Ville</th><th>Commandes</th><th>Dépenses</th><th>Plan</th><th>Statut</th><th>Action</th></tr></thead><tbody>
         <tr onclick="toast('Café Atlas · Pro · Actif')"><td><strong>Café Atlas</strong></td><td style="color:var(--grey)">ahmed@cafeatlas.ma</td><td>Casablanca</td><td>24</td><td><span class="num">8 420 DH</span></td><td><span class="badge bb">Pro</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier Café Atlas')">Modifier</button></td></tr>
@@ -1426,7 +1450,7 @@ function adminPanel(id) {
     </div>`;
 
   if (id === 'four') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Fournisseurs</h1><p>Gestion des comptes et scores qualité</p></div><button class="btn-primary" onclick="moAddUser('fournisseur')">+ Ajouter</button></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('suppliers')}</h1><p>Gestion des comptes et scores qualité</p></div><button class="btn-primary" onclick="moAddUser('fournisseur')">+ Ajouter</button></div>
     <div class="card">
       <table><thead><tr><th>Nom</th><th>Catégorie</th><th>Produits</th><th>CA (DH)</th><th>Score</th><th>Statut</th><th>Action</th></tr></thead><tbody>
         <tr onclick="toast('ProViande · 92/100')"><td><strong>ProViande SARL</strong></td><td>🥩 Viandes</td><td>8</td><td><span class="num">12 480</span></td><td><span class="badge bg">92/100</span></td><td><span class="badge bg">Actif</span></td><td><button class="btn-edit-sm" onclick="toast('✏️ Modifier ProViande')">Modifier</button></td></tr>
@@ -1438,7 +1462,7 @@ function adminPanel(id) {
     </div>`;
 
   if (id === 'fin') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Finances & GMV</h1><p>Performance financière de la plateforme</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('finances')}</h1><p>Performance financière de la plateforme</p></div></div>
     <div class="stat-grid g4">
       <div class="scard"><div class="scard-accent" style="background:var(--gold)"></div><div class="scard-ico">💰</div><div class="scard-val">68 400</div><div class="scard-lbl">GMV ce mois (DH)</div><div class="scard-delta up">↑ 41%</div></div>
       <div class="scard"><div class="scard-accent" style="background:var(--blue)"></div><div class="scard-ico">💳</div><div class="scard-val">2 097</div><div class="scard-lbl">Revenus Mazaya (DH)</div><div class="scard-delta up">3.07%</div></div>
@@ -1462,7 +1486,7 @@ function adminPanel(id) {
     </div>`;
 
   if (id === 'lit') return `
-    <div class="ph"><div class="ph-left"><h1 class="bebas">Litiges & Anomalies</h1><p>Résolution des conflits de facturation</p></div></div>
+    <div class="ph"><div class="ph-left"><h1 class="bebas">${t('disputes')}</h1><p>Résolution des conflits de facturation</p></div></div>
     <div class="litige-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div><div style="font-size:14px;font-weight:700">Café Atlas vs HuileMax Distrib.</div><div style="font-size:11px;color:var(--grey);margin-top:3px">Commande #2839 · Signalé le 13 Jan 2026</div></div>
@@ -1978,18 +2002,32 @@ async function installApp() {
 // ── MAZAYA TRANSLATION SYSTEM ──
 const T = {
   fr: {
-    dashboard:'Tableau de bord', orders:'Commandes', catalogue:'Commander', compare:'Comparer prix',
+    dashboard:'Tableau de bord', orders:'Commandes', catalogue:'Commander', compare:'Comparer les prix',
     analytics:'Analytiques', invoices:'Factures', logout:'Déconnexion', password:'Mot de passe',
     welcome:'Bonjour', search:'Rechercher...', addToCart:'Ajouter', cart:'Panier',
     emptyCart:'Panier vide', checkout:'Commander', total:'Total', delivery:'Livraison',
     standard:'Standard', express:'Express', confirm:'Confirmer', cancel:'Annuler',
-    save:'Enregistrer', products:'Produits', payments:'Paiements', stats:'Statistiques',
+    save:'Enregistrer', products:'Mes produits', payments:'Paiements', stats:'Statistiques',
     restaurants:'Restaurants', suppliers:'Fournisseurs', disputes:'Litiges', finances:'Finances',
     addRestaurant:'+ Ajouter Restaurant', addSupplier:'+ Ajouter Fournisseur',
-    morningBriefing:'Briefing du matin', spending:'Dépenses du mois', savings:'Économies',
-    foodCost:'Food Cost', losses:'Pertes & Gaspillage', allCategories:'Toutes catégories', inStock:'En stock',
+    morningBriefing:'Briefing du matin', spending:'Dépenses du mois', savings:'Économies IA',
+    foodCost:'Food Cost', allCategories:'Toutes catégories', inStock:'En stock',
     outOfStock:'Rupture', markDelivered:'Marquer livré', sendReminder:'Envoyer rappel',
     profile:'Mon profil', settings:'Paramètres', language:'Langue',
+    recentOrders:'Commandes récentes', compareTitle:'Comparaison par produit',
+    aiAnalysis:'ANALYSE IA', orderTitle:'Commander', ordersTitle:'Mes commandes',
+    analyticsTitle:'Analytiques', compareSubtitle:"L'IA sélectionne le meilleur fournisseur",
+    supplierA:'Fournisseur A', supplierB:'Fournisseur B', supplierC:'Fournisseur C',
+    aiReco:'Recommandation IA', product:'Produit',
+    ordersHistory:'Historique et suivi des livraisons',
+    mySuppliers:'Mes fournisseurs', catalogueSubtitle:'Catalogue multi-fournisseurs · Comparaison prix IA',
+    briefingTag:"BRIEFING IA · AUJOURD'HUI",
+    briefingText:"Stock <strong>boeuf hache</strong> probablement epuise. ProViande propose <strong>68 DH/kg</strong> cette semaine (economie <strong>136 DH</strong> sur 8kg). Anomalie facture HuileMax detectee : <strong>+40 DH</strong> non justifies.",
+    confirmOrder:'Confirmer la commande', later:'Plus tard',
+    ordersThisMonth:'Commandes ce mois', thisWeekUp:'↑ 3 cette semaine',
+    vsPrevMonth:'↓ 18% vs mois passé', thisMonth32:'↑ 32% ce mois',
+    target25:'⚠ Objectif 25%', orderConfirmed:'✅ Commande confirmée — Livraison vendredi 7h',
+    losses:'Pertes & Gaspillage',
   },
   en: {
     dashboard:'Dashboard', orders:'Orders', catalogue:'Order', compare:'Compare prices',
@@ -1997,13 +2035,27 @@ const T = {
     welcome:'Good morning', search:'Search...', addToCart:'Add', cart:'Cart',
     emptyCart:'Empty cart', checkout:'Order now', total:'Total', delivery:'Delivery',
     standard:'Standard', express:'Express', confirm:'Confirm', cancel:'Cancel',
-    save:'Save', products:'Products', payments:'Payments', stats:'Statistics',
+    save:'Save', products:'My products', payments:'Payments', stats:'Statistics',
     restaurants:'Restaurants', suppliers:'Suppliers', disputes:'Disputes', finances:'Finances',
     addRestaurant:'+ Add Restaurant', addSupplier:'+ Add Supplier',
-    morningBriefing:'Morning briefing', spending:'Monthly spending', savings:'Savings',
-    foodCost:'Food Cost', losses:'Waste & Losses', allCategories:'All categories', inStock:'In stock',
+    morningBriefing:'Morning briefing', spending:'Monthly spending', savings:'AI Savings',
+    foodCost:'Food Cost', allCategories:'All categories', inStock:'In stock',
     outOfStock:'Out of stock', markDelivered:'Mark delivered', sendReminder:'Send reminder',
     profile:'My profile', settings:'Settings', language:'Language',
+    recentOrders:'Recent orders', compareTitle:'Price comparison',
+    aiAnalysis:'AI ANALYSIS', orderTitle:'Order', ordersTitle:'My orders',
+    analyticsTitle:'Analytics', compareSubtitle:'AI selects the best supplier for each product',
+    supplierA:'Supplier A', supplierB:'Supplier B', supplierC:'Supplier C',
+    aiReco:'AI recommendation', product:'Product',
+    ordersHistory:'Order history and delivery tracking',
+    mySuppliers:'My suppliers', catalogueSubtitle:'Multi-supplier catalogue · AI price comparison',
+    briefingTag:'AI BRIEFING · TODAY',
+    briefingText:'Stock <strong>ground beef</strong> probably depleted. ProViande offers <strong>68 DH/kg</strong> this week (saving <strong>136 DH</strong> on 8kg). HuileMax invoice anomaly: <strong>+40 DH</strong> unjustified.',
+    confirmOrder:'Confirm order', later:'Later',
+    ordersThisMonth:'Orders this month', thisWeekUp:'↑ 3 this week',
+    vsPrevMonth:'↓ 18% vs last month', thisMonth32:'↑ 32% this month',
+    target25:'⚠ Target 25%', orderConfirmed:'✅ Order confirmed — Delivery Friday 7am',
+    losses:'Losses & Waste',
   },
   ar: {
     dashboard:'لوحة التحكم', orders:'الطلبات', catalogue:'الطلب', compare:'مقارنة الأسعار',
@@ -2011,13 +2063,27 @@ const T = {
     welcome:'صباح الخير', search:'بحث...', addToCart:'إضافة', cart:'السلة',
     emptyCart:'السلة فارغة', checkout:'تأكيد الطلب', total:'المجموع', delivery:'التوصيل',
     standard:'عادي', express:'سريع', confirm:'تأكيد', cancel:'إلغاء',
-    save:'حفظ', products:'المنتجات', payments:'المدفوعات', stats:'الإحصائيات',
+    save:'حفظ', products:'منتجاتي', payments:'المدفوعات', stats:'الإحصائيات',
     restaurants:'المطاعم', suppliers:'الموردون', disputes:'النزاعات', finances:'المالية',
     addRestaurant:'+ إضافة مطعم', addSupplier:'+ إضافة مورد',
-    morningBriefing:'ملخص الصباح', spending:'مصاريف الشهر', savings:'التوفيرات',
-    foodCost:'تكلفة الطعام', losses:'الخسائر والهدر', allCategories:'كل الفئات', inStock:'متوفر',
+    morningBriefing:'ملخص الصباح', spending:'مصاريف الشهر', savings:'توفيرات الذكاء',
+    foodCost:'تكلفة الطعام', allCategories:'كل الفئات', inStock:'متوفر',
     outOfStock:'نفذ المخزون', markDelivered:'تم التسليم', sendReminder:'إرسال تذكير',
     profile:'ملفي الشخصي', settings:'الإعدادات', language:'اللغة',
+    recentOrders:'الطلبات الأخيرة', compareTitle:'مقارنة الأسعار',
+    aiAnalysis:'تحليل الذكاء الاصطناعي', orderTitle:'الطلب', ordersTitle:'طلباتي',
+    analyticsTitle:'الإحصائيات', compareSubtitle:'الذكاء الاصطناعي يختار أفضل مورد لكل منتج',
+    supplierA:'المورد أ', supplierB:'المورد ب', supplierC:'المورد ج',
+    aiReco:'توصية الذكاء', product:'المنتج',
+    ordersHistory:'سجل الطلبات والتسليم',
+    mySuppliers:'موردي', catalogueSubtitle:'كتالوج متعدد الموردين · مقارنة أسعار ذكية',
+    briefingTag:'ملخص الذكاء · اليوم',
+    briefingText:'مخزون <strong>اللحم المفروم</strong> على وشك النفاد. ProViande يعرض <strong>68 درهم/كغ</strong> هذا الأسبوع (توفير <strong>136 درهم</strong> على 8كغ). شذوذ في فاتورة HuileMax: <strong>+40 درهم</strong> غير مبررة.',
+    confirmOrder:'تأكيد الطلب', later:'لاحقاً',
+    ordersThisMonth:'الطلبات هذا الشهر', thisWeekUp:'↑ 3 هذا الأسبوع',
+    vsPrevMonth:'↓ 18% مقارنة بالشهر الماضي', thisMonth32:'↑ 32% هذا الشهر',
+    target25:'⚠ الهدف 25%', orderConfirmed:'✅ تم تأكيد الطلب — التسليم الجمعة 7 صباحاً',
+    losses:'الفاقد والهدر',
   },
   nl: {
     dashboard:'Dashboard', orders:'Bestellingen', catalogue:'Bestellen', compare:'Prijzen vergelijken',
@@ -2025,13 +2091,27 @@ const T = {
     welcome:'Goedemorgen', search:'Zoeken...', addToCart:'Toevoegen', cart:'Winkelwagen',
     emptyCart:'Lege winkelwagen', checkout:'Bestelling plaatsen', total:'Totaal', delivery:'Levering',
     standard:'Standaard', express:'Express', confirm:'Bevestigen', cancel:'Annuleren',
-    save:'Opslaan', products:'Producten', payments:'Betalingen', stats:'Statistieken',
+    save:'Opslaan', products:'Mijn producten', payments:'Betalingen', stats:'Statistieken',
     restaurants:'Restaurants', suppliers:'Leveranciers', disputes:'Geschillen', finances:'Financiën',
     addRestaurant:'+ Restaurant toevoegen', addSupplier:'+ Leverancier toevoegen',
-    morningBriefing:'Ochtendrapport', spending:'Maandelijkse uitgaven', savings:'Besparingen',
-    foodCost:'Voedselkosten', losses:'Verliezen', allCategories:'Alle categorieën', inStock:'Op voorraad',
+    morningBriefing:'Ochtendrapport', spending:'Maandelijkse uitgaven', savings:'AI Besparingen',
+    foodCost:'Voedselkosten', allCategories:'Alle categorieën', inStock:'Op voorraad',
     outOfStock:'Uitverkocht', markDelivered:'Geleverd markeren', sendReminder:'Herinnering sturen',
     profile:'Mijn profiel', settings:'Instellingen', language:'Taal',
+    recentOrders:'Recente bestellingen', compareTitle:'Prijsvergelijking',
+    aiAnalysis:'AI ANALYSE', orderTitle:'Bestellen', ordersTitle:'Mijn bestellingen',
+    analyticsTitle:'Analyses', compareSubtitle:'AI selecteert de beste leverancier per product',
+    supplierA:'Leverancier A', supplierB:'Leverancier B', supplierC:'Leverancier C',
+    aiReco:'AI aanbeveling', product:'Product',
+    ordersHistory:'Bestelgeschiedenis en leveringstracking',
+    mySuppliers:'Mijn leveranciers', catalogueSubtitle:'Multi-leverancier catalogus · AI prijsvergelijking',
+    briefingTag:'AI BRIEFING · VANDAAG',
+    briefingText:'Voorraad <strong>gehakt</strong> waarschijnlijk uitgeput. ProViande biedt <strong>68 DH/kg</strong> (besparing <strong>136 DH</strong> op 8kg). HuileMax factuurafwijking: <strong>+40 DH</strong> niet gerechtvaardigd.',
+    confirmOrder:'Bestelling bevestigen', later:'Later',
+    ordersThisMonth:'Bestellingen deze maand', thisWeekUp:'↑ 3 deze week',
+    vsPrevMonth:'↓ 18% vs vorige maand', thisMonth32:'↑ 32% deze maand',
+    target25:'⚠ Doel 25%', orderConfirmed:'✅ Bestelling bevestigd — Levering vrijdag 7u',
+    losses:'Verliezen & Verspilling',
   },
   es: {
     dashboard:'Panel', orders:'Pedidos', catalogue:'Pedir', compare:'Comparar precios',
@@ -2039,13 +2119,27 @@ const T = {
     welcome:'Buenos días', search:'Buscar...', addToCart:'Añadir', cart:'Carrito',
     emptyCart:'Carrito vacío', checkout:'Hacer pedido', total:'Total', delivery:'Entrega',
     standard:'Estándar', express:'Express', confirm:'Confirmar', cancel:'Cancelar',
-    save:'Guardar', products:'Productos', payments:'Pagos', stats:'Estadísticas',
+    save:'Guardar', products:'Mis productos', payments:'Pagos', stats:'Estadísticas',
     restaurants:'Restaurantes', suppliers:'Proveedores', disputes:'Disputas', finances:'Finanzas',
     addRestaurant:'+ Añadir restaurante', addSupplier:'+ Añadir proveedor',
-    morningBriefing:'Resumen matutino', spending:'Gasto mensual', savings:'Ahorros',
-    foodCost:'Coste alimentario', losses:'Pérdidas', allCategories:'Todas las categorías', inStock:'En stock',
+    morningBriefing:'Resumen matutino', spending:'Gasto mensual', savings:'Ahorros IA',
+    foodCost:'Coste alimentario', allCategories:'Todas las categorías', inStock:'En stock',
     outOfStock:'Sin stock', markDelivered:'Marcar entregado', sendReminder:'Enviar recordatorio',
     profile:'Mi perfil', settings:'Configuración', language:'Idioma',
+    recentOrders:'Pedidos recientes', compareTitle:'Comparación de precios',
+    aiAnalysis:'ANÁLISIS IA', orderTitle:'Pedir', ordersTitle:'Mis pedidos',
+    analyticsTitle:'Análisis', compareSubtitle:'La IA selecciona el mejor proveedor por producto',
+    supplierA:'Proveedor A', supplierB:'Proveedor B', supplierC:'Proveedor C',
+    aiReco:'Recomendación IA', product:'Producto',
+    ordersHistory:'Historial de pedidos y seguimiento',
+    mySuppliers:'Mis proveedores', catalogueSubtitle:'Catálogo multi-proveedor · Comparación IA',
+    briefingTag:'BRIEFING IA · HOY',
+    briefingText:'Stock de <strong>carne picada</strong> probablemente agotado. ProViande ofrece <strong>68 DH/kg</strong> esta semana (ahorro <strong>136 DH</strong> en 8kg). Anomalía factura HuileMax: <strong>+40 DH</strong> no justificados.',
+    confirmOrder:'Confirmar pedido', later:'Más tarde',
+    ordersThisMonth:'Pedidos este mes', thisWeekUp:'↑ 3 esta semana',
+    vsPrevMonth:'↓ 18% vs mes pasado', thisMonth32:'↑ 32% este mes',
+    target25:'⚠ Objetivo 25%', orderConfirmed:'✅ Pedido confirmado — Entrega viernes 7h',
+    losses:'Pérdidas y Desperdicios',
   }
 };
 
@@ -2065,8 +2159,10 @@ function setLang(lang) {
   if(event && event.target) event.target.classList.add('active');
   document.getElementById('langSel').classList.remove('open');
   applyTranslations();
-  // Rebuild nav with new language
-  if(currentRole) buildSidebar();
+  if(currentRole) {
+    buildSidebar();
+    renderPanel(currentPanel); // Re-render panel with new language
+  }
   toast('🌍 ' + CODES[lang]);
 }
 
@@ -2087,7 +2183,7 @@ function applyTranslations() {
   });
   // Logout button
   document.querySelectorAll('.btn-out').forEach(btn => {
-    if(btn.getAttribute('onclick') === 'logout()') btn.textContent = lang.logout || 'Déconnexion';
+    if(btn.getAttribute('onclick') === 'logout()') btn.textContent = t('logout') || 'Déconnexion';
     if(btn.getAttribute('onclick') === 'moChangePass()') btn.innerHTML = '🔑 ' + (lang.password || 'Mot de passe');
   });
   // Rebuild sidebar with translated labels
@@ -2108,6 +2204,11 @@ function applyTranslations() {
 
 // Apply saved language on load
 document.addEventListener('DOMContentLoaded', () => {
+  // Restore session if exists
+  try {
+    const saved = sessionStorage.getItem('mazaya-session');
+    if (saved) { const u = JSON.parse(saved); if (u && u.role) { startApp(u); return; } }
+  } catch(e) {}
   if (currentLang !== 'fr') {
     document.getElementById('langFlag').textContent = FLAGS[currentLang];
     document.getElementById('langCode').textContent = CODES[currentLang];
@@ -2601,25 +2702,25 @@ navigateTo = function(id) {
 // ── BOTTOM NAV MOBILE ──
 const BNAV = {
   restaurant: [
-    {id:'dash', icon:'<svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>', label:'Home'},
-    {id:'cmd',  icon:'<svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>', label:'Commander'},
-    {id:'cmp',  icon:'<svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline></svg>', label:'Prix'},
-    {id:'ord',  icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect></svg>', label:'Commandes'},
-    {id:'ana',  icon:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>', label:'Stats'},
+    {id:'dash', icon:'<svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>', label:()=>t('dashboard')},
+    {id:'cmd',  icon:'<svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>', label:()=>t('catalogue')},
+    {id:'cmp',  icon:'<svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline></svg>', label:()=>t('compare')},
+    {id:'ord',  icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect></svg>', label:()=>t('orders')},
+    {id:'ana',  icon:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>', label:()=>t('stats')},
   ],
   fournisseur: [
-    {id:'dash',  icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>', label:'Home'},
-    {id:'prod',  icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>', label:'Produits'},
-    {id:'cmd',   icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect></svg>', label:'Commandes'},
-    {id:'pay',   icon:'<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>', label:'Paiements'},
-    {id:'stats', icon:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>', label:'Stats'},
+    {id:'dash',  icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>', label:()=>t('dashboard')},
+    {id:'prod',  icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>', label:()=>t('products')},
+    {id:'cmd',   icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect></svg>', label:()=>t('orders')},
+    {id:'pay',   icon:'<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>', label:()=>t('payments')},
+    {id:'stats', icon:'<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>', label:()=>t('stats')},
   ],
   admin: [
-    {id:'dash', icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>', label:'Global'},
-    {id:'cmd',  icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect></svg>', label:'Commandes'},
-    {id:'rest', icon:'<svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"></path></svg>', label:'Restos'},
-    {id:'four', icon:'<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon></svg>', label:'Fournis.'},
-    {id:'lit',  icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>', label:'Litiges'},
+    {id:'dash', icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>', label:()=>t('dashboard')},
+    {id:'cmd',  icon:'<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect></svg>', label:()=>t('orders')},
+    {id:'rest', icon:'<svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"></path></svg>', label:()=>t('restaurants')},
+    {id:'four', icon:'<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon></svg>', label:()=>t('suppliers')},
+    {id:'lit',  icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>', label:()=>t('disputes')},
   ]
 };
 
