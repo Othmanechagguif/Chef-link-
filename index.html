@@ -560,8 +560,7 @@ select.finp option{background:var(--dark3);}
   .mo-box{padding:20px;margin:12px;}
 }
 </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -608,7 +607,7 @@ select.finp option{background:var(--dark3);}
       <input class="form-input" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
       <button class="btn-login" onclick="login()">ACCÉDER</button>
       <div style="margin-top:20px;text-align:center;font-size:11px;color:#555;">
-        Accès sur invitation uniquement — <span style="color:#00FF88;">contact@mazaya.ma</span>
+        Accès sur invitation uniquement — <span style="color:#00FF88;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5b3834352f3a382f1b363a213a223a75363a">[email&#160;protected]</a></span>
       </div>
     </div>
   </div>
@@ -719,7 +718,7 @@ select.finp option{background:var(--dark3);}
 
 
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
 // ══ DATA ══
 const PRODS = [
@@ -759,30 +758,42 @@ async function login() {
   const btn = document.querySelector('.btn-login');
   btn.textContent = 'CONNEXION...';
 
-  // Try Supabase with 3s timeout, fallback to demo instantly
-  if (sb) {
+  // Init Supabase lazily (CDN guaranteed loaded by now)
+  if (!window.sb && typeof supabase !== 'undefined') {
     try {
-      const authPromise = sb.auth.signInWithPassword({ email: e, password: p });
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
-      const { data, error } = await Promise.race([authPromise, timeoutPromise]);
-      if (data && data.user && !error) {
-        const meta = data.user.user_metadata || {};
+      window.sb = supabase.createClient(
+        'https://usslajplsapxzxfrcxlk.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzc2xhanBsc2FweHp4ZnJjeGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTgxOTIsImV4cCI6MjA4ODYzNDE5Mn0.dRRJ9tnk5rRNPRWtihhnVrG23nVj3z-UFi4sb0oEtwg'
+      );
+    } catch(e2) { window.sb = null; }
+  }
+
+  // Try Supabase with 4s timeout
+  if (window.sb) {
+    try {
+      const race = await Promise.race([
+        window.sb.auth.signInWithPassword({ email: e, password: p }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000))
+      ]);
+      if (race.data && race.data.user && !race.error) {
+        const meta = race.data.user.user_metadata || {};
         const role = meta.role || (DEMO_USERS[e] ? DEMO_USERS[e].role : 'restaurant');
         const name = meta.name || (DEMO_USERS[e] ? DEMO_USERS[e].name : e.split('@')[0]);
         btn.textContent = 'ACCÉDER';
         startApp({ email: e, role, name, pass: p });
         return;
       }
-    } catch(err) { /* timeout or error — use demo */ }
+    } catch(err) { console.log('Supabase:', err.message); }
   }
 
-  // Demo fallback (instant)
-  btn.textContent = 'ACCÉDER';
-  const u = DEMO_USERS[e];
-  if (!u || u.pass !== p) { toast('❌ Identifiants incorrects'); return; }
-  startApp({...u, email: e});
+  // Demo fallback
+  setTimeout(() => {
+    const u = DEMO_USERS[e];
+    btn.textContent = 'ACCÉDER';
+    if (!u || u.pass !== p) { toast('❌ Identifiants incorrects'); return; }
+    startApp({...u, email: e});
+  }, 300);
 }
-
 function quickLogin(role) {
   const map = {
     restaurant: 'restaurant@demo.com',
@@ -2201,6 +2212,7 @@ function applyTranslations() {
 
 // Apply saved language on load
 document.addEventListener('DOMContentLoaded', () => {
+  // Supabase initialized lazily in login()
   // Restore session if exists
   try {
     const saved = sessionStorage.getItem('mazaya-session');
@@ -2746,13 +2758,4 @@ startApp = function(u) {
   _origStartApp(u);
   setTimeout(buildBottomNav, 100);
   // Show AI FAB
-  const fab = document.getElementById('ai-fab');
-  if(fab) { fab.style.display = 'flex'; }
-  const dot = document.getElementById('ai-dot');
-  if(dot) { dot.style.display = 'flex'; dot.textContent = '2'; }
-  startNotifSimulation();
-};
-
-</script>
-</body>
-</html>
+  const fab = document.getElementB
