@@ -748,6 +748,12 @@ let MY_PRODS = [
 // ══ SUPABASE ══
 
 
+const DEMO_USERS = {
+  'restaurant@demo.com': { pass:'demo123', role:'restaurant', name:'Ahmed Benali', company:'Café Atlas', ville:'Casablanca' },
+  'fournisseur@demo.com': { pass:'demo123', role:'fournisseur', name:'Karim Idrissi', company:'ProViande Maroc', ville:'Casablanca' },
+  'admin@mazaya.ma':      { pass:'admin123', role:'admin',       name:'Admin Mazaya',  company:'Mazaya',       ville:'Casablanca' },
+};
+
 function login() {
   const e = document.getElementById('l-email').value.trim().toLowerCase();
   const p = document.getElementById('l-pass').value;
