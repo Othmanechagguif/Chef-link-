@@ -746,8 +746,6 @@ let MY_PRODS = [
 
 // Demo users fallback (utilisé si Supabase non disponible)
 // ══ SUPABASE ══
-const SUPA_URL = 'https://usslajplsapxzxfrcxlk.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzc2xhanBsc2FweHp4ZnJjeGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTgxOTIsImV4cCI6MjA4ODYzNDE5Mn0.dRRJ9tnk5rRNPRWtihhnVrG23nVj3z-UFi4sb0oEtwg';
 
 
 function login() {
@@ -808,7 +806,7 @@ function startApp(u) {
 
 function logout() {
   try { sessionStorage.removeItem('mazaya-session'); } catch(e) {}
-  if (sb) { try { sb.auth.signOut(); } catch(e) {} }
+  if (sb) {  }
   currentUser = null; currentRole = null;
   Object.keys(cart).forEach(k => delete cart[k]);
   document.getElementById('app').style.display = 'none';
@@ -1701,8 +1699,7 @@ async function confirmOrder() {
   const del = delMode==='exp'?30:0;
   const tot = sub+del-sav;
 
-  // Sauvegarder dans Supabase
-  const cmd = null; // mode démo
+    const cmd = null; // mode démo
   const num = cmd ? cmd.id.slice(0,6).toUpperCase() : Math.floor(Math.random()*9000+1000);
 
   document.getElementById('s-det').innerHTML = `
@@ -1750,16 +1747,7 @@ async function addMyProd() {
 
   const newProd = {id:Date.now(),emo,name,price,unit,cat,rupt:false};
 
-  // Sauvegarder dans Supabase si connecté
-  if (currentUser.id) {
-    try {
-      const { data } = await sb.from('produits').insert({
-        fournisseur_id: currentUser.id,
-        nom: name, prix: price, unite: unit,
-        categorie: cat, emoji: emo, rupture: false
-      }).select().single();
-      if (data) newProd.id = data.id;
-    } catch(e) {}
+  // Mode démo — local uniquement
   }
 
   MY_PRODS.push(newProd);
@@ -2447,7 +2435,7 @@ async function addPerte() {
   };
 
   try {
-    const { data, error } = await sb.from('pertes').insert([perte]).select().single();
+    const data = perte; const error = null; // mode démo
     if (error) throw error;
     pertesData.unshift(data);
     renderPertes();
@@ -2455,7 +2443,7 @@ async function addPerte() {
     document.getElementById('p-produit').value = '';
     document.getElementById('p-qty').value = '';
     document.getElementById('p-prix').value = '';
-    toast('✅ Perte enregistrée dans Supabase');
+    toast('✅ Perte enregistrée');
   } catch(e) {
     toast('❌ Erreur: ' + e.message);
   }
@@ -2463,7 +2451,7 @@ async function addPerte() {
 
 async function removePerte(id) {
   try {
-    const { error } = await sb.from('pertes').delete().eq('id', id);
+    const e3 = null; // mode démo
     if (error) throw error;
     pertesData = pertesData.filter(p => p.id !== id);
     renderPertes();
@@ -2477,7 +2465,7 @@ async function removePerte(id) {
 async function clearPertes() {
   if (!confirm('Vider toutes les pertes ?')) return;
   try {
-    const { error } = await sb.from('pertes').delete().eq('restaurant_id', currentUser.id);
+    const error = null; // mode démo
     if (error) throw error;
     pertesData = [];
     renderPertes();
@@ -2727,4 +2715,3 @@ startApp = function(u) {
   setTimeout(buildBottomNav, 100);
   // Show AI FAB
   const fab = document.getElementB
-  
