@@ -560,8 +560,7 @@ select.finp option{background:var(--dark3);}
   .mo-box{padding:20px;margin:12px;}
 }
 </style>
-  <script src="https://unpkg.com/@supabase/supabase-js@2" crossorigin="anonymous"></script>
-</head>
+  </head>
 <body>
 
 <div id="toast"></div>
@@ -751,48 +750,18 @@ const SUPA_URL = 'https://usslajplsapxzxfrcxlk.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzc2xhanBsc2FweHp4ZnJjeGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTgxOTIsImV4cCI6MjA4ODYzNDE5Mn0.dRRJ9tnk5rRNPRWtihhnVrG23nVj3z-UFi4sb0oEtwg';
 
 
-async function login() {
+function login() {
   const e = document.getElementById('l-email').value.trim().toLowerCase();
   const p = document.getElementById('l-pass').value;
   if (!e || !p) { toast('Remplis tous les champs'); return; }
   const btn = document.querySelector('.btn-login');
   btn.textContent = 'CONNEXION...';
-
-  // Init Supabase lazily (CDN guaranteed loaded by now)
-  if (!window.sb && typeof supabase !== 'undefined') {
-    try {
-      window.sb = supabase.createClient(
-        'https://usslajplsapxzxfrcxlk.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzc2xhanBsc2FweHp4ZnJjeGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTgxOTIsImV4cCI6MjA4ODYzNDE5Mn0.dRRJ9tnk5rRNPRWtihhnVrG23nVj3z-UFi4sb0oEtwg'
-      );
-    } catch(e2) { window.sb = null; }
-  }
-
-  // Try Supabase with 4s timeout
-  if (window.sb) {
-    try {
-      const race = await Promise.race([
-        window.sb.auth.signInWithPassword({ email: e, password: p }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000))
-      ]);
-      if (race.data && race.data.user && !race.error) {
-        const meta = race.data.user.user_metadata || {};
-        const role = meta.role || (DEMO_USERS[e] ? DEMO_USERS[e].role : 'restaurant');
-        const name = meta.name || (DEMO_USERS[e] ? DEMO_USERS[e].name : e.split('@')[0]);
-        btn.textContent = 'ACCÉDER';
-        startApp({ email: e, role, name, pass: p });
-        return;
-      }
-    } catch(err) { console.log('Supabase:', err.message); }
-  }
-
-  // Demo fallback
   setTimeout(() => {
-    const u = DEMO_USERS[e];
     btn.textContent = 'ACCÉDER';
+    const u = DEMO_USERS[e];
     if (!u || u.pass !== p) { toast('❌ Identifiants incorrects'); return; }
     startApp({...u, email: e});
-  }, 300);
+  }, 500);
 }
 function quickLogin(role) {
   const map = {
@@ -2212,7 +2181,6 @@ function applyTranslations() {
 
 // Apply saved language on load
 document.addEventListener('DOMContentLoaded', () => {
-  // Supabase initialized lazily in login()
   // Restore session if exists
   try {
     const saved = sessionStorage.getItem('mazaya-session');
@@ -2759,3 +2727,4 @@ startApp = function(u) {
   setTimeout(buildBottomNav, 100);
   // Show AI FAB
   const fab = document.getElementB
+  
