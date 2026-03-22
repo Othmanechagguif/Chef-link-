@@ -796,17 +796,20 @@ function startApp(u) {
   roleEl.textContent = u.role.toUpperCase();
   roleEl.className = 'tb-role r-' + u.role;
   buildSidebar();
+  // Force app-body visible
+  const ab = document.querySelector('.app-body');
+  if (ab) ab.style.display = 'flex';
   if (u.role === 'restaurant') {
     document.getElementById('cart-panel').style.display = 'flex';
     document.getElementById('cart-panel').style.flexDirection = 'column';
     renderCart();
-    navigateTo('dash');
+    setTimeout(() => navigateTo('dash'), 50);
   } else if (u.role === 'fournisseur') {
     document.getElementById('cart-panel').style.display = 'none';
-    navigateTo('dash');
+    setTimeout(() => navigateTo('dash'), 50);
   } else {
     document.getElementById('cart-panel').style.display = 'none';
-    navigateTo('dash');
+    setTimeout(() => navigateTo('dash'), 50);
   }
 }
 
@@ -899,12 +902,22 @@ function navigateTo(id) {
 // ══ PANEL RENDERER ══
 function renderPanel(id) {
   const mc = document.getElementById('main-content');
-  if (currentRole === 'restaurant') mc.innerHTML = restaurantPanel(id);
-  else if (currentRole === 'fournisseur') mc.innerHTML = fournisseurPanel(id);
-  else mc.innerHTML = adminPanel(id);
+  if (!mc) return;
+  try {
+    let html = '';
+    if (currentRole === 'restaurant') html = restaurantPanel(id);
+    else if (currentRole === 'fournisseur') html = fournisseurPanel(id);
+    else html = adminPanel(id);
+    mc.innerHTML = html;
+  } catch(err) {
+    mc.innerHTML = '<div style="padding:40px;color:#ff4444">Erreur: ' + err.message + '</div>';
+    console.error('renderPanel error:', err);
+  }
   // Post-render hooks
-  if (id === 'cmd' && currentRole === 'restaurant') renderProds();
-  if (id === 'prod' && currentRole === 'fournisseur') renderMyProds();
+  try {
+    if (id === 'cmd' && currentRole === 'restaurant') renderProds();
+    if (id === 'prod' && currentRole === 'fournisseur') renderMyProds();
+  } catch(e) {}
 }
 
 // ══ RESTAURANT PANELS ══
@@ -1753,9 +1766,6 @@ async function addMyProd() {
 
   const newProd = {id:Date.now(),emo,name,price,unit,cat,rupt:false};
 
-  // Mode démo — local uniquement
-  }
-
   MY_PRODS.push(newProd);
   ['np-name','np-price','np-emo'].forEach(i => document.getElementById(i).value='');
   renderMyProds();
@@ -2178,8 +2188,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Restore session if exists
   try {
     const saved = sessionStorage.getItem('mazaya-session');
-    if (saved) { const u = JSON.parse(saved); if (u && u.role) { startApp(u); return; } }
-  } catch(e) {}
+    if (saved) { 
+      const u = JSON.parse(saved); 
+      if (u && u.role && DEMO_USERS[u.email]) { 
+        startApp({...DEMO_USERS[u.email], email: u.email}); 
+        return; 
+      }
+    }
+  } catch(e) { sessionStorage.removeItem('mazaya-session'); }
   if (currentLang !== 'fr') {
     document.getElementById('langFlag').textContent = FLAGS[currentLang];
     document.getElementById('langCode').textContent = CODES[currentLang];
@@ -2720,4 +2736,13 @@ startApp = function(u) {
   _origStartApp(u);
   setTimeout(buildBottomNav, 100);
   // Show AI FAB
-  const fab = document.getElementB
+  const fab = document.getElementBgetElementById('ai-fab');
+  if(fab) fab.style.display='flex';
+  const dot = document.getElementById('ai-dot');
+  if(dot) { dot.style.display='flex'; dot.textContent='2'; }
+  startNotifSimulation();
+};
+
+</script>
+</body>
+</html>
